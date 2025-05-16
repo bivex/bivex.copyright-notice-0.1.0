@@ -6,6 +6,8 @@
 
 Automatically add customizable copyright notices to your code files across multiple programming languages. Perfect for ensuring proper intellectual property protection in your projects.
 
+![Extension Demo](images/image.png)
+
 ## Key Features
 
 - ✨ **Automatic Insertion**: Adds copyright notice when typing in a new file
