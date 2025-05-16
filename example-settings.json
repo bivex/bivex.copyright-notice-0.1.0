@@ -1,0 +1,27 @@
+{
+    "window.commandCenter": true,
+    "explorer.confirmDelete": false,
+    "copyright-notice.languages": [
+        "javascript", 
+        "typescript",
+        "c",
+        "cpp"
+    ],
+    
+    "copyright-notice.fileExtensions": [
+        ".js",
+        ".jsx",
+        ".ts",
+        ".tsx",
+        ".c",
+        ".cpp",
+        ".h",
+        ".hpp"
+    ],
+
+    "copyright-notice.includeTimestamp": true,
+    "copyright-notice.timestampFormat": "YYYY-MM-DD HH:mm",
+    "copyright-notice.includeUpdateTime": true,
+    "copyright-notice.updateTimeFormat": "YYYY-MM-DD HH:mm",
+    "copyright-notice.template": "/**\n * Copyright (c) {year} Your Company Name\n * Created: {timestamp}\n * Last Updated: {updatetime}\n * All rights reserved.\n */\n\n"
+} 

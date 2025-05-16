@@ -1,0 +1,110 @@
+{
+	"name": "copyright-notice",
+	"displayName": "⚖️ Copyright Header Generator Pro",
+	"description": "Auto-insert customizable copyright headers in any file format. Smart templating with dynamic year, timestamps, and multi-language support.",
+	"version": "1.0.0",
+	"publisher": "bivex",
+	"license": "MIT",
+	"homepage": "https://github.com/bivex/copyright-notice",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/bivex/copyright-notice.git"
+	},
+	"bugs": {
+		"url": "https://github.com/bivex/copyright-notice/issues"
+	},
+	"engines": {
+		"vscode": "^1.17.0"
+	},
+	"categories": [
+		"Formatters",
+		"Snippets",
+		"Other",
+		"Programming Languages"
+	],
+	"keywords": [
+		"copyright header",
+		"license header",
+		"file header",
+		"code comments",
+		"legal compliance",
+		"intellectual property",
+		"auto-insert",
+		"multi-language",
+		"dynamic timestamp",
+		"template"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./out/extension",
+	"contributes": {
+		"commands": [
+			{
+				"command": "copyright-notice.apply",
+				"title": "Apply Copyright Notice"
+			}
+		],
+		"configuration": {
+			"type": "object",
+			"title": "Copyright Notice configuration",
+			"properties": {
+				"copyright-notice.languages": {
+					"type": "array",
+					"default": [
+						"*"
+					],
+					"description": "Languages that the extension will be activated for"
+				},
+				"copyright-notice.fileExtensions": {
+					"type": "array",
+					"default": [
+						"*"
+					],
+					"description": "File extensions to which the copyright notice will be applied (e.g., ['.js', '.ts', '.py']). Use ['*'] for all files."
+				},
+				"copyright-notice.template": {
+					"type": "string",
+					"default": "/* Copyright (c) {year} */\n\n",
+					"description": "Copyright notice template. Use {year} for the current year."
+				},
+				"copyright-notice.includeTimestamp": {
+					"type": "boolean",
+					"default": false,
+					"description": "Whether to include timestamp when the copyright notice was added. When enabled, use {timestamp} in your template."
+				},
+				"copyright-notice.timestampFormat": {
+					"type": "string",
+					"default": "YYYY-MM-DD HH:mm:ss",
+					"description": "Format of the timestamp (when includeTimestamp is enabled). Use YYYY (year), MM (month), DD (day), HH (hour), mm (minute), ss (second)."
+				},
+				"copyright-notice.includeUpdateTime": {
+					"type": "boolean",
+					"default": false,
+					"description": "Whether to include and update the 'last updated' timestamp when files are modified. When enabled, use {updatetime} in your template."
+				},
+				"copyright-notice.updateTimeFormat": {
+					"type": "string",
+					"default": "YYYY-MM-DD HH:mm:ss",
+					"description": "Format of the update timestamp (when includeUpdateTime is enabled). Use YYYY (year), MM (month), DD (day), HH (hour), mm (minute), ss (second)."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"typescript": "^2.5.3",
+		"vscode": "^1.1.5",
+		"@types/node": "^7.0.43",
+		"@types/mocha": "^2.2.42"
+	},
+	"__metadata": {
+		"size": 6790
+	}
+}

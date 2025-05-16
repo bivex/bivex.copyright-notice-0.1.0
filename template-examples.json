@@ -1,0 +1,39 @@
+{
+    "// Comment: Template Examples for Copyright Notice Extension": "",
+    "// Comment: Copy any of these templates to your settings.json": "",
+
+    "// ------- CORPORATE TEMPLATES -------": "",
+
+    "// Standard Company Template": "",
+    "template-standard-company": "/**\n * Copyright (c) {year} Your Company Name\n * Created: {timestamp}\n * Last Updated: {updatetime}\n * All rights reserved.\n */\n\n",
+
+    "// Detailed Company Template": "",
+    "template-detailed-company": "/**\n * Copyright (c) {year} Your Company Name, Inc.\n * Website: https://yourcompany.com\n * Created: {timestamp}\n * Last Updated: {updatetime}\n * \n * All rights reserved. This source code is licensed under the\n * terms found in the LICENSE file in the root directory.\n */\n\n",
+
+    "// ------- INDIVIDUAL TEMPLATES -------": "",
+
+    "// Sole Proprietor / Individual Entrepreneur Template": "",
+    "template-sole-proprietor": "/**\n * Copyright (c) {year} [Your Name], Individual Entrepreneur\n * INN: [Your Tax ID Number]\n * Created: {timestamp}\n * Last Updated: {updatetime}\n * All rights reserved. Unauthorized copying, modification,\n * distribution, or use is strictly prohibited.\n */\n\n",
+
+    "// Freelancer Template": "",
+    "template-freelancer": "/**\n * Copyright (c) {year} [Your Name]\n * Contact: your@email.com\n * Created: {timestamp}\n * Last Updated: {updatetime}\n * \n * Personal code. Unauthorized use, copying, modification,\n * distribution, or reuse is prohibited.\n */\n\n",
+
+    "// ------- OPEN SOURCE TEMPLATES -------": "",
+
+    "// MIT License Template": "",
+    "template-mit": "/**\n * Copyright (c) {year} [Your Name or Organization]\n * Created: {timestamp}\n * Last Updated: {updatetime}\n * \n * This source code is licensed under the MIT license found in the\n * LICENSE file in the root directory of this source tree.\n */\n\n",
+
+    "// GPL License Template": "",
+    "template-gpl": "/**\n * Copyright (c) {year} [Your Name or Organization]\n * Created: {timestamp}\n * Last Updated: {updatetime}\n * \n * This program is free software: you can redistribute it and/or modify\n * it under the terms of the GNU General Public License as published by\n * the Free Software Foundation, either version 3 of the License, or\n * (at your option) any later version.\n */\n\n",
+
+    "// ------- LANGUAGE SPECIFIC TEMPLATES -------": "",
+
+    "// Python Template": "",
+    "template-python": "# -*- coding: utf-8 -*-\n# Copyright (c) {year} [Your Name or Company]\n# Created: {timestamp}\n# Last Updated: {updatetime}\n# All rights reserved.\n\n",
+
+    "// HTML/XML Template": "",
+    "template-html": "<!--\n  Copyright (c) {year} [Your Name or Company]\n  Created: {timestamp}\n  Last Updated: {updatetime}\n  All rights reserved.\n-->\n\n",
+
+    "// Shell Script Template": "",
+    "template-shell": "#!/bin/bash\n# Copyright (c) {year} [Your Name or Company]\n# Created: {timestamp}\n# Last Updated: {updatetime}\n# All rights reserved.\n\n"
+} 
