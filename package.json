@@ -5,13 +5,13 @@
 	"version": "1.0.0",
 	"publisher": "bivex",
 	"license": "MIT",
-	"homepage": "https://github.com/bivex/copyright-notice",
+	"homepage": "https://github.com/bivex/bivex.copyright-notice-0.1.0",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/bivex/copyright-notice.git"
+		"url": "https://github.com/bivex/bivex.copyright-notice-0.1.0.git"
 	},
 	"bugs": {
-		"url": "https://github.com/bivex/copyright-notice/issues"
+		"url": "https://github.com/bivex/bivex.copyright-notice-0.1.0/issues"
 	},
 	"engines": {
 		"vscode": "^1.17.0"
