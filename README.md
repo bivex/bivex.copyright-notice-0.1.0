@@ -3,7 +3,6 @@
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 [![Installs](https://img.shields.io/badge/installs-new-brightgreen.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 [![Rating](https://img.shields.io/badge/rating-5%20stars-yellow.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
-[![Protected ©](https://a.b-b.top/badge.svg?repo=bivex.copyright-notice-0.1.0&label=Protected%20©&background_color=37474f&background_color2=607d8b&utm_source=github&utm_medium=readme&utm_campaign=badge)](https://a.b-b.top)
 
 Automatically add customizable copyright notices to your code files across multiple programming languages. Perfect for ensuring proper intellectual property protection in your projects.
 
