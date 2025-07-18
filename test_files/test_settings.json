@@ -1,0 +1,24 @@
+{
+    "copyright-notice.fileExtensions": [
+        ".js",
+        ".jsx",
+        ".ts",
+        ".tsx",
+        ".py",
+        ".cpp",
+        ".h",
+        ".ahk",
+        ".ahk2"
+    ],
+    "copyright-notice.excludedFiles": [
+        "*.json",
+        "*.config.js",
+        "package.json",
+        "tsconfig.json"
+    ],
+    "copyright-notice.template": "/**\n * Copyright (c) {year} Test Company\n * All rights reserved.\n */\n\n",
+    "copyright-notice.includeTimestamp": true,
+    "copyright-notice.timestampFormat": "YYYY-MM-DD HH:mm:ss",
+    "copyright-notice.includeUpdateTime": true,
+    "copyright-notice.updateTimeFormat": "YYYY-MM-DD HH:mm:ss"
+}
