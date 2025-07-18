@@ -134,7 +134,7 @@ The extension comes with a variety of pre-configured templates for different sce
 - Open source license templates (MIT, GPL)
 - Language-specific templates (Python, HTML, Shell)
 
-See the [template-examples.json](https://github.com/bivex/copyright-notice/blob/main/template-examples.json) file for a complete list of examples that you can copy into your configuration.
+See the [template-examples.json](https://github.com/bivex/bivex.copyright-notice-0.1.0/blob/main/template-examples.json) file for a complete list of examples that you can copy into your configuration.
 
 ## Why Use Copyright Notices?
 
@@ -157,7 +157,7 @@ No additional requirements or dependencies needed.
 
 ## Known Issues
 
-None currently reported. Please submit issues on our [GitHub repository](https://github.com/bivex/copyright-notice/issues).
+None currently reported. Please submit issues on our [GitHub repository](https://github.com/bivex/bivex.copyright-notice-0.1.0/issues).
 
 ## Release Notes
 
