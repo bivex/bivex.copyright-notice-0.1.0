@@ -16,7 +16,17 @@
         ".c",
         ".cpp",
         ".h",
-        ".hpp"
+        ".hpp",
+        ".ahk",
+        ".ahk2"
+    ],
+
+    "copyright-notice.excludedFiles": [
+        "*.json",
+        "*.config.js",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json"
     ],
 
     "copyright-notice.includeTimestamp": true,

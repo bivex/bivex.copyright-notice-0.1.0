@@ -2,7 +2,7 @@
 	"name": "copyright-notice",
 	"displayName": "⚖️ Copyright Header Generator Pro",
 	"description": "Auto-insert customizable copyright headers in any file format. Smart templating with dynamic year, timestamps, and multi-language support.",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"publisher": "bivex",
 	"license": "MIT",
 	"homepage": "https://github.com/bivex/bivex.copyright-notice-0.1.0",
@@ -35,7 +35,7 @@
 		"template"
 	],
 	"activationEvents": [
-		"*"
+		"onStartupFinished"
 	],
 	"main": "./out/extension",
 	"contributes": {
@@ -62,6 +62,11 @@
 						"*"
 					],
 					"description": "File extensions to which the copyright notice will be applied (e.g., ['.js', '.ts', '.py']). Use ['*'] for all files."
+				},
+				"copyright-notice.excludedFiles": {
+					"type": "array",
+					"default": [],
+					"description": "File patterns to exclude from copyright notices (e.g., ['*.json', '*.config.js', 'package.json']). Supports glob patterns."
 				},
 				"copyright-notice.template": {
 					"type": "string",
@@ -94,7 +99,10 @@
 	"scripts": {
 		"watch": "tsc -watch -p ./",
 		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+		"test": "npm run compile && node ./node_modules/vscode/bin/test",
+		"package": "vsce package",
+		"package:win": "scripts\\pack.bat",
+		"package:unix": "bash scripts/pack.sh"
 	},
 	"devDependencies": {
 		"typescript": "^2.5.3",

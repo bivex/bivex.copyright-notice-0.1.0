@@ -1,6 +1,6 @@
 {
-    "// Comment: The settings below ensure proper line breaks after each line in the copyright notice": "",
-    "// Comment: Note the explicit \\n after each line to ensure proper formatting": "",
+    "window.commandCenter": true,
+    "explorer.confirmDelete": false,
     
     "copyright-notice.languages": [
         "javascript", 
@@ -17,15 +17,22 @@
         ".c",
         ".cpp",
         ".h",
-        ".hpp"
+        ".hpp",
+        ".ahk",
+        ".ahk2"
+    ],
+
+    "copyright-notice.excludedFiles": [
+        "*.json",
+        "*.config.js",
+        "package.json",
+        "package-lock.json",
+        "tsconfig.json"
     ],
 
     "copyright-notice.includeTimestamp": true,
     "copyright-notice.timestampFormat": "YYYY-MM-DD HH:mm",
     "copyright-notice.includeUpdateTime": true,
     "copyright-notice.updateTimeFormat": "YYYY-MM-DD HH:mm",
-    
-    "// Comment: IMPORTANT: Make sure each line ends with \\n and has proper spacing before it": "",
-    "// Comment: The space after {updatetime} ensures proper formatting of the document": "",
-    "copyright-notice.template": "/**\n * Copyright (c) {year} [Your Name], Individual Entrepreneur\n * INN: [Your Tax ID Number]\n * Created: {timestamp}\n * Last Updated: {updatetime}\n * All rights reserved. Unauthorized copying, modification,\n * distribution, or use is strictly prohibited.\n */\n\n"
+    "copyright-notice.template": "/**\n * Copyright (c) {year} Your Company Name\n * Created: {timestamp}\n * Last Updated: {updatetime}\n * All rights reserved.\n */\n\n"
 } 

@@ -34,6 +34,7 @@ You can also manually trigger the extension by running the "Apply Copyright Noti
 - `copyright-notice.timestampFormat`: Format for the timestamp (default: "YYYY-MM-DD HH:mm:ss").
 - `copyright-notice.includeUpdateTime`: Whether to include and update the "last updated" timestamp (default: false).
 - `copyright-notice.updateTimeFormat`: Format for the update timestamp (default: "YYYY-MM-DD HH:mm:ss").
+- `copyright-notice.excludedFiles`: File patterns to exclude from copyright notices (e.g., ['*.json', '*.config.js']). Supports glob patterns.
 
 ## Example Settings
 
@@ -115,6 +116,25 @@ You can also manually trigger the extension by running the "Apply Copyright Noti
 }
 ```
 
+### AutoHotkey Development (.ahk and .ahk2 files)
+
+```json
+{
+  "copyright-notice.fileExtensions": [
+    ".ahk",
+    ".ahk2"
+  ],
+  "copyright-notice.excludedFiles": [
+    "*.json",
+    "*.config.js",
+    "package.json"
+  ],
+  "copyright-notice.template": "/*\n * Copyright (c) {year} Your Company Name\n * All rights reserved.\n */\n\n"
+}
+```
+
+**Note**: The extension now works with `.ahk2` files even if VS Code doesn't recognize the language ID. Simply add the file extension to the `fileExtensions` array.
+
 ### Individual Entrepreneur / Sole Proprietor
 
 ```json
@@ -146,20 +166,59 @@ Adding copyright notices to your source code:
 
 ## Installation
 
+### From VS Code Marketplace
 1. Open VS Code
 2. Go to Extensions (Ctrl+Shift+X)
 3. Search for "Copyright Notice Generator"
 4. Click Install
 
+### From VSIX File
+1. Download the `.vsix` file from the [Releases](https://github.com/bivex/bivex.copyright-notice-0.1.0/releases) page
+2. In VS Code, go to Extensions (Ctrl+Shift+X)
+3. Click the "..." menu and select "Install from VSIX..."
+4. Choose the downloaded `.vsix` file
+
+### Building from Source
+```bash
+# Clone the repository
+git clone https://github.com/bivex/bivex.copyright-notice-0.1.0.git
+cd bivex.copyright-notice-0.1.0
+
+# Install dependencies
+npm install
+
+# Package the extension
+npm run package:win    # Windows
+npm run package:unix   # Unix/Linux/macOS
+# or
+npm run package        # Direct vsce command
+```
+
+See [scripts/README.md](scripts/README.md) for detailed packaging instructions.
+
 ## Requirements
 
+### For Users
 No additional requirements or dependencies needed.
+
+### For Developers
+- Node.js (https://nodejs.org/)
+- npm or yarn
+- VS Code Extension Development Host (included with VS Code)
 
 ## Known Issues
 
 None currently reported. Please submit issues on our [GitHub repository](https://github.com/bivex/bivex.copyright-notice-0.1.0/issues).
 
 ## Release Notes
+
+### 1.0.1
+
+Bug fixes and new features:
+- **Fixed**: `.ahk2` files now work properly even if VS Code doesn't recognize the language ID
+- **Added**: File exclusion patterns to prevent copyright notices on specific files (e.g., `*.json`)
+- **Improved**: Extension now works if EITHER language ID OR file extension is enabled (not both required)
+- **Added**: Support for glob patterns in file exclusions
 
 ### 1.0.0
 

@@ -29,12 +29,41 @@ class CopyrightHandler {
         return {
             languages: config.get('languages', this.DEFAULT_WILDCARD),
             fileExtensions: config.get('fileExtensions', this.DEFAULT_WILDCARD),
+            excludedFiles: config.get('excludedFiles', []),
             template: config.get('template', this.DEFAULT_TEMPLATE),
             includeTimestamp: config.get('includeTimestamp', false),
             timestampFormat: config.get('timestampFormat', this.DEFAULT_TIMESTAMP_FORMAT),
             includeUpdateTime: config.get('includeUpdateTime', false),
             updateTimeFormat: config.get('updateTimeFormat', this.DEFAULT_TIMESTAMP_FORMAT)
         };
+    }
+
+    /**
+     * Check if a filename matches a glob pattern
+     * @param {string} fileName - The filename to check
+     * @param {string} pattern - The glob pattern (e.g., "*.json", "*.config.js")
+     * @returns {boolean} True if the filename matches the pattern
+     */
+    matchesPattern(fileName, pattern) {
+        // Simple glob pattern matching
+        const regexPattern = pattern
+            .replace(/\./g, '\\.')  // Escape dots
+            .replace(/\*/g, '.*')   // Convert * to .*
+            .replace(/\?/g, '.')    // Convert ? to .
+            .replace(/\[/g, '\\[')  // Escape [
+            .replace(/\]/g, '\\]')  // Escape ]
+            .replace(/\(/g, '\\(')  // Escape (
+            .replace(/\)/g, '\\)')  // Escape )
+            .replace(/\|/g, '\\|')  // Escape |
+            .replace(/\+/g, '\\+')  // Escape +
+            .replace(/\^/g, '\\^')  // Escape ^
+            .replace(/\$/g, '\\$')  // Escape $
+            .replace(/\{/g, '\\{')  // Escape {
+            .replace(/\}/g, '\\}')  // Escape }
+            .replace(/\\/g, '\\\\'); // Escape backslashes
+        
+        const regex = new RegExp(`^${regexPattern}$`, 'i');
+        return regex.test(fileName);
     }
 
     /**
@@ -225,15 +254,27 @@ class CopyrightHandler {
         const fileName = document.fileName;
         const fileExtension = fileName.substring(fileName.lastIndexOf('.')) || '';
         
-        const { languages, fileExtensions } = this.getConfig();
+        const { languages, fileExtensions, excludedFiles } = this.getConfig();
+        
+        // Check if file is explicitly excluded
+        for (const pattern of excludedFiles) {
+            if (this.matchesPattern(fileName, pattern)) {
+                return false;
+            }
+        }
         
         const hasWildcardLanguage = languages.includes("*");
         const hasWildcardExtension = fileExtensions.includes("*");
         
+        // Check if language is enabled
         const languageEnabled = hasWildcardLanguage || languages.includes(languageId);
+        
+        // Check if file extension is enabled
         const extensionEnabled = hasWildcardExtension || fileExtensions.includes(fileExtension);
         
-        return languageEnabled && extensionEnabled;
+        // Enable if EITHER language OR extension is enabled (not both required)
+        // This allows .ahk2 files to work even if VS Code doesn't recognize the language ID
+        return languageEnabled || extensionEnabled;
     }
 
     /**
