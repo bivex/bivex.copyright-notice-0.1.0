@@ -96,13 +96,21 @@ class CopyrightHandler {
      * @returns {boolean} True if copyright notice exists
      */
     hasCopyrightNotice(text) {
-        const trimmedText = text.trim();
-        // More comprehensive check for various copyright notice formats
-        return trimmedText.startsWith("/* Copyright") || 
-               trimmedText.startsWith("/**") && trimmedText.includes("Copyright") ||
-               trimmedText.startsWith("//") && trimmedText.includes("Copyright") ||
-               trimmedText.startsWith("#") && trimmedText.includes("Copyright") ||
-               trimmedText.includes("Copyright (c)");
+        if (!text || text.length === 0) {
+            return false;
+        }
+
+        // Get first few lines to check for copyright
+        const lines = text.split('\n');
+        const firstLines = lines.slice(0, Math.min(10, lines.length)); // Check first 10 lines max
+        const firstBlock = firstLines.join('\n');
+
+        // Check for copyright notice patterns in the beginning of file
+        return firstBlock.includes("Copyright (c)") ||
+               (firstBlock.startsWith("/*") && firstBlock.includes("Copyright")) ||
+               (firstBlock.startsWith("/**") && firstBlock.includes("Copyright")) ||
+               (firstBlock.startsWith("//") && firstBlock.includes("Copyright")) ||
+               (firstBlock.startsWith("#") && firstBlock.includes("Copyright"));
     }
 
     /**
@@ -231,19 +239,53 @@ class CopyrightHandler {
         if (text.length === 0) {
             edit.insert(document.uri, new vscode.Position(0, 0), formattedTemplate);
         } else {
-            // If file has content, replace the entire file with copyright + content
-            // Ensure there's a newline between copyright and existing content if needed
-            let contentToInsert = formattedTemplate;
-            if (!formattedTemplate.endsWith('\n') && text.length > 0) {
-                contentToInsert += '\n';
-            }
-            contentToInsert += text;
+            // Find the first non-empty line to insert copyright before it
+            const lines = text.split('\n');
+            let insertPosition = 0;
+            let insertLine = 0;
 
-            const fullRange = new vscode.Range(
-                document.positionAt(0),
-                document.positionAt(text.length)
-            );
-            edit.replace(document.uri, fullRange, contentToInsert);
+            // Find first non-empty, non-comment line (skip shebang and license comments)
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                // Skip empty lines, shebang, and license comments that don't contain actual code
+                if (line === '' ||
+                    line.startsWith('#!') ||
+                    (line.startsWith('/*') && !line.includes('*/') && i < lines.length - 1) ||
+                    (line.startsWith('//') && (line.includes('License') || line.includes('Copyright') || line.includes('license') || line.includes('copyright')))) {
+                    continue;
+                }
+                // Found the insertion point
+                insertLine = i;
+                insertPosition = text.indexOf(lines[i]);
+                break;
+            }
+
+            // If we found a good insertion point, insert before it
+            if (insertLine > 0 || (insertLine === 0 && lines[0].trim() !== '')) {
+                // Ensure proper spacing before existing content
+                let contentToInsert = formattedTemplate;
+                const lineBefore = insertLine > 0 ? lines[insertLine - 1] : '';
+                const currentLine = lines[insertLine] || '';
+
+                // Add newline if needed between copyright and existing content
+                if (!contentToInsert.endsWith('\n')) {
+                    contentToInsert += '\n';
+                }
+
+                // If inserting in the middle, ensure we have proper separation
+                if (insertLine > 0 && !lineBefore.endsWith('\n') && lineBefore.trim() !== '') {
+                    contentToInsert = '\n' + contentToInsert;
+                }
+
+                edit.insert(document.uri, document.positionAt(insertPosition), contentToInsert);
+            } else {
+                // Fallback: insert at the very beginning
+                let contentToInsert = formattedTemplate;
+                if (!contentToInsert.endsWith('\n') && text.length > 0) {
+                    contentToInsert += '\n';
+                }
+                edit.insert(document.uri, new vscode.Position(0, 0), contentToInsert);
+            }
         }
         
         try {
