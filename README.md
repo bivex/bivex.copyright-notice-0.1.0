@@ -37,6 +37,7 @@ Additionally, you can remove all emojis from any file using the "Remove All Emoj
 - `copyright-notice.timestampFormat`: Format for the timestamp (default: "YYYY-MM-DD HH:mm:ss").
 - `copyright-notice.includeUpdateTime`: Whether to include and update the "last updated" timestamp (default: false).
 - `copyright-notice.updateTimeFormat`: Format for the update timestamp (default: "YYYY-MM-DD HH:mm:ss").
+- `copyright-notice.autoRemoveEmojis`: Whether to automatically remove all emojis from files when they are saved (default: false).
 - `copyright-notice.excludedFiles`: File patterns to exclude from copyright notices (e.g., ['*.json', '*.config.js']). Supports glob patterns.
 
 ## Example Settings

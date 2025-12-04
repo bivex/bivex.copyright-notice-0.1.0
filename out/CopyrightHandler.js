@@ -34,7 +34,8 @@ class CopyrightHandler {
             includeTimestamp: config.get('includeTimestamp', false),
             timestampFormat: config.get('timestampFormat', this.DEFAULT_TIMESTAMP_FORMAT),
             includeUpdateTime: config.get('includeUpdateTime', false),
-            updateTimeFormat: config.get('updateTimeFormat', this.DEFAULT_TIMESTAMP_FORMAT)
+            updateTimeFormat: config.get('updateTimeFormat', this.DEFAULT_TIMESTAMP_FORMAT),
+            autoRemoveEmojis: config.get('autoRemoveEmojis', false)
         };
     }
 
@@ -318,6 +319,63 @@ class CopyrightHandler {
     }
 
     /**
+     * Handle document save events - auto-remove emojis if enabled
+     * @param {vscode.TextDocument} document - The saved document
+     */
+    async handleDocumentSave(document) {
+        const config = this.getConfig();
+
+        // Skip if auto-remove emojis is not enabled
+        if (!config.autoRemoveEmojis) {
+            return;
+        }
+
+        // Check if document is eligible for emoji removal
+        if (!this.isEnabled(document)) {
+            return;
+        }
+
+        const text = document.getText();
+
+        // Regular expression to match various emoji ranges in Unicode
+        const emojiRegex = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1f926}-\u{1f937}]|[\u{10000}-\u{1fffd}]|[\u{1f1f2}-\u{1f1f4}]|[\u{1f1e6}-\u{1f1ff}]|[\u{1f191}-\u{1f19a}]|[\u{1f232}-\u{1f23c}]|[\u{1f250}-\u{1f251}]|[\u{1f21a}]|[\u{1f22f}]|[\u{1f190}]|[\u{1f18e}]|[\u{1f17e}]|[\u{1f17f}]|[\u{1f171}-\u{1f17a}]|[\u{1f17b}-\u{1f17d}]|[\u{1f0cf}]|[\u{1f93a}-\u{1f93c}]|[\u{1f946}]|[\u{1f985}-\u{1f994}]|[\u{1f9d0}-\u{1f9ff}]|[\u{1f9c0}]|[\u{1f9b0}-\u{1f9b3}]|[\u{1f9b4}-\u{1f9b7}]|[\u{1f9b8}-\u{1f9bf}]|[\u{1f9c1}-\u{1f9c2}]|[\u{1f9c3}-\u{1f9cf}]|[\u{1f9d0}-\u{1f9ff}]|[\u{1f9e0}-\u{1f9ff}]/gu;
+
+        const cleanedText = text.replace(emojiRegex, '');
+
+        // If text didn't change, no emojis were found
+        if (cleanedText === text) {
+            return;
+        }
+
+        // Find the active editor for this document
+        const editors = vscode.window.visibleTextEditors;
+        const editor = editors.find(e => e.document === document);
+
+        if (!editor) {
+            return;
+        }
+
+        // Replace the entire document content
+        const fullRange = new vscode.Range(
+            document.positionAt(0),
+            document.positionAt(text.length)
+        );
+
+        const edit = new vscode.WorkspaceEdit();
+        edit.replace(document.uri, fullRange, cleanedText);
+
+        try {
+            const success = await vscode.workspace.applyEdit(edit);
+            if (success) {
+                // Save the document after emoji removal
+                await document.save();
+            }
+        } catch (error) {
+            console.error('Failed to auto-remove emojis:', error);
+        }
+    }
+
+    /**
      * Remove all emojis from the document
      * @param {vscode.TextEditor} editor - The active text editor
      * @returns {Promise<boolean>} Promise resolving to true if emojis were removed
@@ -371,7 +429,8 @@ class CopyrightHandler {
         // Create disposables for event listeners
         const subscriptions = [
             vscode.workspace.onDidChangeTextDocument(this.handleTextChange),
-            vscode.window.onDidChangeActiveTextEditor(this.handleEditorChange)
+            vscode.window.onDidChangeActiveTextEditor(this.handleEditorChange),
+            vscode.workspace.onDidSaveTextDocument(this.handleDocumentSave)
         ];
 
         return subscriptions;

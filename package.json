@@ -2,7 +2,7 @@
 	"name": "copyright-notice",
 	"displayName": "⚖️ Copyright Header Generator Pro",
 	"description": "Auto-insert customizable copyright headers in any file format. Smart templating with dynamic year, timestamps, and multi-language support.",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"publisher": "bivex",
 	"license": "MIT",
 	"homepage": "https://github.com/bivex/bivex.copyright-notice-0.1.0",
@@ -96,6 +96,11 @@
 					"type": "string",
 					"default": "YYYY-MM-DD HH:mm:ss",
 					"description": "Format of the update timestamp (when includeUpdateTime is enabled). Use YYYY (year), MM (month), DD (day), HH (hour), mm (minute), ss (second)."
+				},
+				"copyright-notice.autoRemoveEmojis": {
+					"type": "boolean",
+					"default": false,
+					"description": "Whether to automatically remove all emojis from files when they are saved."
 				}
 			}
 		}
