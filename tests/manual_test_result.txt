@@ -1,0 +1,42 @@
+#include <iostream>
+
+int main() {
+    std::cout << "Hello, World!" << std::endl;
+    return 0;
+}
+
+=== MANUAL ALGORITHM APPLICATION ===
+
+Step 1: hasCopyrightNotice?
+- First 10 lines: #include <iostream>\n\nint main()...
+- Contains "Copyright"? NO
+- Result: false (need to insert)
+
+Step 2: Find insertion point
+- Line 0: "#include <iostream>" -> not empty, not shebang, not license comment -> INSERT HERE
+- insertLine = 0, insertPosition = 0
+
+Step 3: Insert logic
+- insertLine === 0 && lines[0].trim() !== '' -> TRUE
+- contentToInsert = "/*\n * Copyright (c) 2025 bivex\n */\n\n"
+- lineBefore = (empty, since insertLine = 0)
+- currentLine = "#include <iostream>"
+- contentToInsert ends with \n -> TRUE
+- Insert at position 0
+
+EXPECTED RESULT:
+"/*\n * Copyright (c) 2025 bivex\n */\n\n" + original_content
+
+ACTUAL RESULT SHOULD BE:
+/*
+ * Copyright (c) 2025 bivex
+ */
+
+/*
+#include <iostream>
+
+int main() {
+    std::cout << "Hello, World!" << std::endl;
+    return 0;
+}
+*/

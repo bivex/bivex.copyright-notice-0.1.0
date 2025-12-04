@@ -1,0 +1,43 @@
+=== TEST FOR FILES WITH EXISTING COPYRIGHT ===
+
+Test file content:
+/*
+ * Copyright (c) 2025 bivex
+ */
+#include <iostream>
+
+int main() {
+    std::cout << "Hello, World!" << std::endl;
+    return 0;
+}
+
+=== ALGORITHM STEPS ===
+
+1. hasCopyrightNotice(content)
+   - First block starts with "/*" and contains "Copyright"
+   - Returns: true
+
+2. Since copyright exists, call updateTimestampIfNeeded
+
+3. updateTimestampIfNeeded:
+   - includeUpdateTime = false (default)
+   - Returns: false (no update needed)
+
+4. Result: No changes made
+
+=== VERIFICATION ===
+- Existing copyright preserved ✓
+- No duplicate copyright added ✓
+- File structure intact ✓
+
+=== EDGE CASE: Broken copyright ===
+/* Copyright (c) 2025 bivex
+#include <iostream>
+
+1. hasCopyrightNotice(content) -> true (contains "Copyright")
+2. updateTimestampIfNeeded tries to find /**...*/ block
+3. With fixed regex /\*[\s\S]*?\*\// finds "/* Copyright (c) 2025 bivex"
+4. But no "Last Updated" line found -> no changes
+5. Result: Broken copyright remains broken
+
+This is the issue! Files with malformed copyright don't get fixed.

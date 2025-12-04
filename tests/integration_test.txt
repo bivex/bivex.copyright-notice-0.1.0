@@ -1,0 +1,45 @@
+=== INTEGRATION TEST FOR COPYRIGHT INSERTION ===
+
+Original file content (basic.cpp):
+#include <iostream>
+
+int main() {
+    std::cout << "Hello, World!" << std::endl;
+    return 0;
+}
+
+=== ALGORITHM STEPS ===
+
+1. hasCopyrightNotice(content)
+   - Content starts with "#include" - no copyright patterns found
+   - Returns: false
+
+2. addCopyrightIfNeeded triggered
+
+3. Template: "/* Copyright (c) 2025 */\n\n"
+
+4. Find insertion point:
+   - Line 0: "#include <iostream>" - not empty, not shebang, not license comment
+   - insertLine = 0, insertPosition = 0
+
+5. Insert at beginning:
+   - contentToInsert = "/* Copyright (c) 2025 */\n\n"
+   - Insert at position 0
+
+EXPECTED RESULT:
+"/* Copyright (c) 2025 */\n\n#include <iostream>
+
+int main() {
+    std::cout << "Hello, World!" << std::endl;
+    return 0;
+}"
+
+=== VERIFICATION ===
+- Copyright inserted at beginning ✓
+- Proper spacing with \n\n ✓
+- Original content preserved ✓
+- No */ lost (using single-line comment style) ✓
+
+=== CONCLUSION ===
+Algorithm works correctly for files without copyright.
+The issue might be with files that ALREADY have copyright.
