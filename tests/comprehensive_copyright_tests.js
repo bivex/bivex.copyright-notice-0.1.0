@@ -171,6 +171,7 @@ function simulateInsertion(text, handler) {
 
     let leadingEmptyLines = 0;
     let hasShebang = false;
+    let shebangEndPosition = 0;
 
     if (text.length === 0) {
         return formattedTemplate;
@@ -192,6 +193,8 @@ function simulateInsertion(text, handler) {
             hasShebang = true;
             leadingEmptyLines = 0; // Reset - empty lines after shebang are not "leading"
             lineIndex++;
+            // Store position right after shebang line (including its newline)
+            shebangEndPosition = getOffsetForLine(lineIndex);
             continue;
         }
 
@@ -214,31 +217,32 @@ function simulateInsertion(text, handler) {
 
     // Handle different cases
     if (hasShebang) {
-        // After shebang: add blank line before copyright if not already present
-        const remainingText = text.substring(insertPosition);
+        // After shebang: insert right after shebang, replacing any empty lines
         const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
 
-        if (!templateEndsWithDoubleNewline) {
-            contentToInsert = '\n' + contentToInsert;
-        }
+        // Always add blank line before copyright
+        contentToInsert = '\n' + contentToInsert;
 
-        // Add spacing after copyright
-        if (!remainingText.startsWith('\n')) {
-            contentToInsert += '\n';
-        }
-
-        return text.slice(0, insertPosition) + contentToInsert + text.slice(insertPosition);
+        // Replace from end of shebang to start of actual content
+        // This removes any empty lines between shebang and content
+        return text.slice(0, shebangEndPosition) + contentToInsert + text.slice(insertPosition);
     } else if (leadingEmptyLines > 0 || insertPosition === 0) {
         // File has leading empty lines or only whitespace - replace from start
         const remainingText = text.substring(insertPosition);
         const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
+        const remainingIsOnlyWhitespace = remainingText.trim().length === 0;
 
-        if (!templateEndsWithDoubleNewline && remainingText && !remainingText.startsWith('\n')) {
+        // For whitespace-only files, strip one newline if template ends with double newline
+        if (remainingIsOnlyWhitespace && templateEndsWithDoubleNewline) {
+            contentToInsert = contentToInsert.slice(0, -1);
+        } else if (!remainingIsOnlyWhitespace && !templateEndsWithDoubleNewline && remainingText && !remainingText.startsWith('\n')) {
             contentToInsert += '\n';
         }
 
         // Replace from position 0 to remove leading empty lines
-        return contentToInsert + text.slice(insertPosition);
+        // For whitespace-only files, replace entire content
+        const endPosition = remainingIsOnlyWhitespace ? text.length : insertPosition;
+        return contentToInsert + text.slice(endPosition);
     } else {
         // Normal case - insert at current position
         const remainingText = text.substring(insertPosition);

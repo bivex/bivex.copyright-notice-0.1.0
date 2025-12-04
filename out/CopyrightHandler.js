@@ -343,6 +343,7 @@ class CopyrightHandler {
 
                 let leadingEmptyLines = 0;
                 let hasShebang = false;
+                let shebangEndPosition = 0;
 
                 while (lineIndex < lines.length) {
                     const line = lines[lineIndex];
@@ -360,6 +361,8 @@ class CopyrightHandler {
                         hasShebang = true;
                         leadingEmptyLines = 0; // Reset - empty lines after shebang are not "leading"
                         lineIndex++;
+                        // Store position right after shebang line (including its newline)
+                        shebangEndPosition = getOffsetForLine(lineIndex);
                         continue;
                     }
 
@@ -386,33 +389,37 @@ class CopyrightHandler {
 
                     // Handle different cases
                     if (hasShebang) {
-                        // After shebang: add blank line before copyright if not already present
-                        const remainingText = text.substring(insertPosition);
+                        // After shebang: insert right after shebang, replacing any empty lines
                         const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
 
+                        // Add blank line before copyright if template doesn't already have it
                         if (!templateEndsWithDoubleNewline) {
                             contentToInsert = '\n' + contentToInsert;
                         }
 
-                        // Add spacing after copyright
-                        if (!remainingText.startsWith('\n')) {
-                            contentToInsert += '\n';
-                        }
-
-                        edit.insert(document.uri, document.positionAt(insertPosition), contentToInsert);
+                        // Replace from end of shebang to start of actual content
+                        // This removes any empty lines between shebang and content
+                        edit.replace(document.uri, new vscode.Range(
+                            document.positionAt(shebangEndPosition),
+                            document.positionAt(insertPosition)
+                        ), contentToInsert);
                     } else if (leadingEmptyLines > 0 || insertPosition === 0) {
                         // File has leading empty lines or only whitespace - replace from start
                         const remainingText = text.substring(insertPosition);
                         const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
+                        const remainingIsOnlyWhitespace = remainingText.trim().length === 0;
 
-                        if (!templateEndsWithDoubleNewline && remainingText && !remainingText.startsWith('\n')) {
+                        // For whitespace-only files, don't add extra spacing
+                        if (!remainingIsOnlyWhitespace && !templateEndsWithDoubleNewline && remainingText && !remainingText.startsWith('\n')) {
                             contentToInsert += '\n';
                         }
 
                         // Replace from position 0 to remove leading empty lines
+                        // For whitespace-only files, replace entire content
+                        const endPosition = remainingIsOnlyWhitespace ? text.length : insertPosition;
                         edit.replace(document.uri, new vscode.Range(
                             document.positionAt(0),
-                            document.positionAt(insertPosition)
+                            document.positionAt(endPosition)
                         ), contentToInsert);
                     } else {
                         // Normal case - insert at current position
