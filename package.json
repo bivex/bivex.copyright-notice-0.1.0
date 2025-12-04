@@ -114,10 +114,11 @@
 		"package:unix": "bash scripts/pack.sh"
 	},
 	"devDependencies": {
-		"typescript": "^2.5.3",
-		"vscode": "^1.1.5",
-		"@types/node": "^7.0.43",
-		"@types/mocha": "^2.2.42"
+		"typescript": "^5.0.0",
+		"@types/vscode": "^1.17.0",
+		"@types/node": "^20.0.0",
+		"@types/mocha": "^10.0.0",
+		"@vscode/vsce": "^3.0.0"
 	},
 	"__metadata": {
 		"size": 6790
