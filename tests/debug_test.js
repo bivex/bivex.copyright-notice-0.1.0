@@ -62,4 +62,4 @@ const output = {
     algorithmWorked: hasCopyrightNotice(result) && !hasCopyright
 };
 
-fs.writeFileSync('tests/debug_output.json', JSON.stringify(output, null, 2));
+fs.writeFileSync('debug_output.json', JSON.stringify(output, null, 2));

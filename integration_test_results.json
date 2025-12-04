@@ -1,0 +1,174 @@
+{
+  "timestamp": "2025-12-04T10:37:48.053Z",
+  "summary": {
+    "totalFiles": 17,
+    "passed": 17,
+    "failed": 0
+  },
+  "actions": {
+    "inserted": 9,
+    "fixed": 6,
+    "skipped": 2
+  },
+  "reasons": {
+    "at_beginning": 9,
+    "malformed_copyright": 6,
+    "valid_copyright_exists": 2
+  },
+  "issues": {},
+  "detailedResults": [
+    {
+      "file": "basic.ahk",
+      "originalLength": 90,
+      "resultLength": 126,
+      "action": "inserted",
+      "reason": "at_beginning",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "basic.ahk2",
+      "originalLength": 91,
+      "resultLength": 127,
+      "action": "inserted",
+      "reason": "at_beginning",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "basic.cpp",
+      "originalLength": 103,
+      "resultLength": 139,
+      "action": "inserted",
+      "reason": "at_beginning",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "basic.css",
+      "originalLength": 113,
+      "resultLength": 149,
+      "action": "inserted",
+      "reason": "at_beginning",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "basic.h",
+      "originalLength": 93,
+      "resultLength": 129,
+      "action": "inserted",
+      "reason": "at_beginning",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "basic.js",
+      "originalLength": 58,
+      "resultLength": 94,
+      "action": "inserted",
+      "reason": "at_beginning",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "basic.py",
+      "originalLength": 85,
+      "resultLength": 121,
+      "action": "inserted",
+      "reason": "at_beginning",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "malformed_copyright.cpp",
+      "originalLength": 132,
+      "resultLength": 139,
+      "action": "fixed",
+      "reason": "malformed_copyright",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "malformed_copyright_2.cpp",
+      "originalLength": 107,
+      "resultLength": 143,
+      "action": "inserted",
+      "reason": "at_beginning",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "malformed_copyright_3.js",
+      "originalLength": 107,
+      "resultLength": 120,
+      "action": "fixed",
+      "reason": "malformed_copyright",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "malformed_copyright_4.py",
+      "originalLength": 93,
+      "resultLength": 101,
+      "action": "fixed",
+      "reason": "malformed_copyright",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "malformed_copyright_5.cpp",
+      "originalLength": 134,
+      "resultLength": 134,
+      "action": "skipped",
+      "reason": "valid_copyright_exists",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "malformed_copyright_6.js",
+      "originalLength": 85,
+      "resultLength": 97,
+      "action": "fixed",
+      "reason": "malformed_copyright",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "malformed_copyright_7.cpp",
+      "originalLength": 161,
+      "resultLength": 161,
+      "action": "skipped",
+      "reason": "valid_copyright_exists",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "malformed_copyright_8.h",
+      "originalLength": 114,
+      "resultLength": 121,
+      "action": "fixed",
+      "reason": "malformed_copyright",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "malformed_copyright_9.ahk",
+      "originalLength": 109,
+      "resultLength": 116,
+      "action": "fixed",
+      "reason": "malformed_copyright",
+      "valid": true,
+      "issues": []
+    },
+    {
+      "file": "test_multiline_comment.cpp",
+      "originalLength": 192,
+      "resultLength": 228,
+      "action": "inserted",
+      "reason": "at_beginning",
+      "valid": true,
+      "issues": []
+    }
+  ]
+}
