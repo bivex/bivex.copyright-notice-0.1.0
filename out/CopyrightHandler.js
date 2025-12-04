@@ -106,8 +106,8 @@ class CopyrightHandler {
         const firstBlock = firstLines.join('\n');
 
         // Check for a well-formed multiline copyright block at the very beginning of the file.
-        // It must start with /*, contain 'Copyright (c) YYYY', and end with */
-        const wellFormedCopyrightRegex = /^\s*\/\*\s*(?:\*\s*)?Copyright \(c\) \d{4}[\s\S]*?\*\/\s*(\n|$)/;
+        // It must start with /* or /**, contain 'Copyright (c) YYYY', and end with */
+        const wellFormedCopyrightRegex = /^\s*\/\*\*?[\s\S]*?Copyright \(c\) \d{4}[\s\S]*?\*\/\s*/;
         return wellFormedCopyrightRegex.test(firstBlock);
     }
 

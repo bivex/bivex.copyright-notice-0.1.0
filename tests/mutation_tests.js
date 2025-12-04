@@ -38,7 +38,7 @@ class MutationTester {
         const firstLines = lines.slice(0, Math.min(10, lines.length));
         const firstBlock = firstLines.join('\n');
 
-        const wellFormedCopyrightRegex = /^\s*\/\*\n\s* \* Copyright \(c\) \d{4}.*\n\s* \*\/\s*\n\n/;
+        const wellFormedCopyrightRegex = /^\s*\/\*\*?[\s\S]*?Copyright \(c\) \d{4}[\s\S]*?\*\/\s*/;
         
         const matchResult = wellFormedCopyrightRegex.test(firstBlock);
 
