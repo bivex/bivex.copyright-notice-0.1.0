@@ -318,6 +318,52 @@ class CopyrightHandler {
     }
 
     /**
+     * Remove all emojis from the document
+     * @param {vscode.TextEditor} editor - The active text editor
+     * @returns {Promise<boolean>} Promise resolving to true if emojis were removed
+     */
+    async removeEmojis(editor) {
+        if (!editor) {
+            return false;
+        }
+
+        const document = editor.document;
+        const text = document.getText();
+
+        // Regular expression to match various emoji ranges in Unicode
+        // This covers most emojis including skin tone modifiers, flags, etc.
+        const emojiRegex = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1f926}-\u{1f937}]|[\u{10000}-\u{1fffd}]|[\u{1f1f2}-\u{1f1f4}]|[\u{1f1e6}-\u{1f1ff}]|[\u{1f191}-\u{1f19a}]|[\u{1f232}-\u{1f23c}]|[\u{1f250}-\u{1f251}]|[\u{1f21a}]|[\u{1f22f}]|[\u{1f190}]|[\u{1f18e}]|[\u{1f17e}]|[\u{1f17f}]|[\u{1f171}-\u{1f17a}]|[\u{1f17b}-\u{1f17d}]|[\u{1f0cf}]|[\u{1f93a}-\u{1f93c}]|[\u{1f946}]|[\u{1f985}-\u{1f994}]|[\u{1f9d0}-\u{1f9ff}]|[\u{1f9c0}]|[\u{1f9b0}-\u{1f9b3}]|[\u{1f9b4}-\u{1f9b7}]|[\u{1f9b8}-\u{1f9bf}]|[\u{1f9c1}-\u{1f9c2}]|[\u{1f9c3}-\u{1f9cf}]|[\u{1f9d0}-\u{1f9ff}]|[\u{1f9e0}-\u{1f9ff}]/gu;
+
+        const cleanedText = text.replace(emojiRegex, '');
+
+        // If text didn't change, no emojis were found
+        if (cleanedText === text) {
+            return false;
+        }
+
+        // Replace the entire document content
+        const fullRange = new vscode.Range(
+            document.positionAt(0),
+            document.positionAt(text.length)
+        );
+
+        const edit = new vscode.WorkspaceEdit();
+        edit.replace(document.uri, fullRange, cleanedText);
+
+        try {
+            const success = await vscode.workspace.applyEdit(edit);
+            if (success) {
+                await document.save();
+                return true;
+            }
+        } catch (error) {
+            console.error('Failed to remove emojis:', error);
+        }
+
+        return false;
+    }
+
+    /**
      * Start listening to VS Code events
      * @returns {vscode.Disposable[]} Array of event subscriptions
      */
@@ -327,7 +373,7 @@ class CopyrightHandler {
             vscode.workspace.onDidChangeTextDocument(this.handleTextChange),
             vscode.window.onDidChangeActiveTextEditor(this.handleEditorChange)
         ];
-        
+
         return subscriptions;
     }
 }

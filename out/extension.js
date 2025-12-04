@@ -16,14 +16,14 @@ function activate(context) {
     
     // Register manual command
     const commandDisposable = vscode.commands.registerCommand(
-        'copyright-notice.apply', 
+        'copyright-notice.apply',
         async () => {
             const editor = vscode.window.activeTextEditor;
             if (!editor) {
                 vscode.window.showWarningMessage('No active editor found to apply copyright notice.');
                 return;
             }
-            
+
             try {
                 const added = await copyrightHandler.addCopyrightIfNeeded(editor);
                 if (added) {
@@ -37,10 +37,35 @@ function activate(context) {
             }
         }
     );
+
+    // Register remove emojis command
+    const removeEmojisCommandDisposable = vscode.commands.registerCommand(
+        'copyright-notice.remove-emojis',
+        async () => {
+            const editor = vscode.window.activeTextEditor;
+            if (!editor) {
+                vscode.window.showWarningMessage('No active editor found to remove emojis from.');
+                return;
+            }
+
+            try {
+                const removed = await copyrightHandler.removeEmojis(editor);
+                if (removed) {
+                    vscode.window.showInformationMessage('All emojis have been removed from the file!');
+                } else {
+                    vscode.window.showInformationMessage('No emojis found in the file.');
+                }
+            } catch (error) {
+                vscode.window.showErrorMessage(`Error removing emojis: ${error.message}`);
+                console.error('Error in copyright-notice.remove-emojis command:', error);
+            }
+        }
+    );
     
     // Register all disposables
     context.subscriptions.push(
         commandDisposable,
+        removeEmojisCommandDisposable,
         ...handlerDisposables
     );
     

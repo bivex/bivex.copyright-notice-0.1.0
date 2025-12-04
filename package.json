@@ -2,7 +2,7 @@
 	"name": "copyright-notice",
 	"displayName": "⚖️ Copyright Header Generator Pro",
 	"description": "Auto-insert customizable copyright headers in any file format. Smart templating with dynamic year, timestamps, and multi-language support.",
-	"version": "1.0.1",
+	"version": "1.1.0",
 	"publisher": "bivex",
 	"license": "MIT",
 	"homepage": "https://github.com/bivex/bivex.copyright-notice-0.1.0",
@@ -43,6 +43,10 @@
 			{
 				"command": "copyright-notice.apply",
 				"title": "Apply Copyright Notice"
+			},
+			{
+				"command": "copyright-notice.remove-emojis",
+				"title": "Remove All Emojis from File"
 			}
 		],
 		"configuration": {

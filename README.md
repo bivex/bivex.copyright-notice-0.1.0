@@ -12,6 +12,7 @@ Automatically add customizable copyright notices to your code files across multi
 
 - ✨ **Automatic Insertion**: Adds copyright notice when typing in a new file
 - 🔄 **Manual Command**: Apply notice on demand with the Command Palette
+- 😀 **Emoji Removal**: Remove all emojis from files with a single command
 - 🌐 **Multi-language Support**: Works with all programming languages
 - 📝 **Customizable Templates**: Use your own copyright text with dynamic year insertion
 - 🕒 **Timestamp Support**: Include creation date and time in your notices
@@ -24,6 +25,8 @@ Automatically add customizable copyright notices to your code files across multi
 While you are typing, this extension checks if there's a copyright notice at the beginning of the file. If not, it adds one automatically based on your custom template.
 
 You can also manually trigger the extension by running the "Apply Copyright Notice" command from the Command Palette (Ctrl+Shift+P).
+
+Additionally, you can remove all emojis from any file using the "Remove All Emojis from File" command. This is useful for cleaning up code that contains unwanted emoji characters.
 
 ## Configuration Options
 

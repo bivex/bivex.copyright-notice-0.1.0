@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to the "copyright-notice" extension will be documented in this file.
 
+## [1.1.0] - 2025-12-04
+### Added
+- New "Remove All Emojis from File" command to clean emoji characters from code files
+- Comprehensive emoji detection covering all Unicode emoji ranges
+
 ## [1.0.1] - 2025-07-18
 ### Fixed
 - `.ahk2` files now work properly even if VS Code doesn't recognize the language ID
