@@ -351,53 +351,14 @@ class CopyrightHandler {
                         continue;
                     }
 
-                    // Skip shebang
+                    // Skip shebang - copyright should go AFTER shebang
                     if (trimmedLine.startsWith('#!')) {
                         lineIndex++;
                         continue;
                     }
 
-                    // Skip single line comments (// or #)
-                    if (trimmedLine.startsWith('//') || (trimmedLine.startsWith('#') && !trimmedLine.startsWith('#!'))) {
-                        lineIndex++;
-                        continue;
-                    }
-
-                    // Handle multi-line comments
-                    if (trimmedLine.startsWith('/*')) {
-                        const startOffset = getOffsetForLine(lineIndex);
-                        const closingCommentIndex = text.indexOf("*/", startOffset);
-
-                        if (closingCommentIndex !== -1) {
-                            // Find which line the closing */ is on
-                            let endOffset = closingCommentIndex + 2;
-                            let endLineIndex = lineIndex;
-                            let currentOffset = startOffset;
-
-                            while (endLineIndex < lines.length && currentOffset < endOffset) {
-                                currentOffset += lines[endLineIndex].length + 1;
-                                if (currentOffset <= endOffset) {
-                                    endLineIndex++;
-                                }
-                            }
-
-                            // Skip past the comment block
-                            lineIndex = endLineIndex;
-
-                            // Skip any trailing empty lines after the comment
-                            while (lineIndex < lines.length && lines[lineIndex].trim() === '') {
-                                lineIndex++;
-                            }
-                            continue;
-                        } else {
-                            // Unclosed multiline comment - insert before it
-                            insertPosition = getOffsetForLine(lineIndex);
-                            foundContent = true;
-                            break;
-                        }
-                    }
-
-                    // Found the first line with actual code or content
+                    // Found first non-empty, non-shebang line - insert copyright HERE
+                    // This could be a comment, code, or anything else
                     insertPosition = getOffsetForLine(lineIndex);
                     foundContent = true;
                     break;
