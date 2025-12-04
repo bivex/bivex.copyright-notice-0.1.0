@@ -4,6 +4,8 @@ All notable changes to the "copyright-notice" extension will be documented in th
 ## [1.1.1] - 2025-12-04
 ### Added
 - `copyright-notice.autoRemoveEmojis` setting for automatic emoji removal on file save
+### Fixed
+- Copyright notice insertion now properly handles existing file content and maintains correct line breaks
 
 ## [1.1.0] - 2025-12-04
 ### Added

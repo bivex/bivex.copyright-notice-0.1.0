@@ -226,7 +226,25 @@ class CopyrightHandler {
 
         // Add copyright to the beginning of the file
         const edit = new vscode.WorkspaceEdit();
-        edit.insert(document.uri, new vscode.Position(0, 0), formattedTemplate);
+
+        // If file is empty, just insert copyright
+        if (text.length === 0) {
+            edit.insert(document.uri, new vscode.Position(0, 0), formattedTemplate);
+        } else {
+            // If file has content, replace the entire file with copyright + content
+            // Ensure there's a newline between copyright and existing content if needed
+            let contentToInsert = formattedTemplate;
+            if (!formattedTemplate.endsWith('\n') && text.length > 0) {
+                contentToInsert += '\n';
+            }
+            contentToInsert += text;
+
+            const fullRange = new vscode.Range(
+                document.positionAt(0),
+                document.positionAt(text.length)
+            );
+            edit.replace(document.uri, fullRange, contentToInsert);
+        }
         
         try {
             const success = await vscode.workspace.applyEdit(edit);
