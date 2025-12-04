@@ -341,27 +341,38 @@ class CopyrightHandler {
                     return offset;
                 };
 
+                let leadingEmptyLines = 0;
+                let hasShebang = false;
+
                 while (lineIndex < lines.length) {
                     const line = lines[lineIndex];
                     const trimmedLine = line.trim();
 
-                    // Skip empty lines
+                    // Track leading empty lines
                     if (trimmedLine === '') {
+                        leadingEmptyLines++;
                         lineIndex++;
                         continue;
                     }
 
-                    // Skip shebang - copyright should go AFTER shebang
+                    // Check for shebang - copyright should go AFTER shebang with blank line
                     if (trimmedLine.startsWith('#!')) {
+                        hasShebang = true;
+                        leadingEmptyLines = 0; // Reset - empty lines after shebang are not "leading"
                         lineIndex++;
                         continue;
                     }
 
-                    // Found first non-empty, non-shebang line - insert copyright HERE
-                    // This could be a comment, code, or anything else
+                    // Found first non-empty, non-shebang line
                     insertPosition = getOffsetForLine(lineIndex);
                     foundContent = true;
                     break;
+                }
+
+                // If file has only whitespace/empty lines, insert at beginning
+                if (!foundContent) {
+                    insertPosition = 0;
+                    foundContent = true;
                 }
 
                 // Prepare content to insert
@@ -373,26 +384,55 @@ class CopyrightHandler {
                         contentToInsert += '\n';
                     }
 
-                    // Check what comes after the insert position
-                    const remainingText = text.substring(insertPosition);
+                    // Handle different cases
+                    if (hasShebang) {
+                        // After shebang: add blank line before copyright if not already present
+                        const remainingText = text.substring(insertPosition);
+                        const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
 
-                    // Add spacing only if needed - avoid double newlines if template already has them
-                    const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
-                    const remainingStartsWithNewline = remainingText.startsWith('\n');
+                        if (!templateEndsWithDoubleNewline) {
+                            contentToInsert = '\n' + contentToInsert;
+                        }
 
-                    if (!templateEndsWithDoubleNewline && !remainingStartsWithNewline) {
-                        // Add one more newline for separation
-                        contentToInsert += '\n';
+                        // Add spacing after copyright
+                        if (!remainingText.startsWith('\n')) {
+                            contentToInsert += '\n';
+                        }
+
+                        edit.insert(document.uri, document.positionAt(insertPosition), contentToInsert);
+                    } else if (leadingEmptyLines > 0 || insertPosition === 0) {
+                        // File has leading empty lines or only whitespace - replace from start
+                        const remainingText = text.substring(insertPosition);
+                        const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
+
+                        if (!templateEndsWithDoubleNewline && remainingText && !remainingText.startsWith('\n')) {
+                            contentToInsert += '\n';
+                        }
+
+                        // Replace from position 0 to remove leading empty lines
+                        edit.replace(document.uri, new vscode.Range(
+                            document.positionAt(0),
+                            document.positionAt(insertPosition)
+                        ), contentToInsert);
+                    } else {
+                        // Normal case - insert at current position
+                        const remainingText = text.substring(insertPosition);
+                        const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
+                        const remainingStartsWithNewline = remainingText.startsWith('\n');
+
+                        if (!templateEndsWithDoubleNewline && !remainingStartsWithNewline) {
+                            contentToInsert += '\n';
+                        }
+
+                        edit.insert(document.uri, document.positionAt(insertPosition), contentToInsert);
                     }
                 } else {
-                    // File contains only comments/empty lines - insert at end with proper newline
-                    insertPosition = text.length;
+                    // Fallback - should not reach here
                     if (!contentToInsert.endsWith('\n')) {
                         contentToInsert += '\n';
                     }
+                    edit.insert(document.uri, document.positionAt(0), contentToInsert);
                 }
-
-                edit.insert(document.uri, document.positionAt(insertPosition), contentToInsert);
             }
 
             try {

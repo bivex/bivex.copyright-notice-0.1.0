@@ -169,65 +169,88 @@ function simulateInsertion(text, handler) {
         return offset;
     };
 
+    let leadingEmptyLines = 0;
+    let hasShebang = false;
+
     if (text.length === 0) {
+        return formattedTemplate;
+    }
+
+    while (lineIndex < lines.length) {
+        const line = lines[lineIndex];
+        const trimmedLine = line.trim();
+
+        // Track leading empty lines
+        if (trimmedLine === '') {
+            leadingEmptyLines++;
+            lineIndex++;
+            continue;
+        }
+
+        // Check for shebang - copyright should go AFTER shebang with blank line
+        if (trimmedLine.startsWith('#!')) {
+            hasShebang = true;
+            leadingEmptyLines = 0; // Reset - empty lines after shebang are not "leading"
+            lineIndex++;
+            continue;
+        }
+
+        // Found first non-empty, non-shebang line
+        insertPosition = getOffsetForLine(lineIndex);
+        foundContent = true;
+        break;
+    }
+
+    // If file has only whitespace/empty lines, insert at beginning
+    if (!foundContent) {
         insertPosition = 0;
-    } else {
-        while (lineIndex < lines.length) {
-            const line = lines[lineIndex];
-            const trimmedLine = line.trim();
-
-            // Skip empty lines
-            if (trimmedLine === '') {
-                lineIndex++;
-                continue;
-            }
-
-            // Skip shebang - copyright should go AFTER shebang
-            if (trimmedLine.startsWith('#!')) {
-                lineIndex++;
-                // After shebang, insert at next line
-                insertPosition = getOffsetForLine(lineIndex);
-                foundContent = true;
-                break;
-            }
-
-            // Found first non-empty, non-shebang line
-            // If we've only seen empty lines so far, insert at position 0
-            // Otherwise insert at the current line
-            if (lineIndex > 0 && lines.slice(0, lineIndex).every(l => l.trim() === '')) {
-                insertPosition = 0;
-            } else {
-                insertPosition = getOffsetForLine(lineIndex);
-            }
-            foundContent = true;
-            break;
-        }
-
-        if (!foundContent) {
-            insertPosition = text.length;
-        }
+        foundContent = true;
     }
 
     let contentToInsert = formattedTemplate;
-    if (text.length === 0) {
-        // Empty file case
-    } else if (foundContent) {
-        if (!contentToInsert.endsWith('\n')) {
+    if (!contentToInsert.endsWith('\n')) {
+        contentToInsert += '\n';
+    }
+
+    // Handle different cases
+    if (hasShebang) {
+        // After shebang: add blank line before copyright if not already present
+        const remainingText = text.substring(insertPosition);
+        const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
+
+        if (!templateEndsWithDoubleNewline) {
+            contentToInsert = '\n' + contentToInsert;
+        }
+
+        // Add spacing after copyright
+        if (!remainingText.startsWith('\n')) {
             contentToInsert += '\n';
         }
+
+        return text.slice(0, insertPosition) + contentToInsert + text.slice(insertPosition);
+    } else if (leadingEmptyLines > 0 || insertPosition === 0) {
+        // File has leading empty lines or only whitespace - replace from start
+        const remainingText = text.substring(insertPosition);
+        const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
+
+        if (!templateEndsWithDoubleNewline && remainingText && !remainingText.startsWith('\n')) {
+            contentToInsert += '\n';
+        }
+
+        // Replace from position 0 to remove leading empty lines
+        return contentToInsert + text.slice(insertPosition);
+    } else {
+        // Normal case - insert at current position
         const remainingText = text.substring(insertPosition);
         const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
         const remainingStartsWithNewline = remainingText.startsWith('\n');
+
         if (!templateEndsWithDoubleNewline && !remainingStartsWithNewline) {
             contentToInsert += '\n';
         }
-    } else {
-        if (!contentToInsert.endsWith('\n')) {
-            contentToInsert += '\n';
-        }
-    }
 
-    return text.slice(0, insertPosition) + contentToInsert + text.slice(insertPosition);
+        return text.slice(0, insertPosition) + contentToInsert + text.slice(insertPosition);
+    }
 }
 
 // ============================================================================
