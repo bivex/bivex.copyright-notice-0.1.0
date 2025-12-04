@@ -9,11 +9,11 @@ class CopyrightHandler {
         this.DEFAULT_TEMPLATE = "/* Copyright (c) {year} */\n\n";
         this.DEFAULT_WILDCARD = ["*"];
         this.DEFAULT_TIMESTAMP_FORMAT = "YYYY-MM-DD HH:mm:ss";
-        
+
         // Debounce handling
         this.lastEditTime = Date.now();
         this.debounceInterval = 2000; // 2 seconds debounce
-        
+
         // Bind methods to maintain 'this' context
         this.handleTextChange = this.handleTextChange.bind(this);
         this.handleEditorChange = this.handleEditorChange.bind(this);
@@ -62,7 +62,7 @@ class CopyrightHandler {
             .replace(/\{/g, '\\{')  // Escape {
             .replace(/\}/g, '\\}')  // Escape }
             .replace(/\\/g, '\\\\'); // Escape backslashes
-        
+
         const regex = new RegExp(`^${regexPattern}$`, 'i');
         return regex.test(fileName);
     }
@@ -80,7 +80,7 @@ class CopyrightHandler {
         const hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
         const seconds = date.getSeconds().toString().padStart(2, '0');
-        
+
         return format
             .replace(/YYYY/g, year)
             .replace(/MM/g, month)
@@ -141,21 +141,21 @@ class CopyrightHandler {
      */
     async updateTimestampIfNeeded(editor) {
         const config = this.getConfig();
-        
+
         // Skip if update time is not enabled
         if (!config.includeUpdateTime) {
             return false;
         }
-        
+
         const document = editor.document;
-        
+
         // Check if document is eligible for copyright notices
         if (!this.isEnabled(document)) {
             return false;
         }
-        
+
         const text = document.getText();
-        
+
         // Skip if no copyright exists
         if (!this.hasCopyrightNotice(text)) {
             return false;
@@ -164,13 +164,13 @@ class CopyrightHandler {
         // Find the copyright block at the beginning of the file
         const copyrightBlockRegex = /\/\*[\s\S]*?\*\//;
         const blockMatch = text.match(copyrightBlockRegex);
-        
+
         if (!blockMatch) {
             return false;
         }
 
         const copyrightBlock = blockMatch[0];
-        
+
         // Find the "Last Updated" line within the copyright block
         const updateLineRegex = /(.*Last\s+Updated:)([^]*?)(\n\s*\*|$)/i;
         const lineMatch = copyrightBlock.match(updateLineRegex);
@@ -183,28 +183,28 @@ class CopyrightHandler {
         const prefix = lineMatch[1]; // "* Last Updated:"
         const oldContent = lineMatch[2]; // Timestamp and anything after it
         const suffix = lineMatch[3];  // Line ending and next line start
-        
+
         // Format the new timestamp
         const now = new Date();
         const newTimestamp = this.formatTimestamp(now, config.updateTimeFormat);
-        
+
         // Create new "Last Updated" line with proper spacing preserved
         const newContent = ` ${newTimestamp}`;
-        
+
         // Replace entire "Last Updated" line to ensure proper formatting
         const startIndex = blockMatch.index + lineMatch.index;
         const oldLineLength = lineMatch[0].length;
-        
+
         const startPosition = document.positionAt(startIndex);
         const endPosition = document.positionAt(startIndex + oldLineLength);
-        
+
         const newLine = `${prefix}${newContent}${suffix}`;
-        
+
         const edit = new vscode.WorkspaceEdit();
         const range = new vscode.Range(startPosition, endPosition);
-        
+
         edit.replace(document.uri, range, newLine);
-        
+
         try {
             const success = await vscode.workspace.applyEdit(edit);
             return success;
@@ -226,7 +226,7 @@ class CopyrightHandler {
 
         const document = editor.document;
         const text = document.getText();
-        
+
         // If well-formed copyright already exists, try to update timestamp if enabled
         const wellFormedCopyrightExists = this.hasCopyrightNotice(text);
         if (wellFormedCopyrightExists) {
@@ -328,73 +328,107 @@ class CopyrightHandler {
                 edit.insert(document.uri, new vscode.Position(0, 0), formattedTemplate);
             } else {
                 const lines = text.split('\n');
-                let currentOffset = 0;
                 let insertPosition = 0;
                 let foundContent = false;
+                let lineIndex = 0;
 
-                for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i];
+                // Calculate byte offset for a given line index
+                const getOffsetForLine = (lineIdx) => {
+                    let offset = 0;
+                    for (let j = 0; j < lineIdx && j < lines.length; j++) {
+                        offset += lines[j].length + 1; // +1 for newline character
+                    }
+                    return offset;
+                };
+
+                while (lineIndex < lines.length) {
+                    const line = lines[lineIndex];
                     const trimmedLine = line.trim();
-                    const lineLength = line.length;
 
+                    // Skip empty lines
                     if (trimmedLine === '') {
-                        currentOffset += lineLength + 1;
+                        lineIndex++;
                         continue;
                     }
 
+                    // Skip shebang
                     if (trimmedLine.startsWith('#!')) {
-                        currentOffset += lineLength + 1;
+                        lineIndex++;
                         continue;
                     }
 
-                    // Skip single line comments
-                    if (trimmedLine.startsWith('//') || trimmedLine.startsWith('#')) {
-                        currentOffset += lineLength + 1;
+                    // Skip single line comments (// or #)
+                    if (trimmedLine.startsWith('//') || (trimmedLine.startsWith('#') && !trimmedLine.startsWith('#!'))) {
+                        lineIndex++;
                         continue;
                     }
 
-                    // Skip multi-line comments that don't contain copyright
+                    // Handle multi-line comments
                     if (trimmedLine.startsWith('/*')) {
-                        const closingCommentIndex = text.indexOf("*/", currentOffset);
+                        const startOffset = getOffsetForLine(lineIndex);
+                        const closingCommentIndex = text.indexOf("*/", startOffset);
+
                         if (closingCommentIndex !== -1) {
-                            currentOffset = closingCommentIndex + 2; // Move past the closing tag
-                            // Also move past any immediate empty lines after the comment block
-                            let nextLineIndex = i + 1;
-                            while (nextLineIndex < lines.length && lines[nextLineIndex].trim() === '') {
-                                currentOffset += lines[nextLineIndex].length + 1;
-                                nextLineIndex++;
+                            // Find which line the closing */ is on
+                            let endOffset = closingCommentIndex + 2;
+                            let endLineIndex = lineIndex;
+                            let currentOffset = startOffset;
+
+                            while (endLineIndex < lines.length && currentOffset < endOffset) {
+                                currentOffset += lines[endLineIndex].length + 1;
+                                if (currentOffset <= endOffset) {
+                                    endLineIndex++;
+                                }
                             }
-                            i = nextLineIndex - 1; // Adjust loop counter to skip processed lines
+
+                            // Skip past the comment block
+                            lineIndex = endLineIndex;
+
+                            // Skip any trailing empty lines after the comment
+                            while (lineIndex < lines.length && lines[lineIndex].trim() === '') {
+                                lineIndex++;
+                            }
                             continue;
                         } else {
-                            // Unclosed multiline comment without copyright - treat as content to insert before
-                            insertPosition = currentOffset;
+                            // Unclosed multiline comment - insert before it
+                            insertPosition = getOffsetForLine(lineIndex);
                             foundContent = true;
                             break;
                         }
                     }
 
                     // Found the first line with actual code or content
-                    insertPosition = currentOffset;
+                    insertPosition = getOffsetForLine(lineIndex);
                     foundContent = true;
                     break;
                 }
 
+                // Prepare content to insert
                 let contentToInsert = formattedTemplate;
 
                 if (foundContent) {
-                    // Ensure proper spacing between the inserted copyright and existing content
+                    // Ensure the template ends with at least one newline
                     if (!contentToInsert.endsWith('\n')) {
                         contentToInsert += '\n';
                     }
-                    // Add an extra newline if there isn't enough separation already
-                    const existingContentAfterInsertPoint = text.substring(insertPosition);
-                    if (!existingContentAfterInsertPoint.startsWith('\n\n')) {
+
+                    // Check what comes after the insert position
+                    const remainingText = text.substring(insertPosition);
+
+                    // Add spacing only if needed - avoid double newlines if template already has them
+                    const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
+                    const remainingStartsWithNewline = remainingText.startsWith('\n');
+
+                    if (!templateEndsWithDoubleNewline && !remainingStartsWithNewline) {
+                        // Add one more newline for separation
                         contentToInsert += '\n';
                     }
-                } else if (text.length > 0) {
-                    // If inserting into a file with only empty lines/comments, ensure a trailing newline
-                    contentToInsert += '\n';
+                } else {
+                    // File contains only comments/empty lines - insert at end with proper newline
+                    insertPosition = text.length;
+                    if (!contentToInsert.endsWith('\n')) {
+                        contentToInsert += '\n';
+                    }
                 }
 
                 edit.insert(document.uri, document.positionAt(insertPosition), contentToInsert);
@@ -422,29 +456,29 @@ class CopyrightHandler {
         if (!document) {
             return false;
         }
-        
+
         const languageId = document.languageId;
         const fileName = document.fileName;
         const fileExtension = fileName.substring(fileName.lastIndexOf('.')) || '';
-        
+
         const { languages, fileExtensions, excludedFiles } = this.getConfig();
-        
+
         // Check if file is explicitly excluded
         for (const pattern of excludedFiles) {
             if (this.matchesPattern(fileName, pattern)) {
                 return false;
             }
         }
-        
+
         const hasWildcardLanguage = languages.includes("*");
         const hasWildcardExtension = fileExtensions.includes("*");
-        
+
         // Check if language is enabled
         const languageEnabled = hasWildcardLanguage || languages.includes(languageId);
-        
+
         // Check if file extension is enabled
         const extensionEnabled = hasWildcardExtension || fileExtensions.includes(fileExtension);
-        
+
         // Enable if EITHER language OR extension is enabled (not both required)
         // This allows .ahk2 files to work even if VS Code doesn't recognize the language ID
         return languageEnabled || extensionEnabled;
@@ -456,17 +490,17 @@ class CopyrightHandler {
      */
     handleTextChange(event) {
         const now = Date.now();
-        
+
         // Only proceed if enough time has passed since last edit
         if (now - this.lastEditTime > this.debounceInterval) {
             this.lastEditTime = now;
-            
+
             // Debounce to avoid processing during rapid typing
             setTimeout(() => {
                 const editor = vscode.window.activeTextEditor;
                 if (editor && editor.document === event.document) {
                     const config = this.getConfig();
-                    
+
                     // If we have an existing copyright with updatetime enabled,
                     // update the timestamp
                     if (config.includeUpdateTime) {
