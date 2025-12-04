@@ -141,7 +141,7 @@ class CopyrightHandler {
         }
 
         // Find the copyright block at the beginning of the file
-        const copyrightBlockRegex = /\/\*\*[\s\S]*?\*\//;
+        const copyrightBlockRegex = /\/\*[\s\S]*?\*\//;
         const blockMatch = text.match(copyrightBlockRegex);
         
         if (!blockMatch) {
@@ -208,7 +208,63 @@ class CopyrightHandler {
         
         // If copyright already exists, try to update timestamp if enabled
         if (this.hasCopyrightNotice(text)) {
-            return this.updateTimestampIfNeeded(editor);
+            const updated = this.updateTimestampIfNeeded(editor);
+            if (updated) {
+                return true; // Successfully updated
+            }
+            // If update failed, the copyright might be malformed
+            // Check if it's a valid copyright block
+            const copyrightBlockRegex = /\/\*[\s\S]*?\*\//;
+            const blockMatch = text.match(copyrightBlockRegex);
+
+            if (blockMatch && blockMatch.index === 0) {
+                // Valid copyright block exists, don't modify
+                return false;
+            } else {
+                // Malformed copyright or false positive - replace with proper copyright
+                // Remove the malformed copyright line(s) and insert proper one
+                const lines = text.split('\n');
+                let endMalformedIndex = 0;
+
+                // Find where malformed copyright ends
+                for (let i = 0; i < lines.length && i < 5; i++) { // Check first 5 lines
+                    if (lines[i].includes('Copyright')) {
+                        endMalformedIndex = text.indexOf(lines[i]) + lines[i].length;
+                        if (i + 1 < lines.length && lines[i + 1].trim() === '') {
+                            endMalformedIndex = text.indexOf(lines[i + 1]) + lines[i + 1].length;
+                        }
+                        break;
+                    }
+                }
+
+                if (endMalformedIndex > 0) {
+                    // Replace malformed copyright with proper one
+                    const beforeCopyright = text.substring(0, endMalformedIndex);
+                    const afterCopyright = text.substring(endMalformedIndex);
+
+                    // Clean up extra whitespace
+                    const cleanAfter = afterCopyright.replace(/^\s*\n/, '');
+
+                    const newContent = formattedTemplate + cleanAfter;
+
+                    const edit = new vscode.WorkspaceEdit();
+                    edit.replace(document.uri, new vscode.Range(
+                        document.positionAt(0),
+                        document.positionAt(text.length)
+                    ), newContent);
+
+                    try {
+                        const success = await vscode.workspace.applyEdit(edit);
+                        if (success) {
+                            await document.save();
+                            return true;
+                        }
+                    } catch (error) {
+                        console.error('Failed to fix malformed copyright:', error);
+                    }
+                }
+            }
+            return false;
         }
 
         // Get configuration
@@ -250,7 +306,6 @@ class CopyrightHandler {
                 // Skip empty lines, shebang, and license comments that don't contain actual code
                 if (line === '' ||
                     line.startsWith('#!') ||
-                    (line.startsWith('/*') && !line.includes('*/') && i < lines.length - 1) ||
                     (line.startsWith('//') && (line.includes('License') || line.includes('Copyright') || line.includes('license') || line.includes('copyright')))) {
                     continue;
                 }
