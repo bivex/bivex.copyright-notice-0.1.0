@@ -446,7 +446,7 @@ class CopyrightHandler {
                 edit.insert(document.uri, new vscode.Position(0, 0), formattedTemplate);
             } else {
             // Find optimal insertion position
-            const insertInfo = this.findOptimalInsertPosition(text);
+            const insertInfo = this.findOptimalInsertPosition(text, document.languageId);
 
             let contentToInsert = formattedTemplate;
 
@@ -505,9 +505,10 @@ class CopyrightHandler {
     /**
      * Find the optimal position to insert copyright notice
      * @param {string} text - Document text
+     * @param {string} languageId - Language ID of the file
      * @returns {Object} Insertion information
      */
-    findOptimalInsertPosition(text) {
+    findOptimalInsertPosition(text, languageId) {
                 const lines = text.split('\n');
                 let insertPosition = 0;
                 let foundContent = false;
@@ -515,6 +516,39 @@ class CopyrightHandler {
         let leadingEmptyLines = 0;
         let hasShebang = false;
         let shebangEndPosition = 0;
+
+        // Special handling for Python files with module docstrings
+        if (languageId === 'python') {
+            // Check if file starts with a module docstring (triple-quoted string)
+            if (lines.length > 0 && lines[0].trim().startsWith('\"\"\"')) {
+                let docstringEndLine = 0;
+
+                // Check if docstring is on the same line (single line docstring)
+                if (lines[0].trim().endsWith('\"\"\"')) {
+                    docstringEndLine = 1; // Insert after this line
+                } else {
+                    // Multi-line docstring - find the closing quotes
+                    for (let i = 1; i < lines.length; i++) {
+                        if (lines[i].trim().endsWith('\"\"\"')) {
+                            docstringEndLine = i + 1; // Insert after this line
+                            break;
+                        }
+                    }
+                }
+
+                if (docstringEndLine > 0) {
+                    insertPosition = getOffsetForLine(docstringEndLine);
+                    foundContent = true;
+                    return {
+                        insertPosition,
+                        foundContent,
+                        leadingEmptyLines: 0,
+                        hasShebang: false,
+                        shebangEndPosition: 0
+                    };
+                }
+            }
+        }
 
         // Calculate byte offset for a line index
                 const getOffsetForLine = (lineIdx) => {
