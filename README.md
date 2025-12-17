@@ -6,7 +6,7 @@
 
 Automatically add customizable copyright notices to your code files across multiple programming languages. Perfect for ensuring proper intellectual property protection in your projects.
 
-## ✨ What's New in v1.1.1
+## ✨ What's New in v1.1.5
 
 - 🔇 **Silent Background Operation**: Works invisibly without interrupting your workflow
 - ⚡ **Smart Debouncing**: Intelligent delay management adapts to file activity levels
@@ -16,6 +16,8 @@ Automatically add customizable copyright notices to your code files across multi
 - 📊 **Performance Optimized**: Smart caching and configurable delays for smooth operation
 - 🔧 **Configurable Timing**: Customize delays and behavior to match your workflow
 - 📈 **Enhanced Diagnostics**: Built-in testing and analysis tools
+- 🔄 **Automatic Comment Conversion**: Templates automatically adapt comment styles (JavaScript `/** */` → Python `#` → Shell `#`)
+- 🌐 **Expanded Language Support**: Enhanced Python and shell script templates with detailed metadata
 
 ![Extension Demo](images/image.png)
 
@@ -44,6 +46,15 @@ The extension works silently in the background, automatically adding copyright n
 
 ### Smart Detection
 Uses advanced pattern recognition to detect existing copyright notices, avoiding duplicates and handling various comment formats across different programming languages.
+
+### Automatic Comment Style Conversion
+The extension automatically adapts your copyright template to match the appropriate comment style for each programming language:
+
+- **JavaScript/TypeScript/C/C++**: Uses `/** */` multiline comments
+- **Python/Shell Scripts**: Automatically converts `/** */` templates to `#` comments
+- **Custom Templates**: Works with any template format - the extension detects the language and converts accordingly
+
+This means you can use the same JavaScript-style template across all your projects, and the extension will automatically format it correctly for Python files, shell scripts, and other languages!
 
 ### Multiple Trigger Points
 - **File Opening**: Automatically processes files when first opened
@@ -176,7 +187,7 @@ The extension automatically excludes these common folders and files by default:
     ".py",
     ".pyw"
   ],
-  "copyright-notice.template": "# Copyright (c) {year} Your Company Name\n# All rights reserved.\n\n"
+  "copyright-notice.template": "# Copyright (c) {year} Bivex\n#\n# Author: Bivex\n# Available for contact via email: support@b-b.top\n# For up-to-date contact information:\n# https://github.com/bivex\n#\n# Created: {timestamp}\n# Last Updated: {updatetime}\n#\n# Licensed under the MIT License.\n# Commercial licensing available upon request.\n\n"
 }
 ```
 

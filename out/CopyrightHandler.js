@@ -290,9 +290,10 @@ class CopyrightHandler {
     /**
      * Format copyright template with current date/time values
      * @param {Object} config - Extension configuration
+     * @param {string} languageId - Language ID of the file
      * @returns {string} Formatted template
      */
-    formatCopyrightTemplate(config) {
+    formatCopyrightTemplate(config, languageId) {
             const currentYear = new Date().getFullYear();
             let formattedTemplate = config.template.replace(/{year}/g, currentYear.toString());
 
@@ -304,6 +305,27 @@ class CopyrightHandler {
             if (config.includeUpdateTime) {
                 const updateTime = this.formatTimestamp(now, config.updateTimeFormat);
                 formattedTemplate = formattedTemplate.replace(/{updatetime}/g, updateTime);
+            }
+
+            // Convert JavaScript-style comments to appropriate format for the language
+            if (languageId === 'python' || languageId === 'shellscript') {
+                // Convert /** */ style comments to # style comments
+                formattedTemplate = formattedTemplate
+                    .split('\n')
+                    .map(line => {
+                        if (line.startsWith('/**')) {
+                            return ''; // Remove opening /**
+                        } else if (line.startsWith(' */')) {
+                            return ''; // Remove closing */
+                        } else if (line.startsWith(' * ')) {
+                            return line.replace(/^ \* /, '# '); // Convert " * " to "# "
+                        } else if (line === ' *') {
+                            return '#'; // Convert empty comment line to "#"
+                        }
+                        return line;
+                    })
+                    .filter(line => line !== '') // Remove empty lines
+                    .join('\n');
             }
 
         return formattedTemplate;
@@ -327,10 +349,9 @@ class CopyrightHandler {
     async fixMalformedCopyright(editor) {
         //console.log(`[Copyright] fixMalformedCopyright called for ${editor.document.fileName}`);
         const config = this.getConfig();
-        const formattedTemplate = this.formatCopyrightTemplate(config);
-        //console.log(`[Copyright] Formatted template: "${formattedTemplate}"`);
-
         const document = editor.document;
+        const formattedTemplate = this.formatCopyrightTemplate(config, document.languageId);
+        //console.log(`[Copyright] Formatted template: "${formattedTemplate}"`);
         const text = document.getText();
         //console.log(`[Copyright] Original text length: ${text.length}`);
             const lines = text.split('\n');
@@ -415,9 +436,8 @@ class CopyrightHandler {
      */
     async insertNewCopyright(editor) {
         const config = this.getConfig();
-        const formattedTemplate = this.formatCopyrightTemplate(config);
-
         const document = editor.document;
+        const formattedTemplate = this.formatCopyrightTemplate(config, document.languageId);
         const text = document.getText();
             const edit = new vscode.WorkspaceEdit();
 
