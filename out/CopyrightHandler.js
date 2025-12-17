@@ -215,6 +215,240 @@ class CopyrightHandler {
     }
 
     /**
+     * Format copyright template with current date/time values
+     * @param {Object} config - Extension configuration
+     * @returns {string} Formatted template
+     */
+    formatCopyrightTemplate(config) {
+        const currentYear = new Date().getFullYear();
+        let formattedTemplate = config.template.replace(/{year}/g, currentYear.toString());
+
+        const now = new Date();
+        if (config.includeTimestamp) {
+            const timestamp = this.formatTimestamp(now, config.timestampFormat);
+            formattedTemplate = formattedTemplate.replace(/{timestamp}/g, timestamp);
+        }
+        if (config.includeUpdateTime) {
+            const updateTime = this.formatTimestamp(now, config.updateTimeFormat);
+            formattedTemplate = formattedTemplate.replace(/{updatetime}/g, updateTime);
+        }
+
+        return formattedTemplate;
+    }
+
+    /**
+     * Handle existing well-formed copyright notice
+     * @param {vscode.TextEditor} editor - The active text editor
+     * @returns {Promise<boolean>} Promise resolving to true if timestamp was updated
+     */
+    async handleExistingCopyright(editor) {
+        const updated = await this.updateTimestampIfNeeded(editor);
+        return updated; // Return whether update was successful
+    }
+
+    /**
+     * Fix malformed copyright notice by replacing it with proper copyright
+     * @param {vscode.TextEditor} editor - The active text editor
+     * @returns {Promise<boolean>} Promise resolving to true if malformed copyright was fixed
+     */
+    async fixMalformedCopyright(editor) {
+        const config = this.getConfig();
+        const formattedTemplate = this.formatCopyrightTemplate(config);
+
+        const document = editor.document;
+        const text = document.getText();
+        const lines = text.split('\n');
+        let endMalformedIndex = -1;
+
+        // Find the end of the malformed comment block
+        for (let i = 0; i < Math.min(10, lines.length); i++) {
+            const line = lines[i];
+            if (line.includes("Copyright (c)") || line.includes("Copyright")) {
+                // Handle multiline comments
+                if (line.trim().startsWith("/*")) {
+                    const closeIndex = text.indexOf("*/", text.indexOf(line));
+                    endMalformedIndex = closeIndex !== -1 ? closeIndex + 2 : text.indexOf(line) + line.length;
+                }
+                // Handle single line comments
+                else if (line.trim().startsWith("//") || line.trim().startsWith("#")) {
+                    endMalformedIndex = text.indexOf(line) + line.length;
+                }
+
+                // Include subsequent empty lines
+                if (endMalformedIndex !== -1) {
+                    let nextLineIndex = i + 1;
+                    while (nextLineIndex < lines.length && lines[nextLineIndex].trim() === '') {
+                        endMalformedIndex = text.indexOf(lines[nextLineIndex]) + lines[nextLineIndex].length;
+                        nextLineIndex++;
+                    }
+                }
+                break;
+            }
+        }
+
+        if (endMalformedIndex === -1) {
+            return false; // Could not find malformed copyright end
+        }
+
+        const afterCopyright = text.substring(endMalformedIndex).replace(/^\s*\n/, '');
+        const newContent = formattedTemplate + afterCopyright;
+
+        const edit = new vscode.WorkspaceEdit();
+        edit.replace(document.uri, new vscode.Range(
+            document.positionAt(0),
+            document.positionAt(text.length)
+        ), newContent);
+
+        try {
+            const success = await vscode.workspace.applyEdit(edit);
+            if (success) {
+                await document.save();
+                return true;
+            }
+        } catch (error) {
+            console.error('Failed to fix malformed copyright:', error);
+        }
+
+        return false;
+    }
+
+    /**
+     * Insert new copyright notice at optimal position in document
+     * @param {vscode.TextEditor} editor - The active text editor
+     * @returns {Promise<boolean>} Promise resolving to true if copyright was inserted
+     */
+    async insertNewCopyright(editor) {
+        const config = this.getConfig();
+        const formattedTemplate = this.formatCopyrightTemplate(config);
+
+        const document = editor.document;
+        const text = document.getText();
+        const edit = new vscode.WorkspaceEdit();
+
+        if (text.length === 0) {
+            // Empty file - insert at beginning
+            edit.insert(document.uri, new vscode.Position(0, 0), formattedTemplate);
+        } else {
+            // Find optimal insertion position
+            const insertInfo = this.findOptimalInsertPosition(text);
+
+            let contentToInsert = formattedTemplate;
+
+            // Ensure template ends with newline
+            if (!contentToInsert.endsWith('\n')) {
+                contentToInsert += '\n';
+            }
+
+            if (insertInfo.hasShebang) {
+                // Insert after shebang
+                if (!contentToInsert.endsWith('\n\n')) {
+                    contentToInsert = '\n' + contentToInsert;
+                }
+                edit.replace(document.uri, new vscode.Range(
+                    document.positionAt(insertInfo.shebangEndPosition),
+                    document.positionAt(insertInfo.insertPosition)
+                ), contentToInsert);
+            } else if (insertInfo.leadingEmptyLines > 0 || insertInfo.insertPosition === 0) {
+                // Handle leading empty lines
+                const remainingText = text.substring(insertInfo.insertPosition);
+                const remainingIsOnlyWhitespace = remainingText.trim().length === 0;
+
+                if (!remainingIsOnlyWhitespace && !contentToInsert.endsWith('\n\n') &&
+                    remainingText && !remainingText.startsWith('\n')) {
+                    contentToInsert += '\n';
+                }
+
+                const endPosition = remainingIsOnlyWhitespace ? text.length : insertInfo.insertPosition;
+                edit.replace(document.uri, new vscode.Range(
+                    document.positionAt(0),
+                    document.positionAt(endPosition)
+                ), contentToInsert);
+            } else {
+                // Normal insertion
+                const remainingText = text.substring(insertInfo.insertPosition);
+                if (!contentToInsert.endsWith('\n\n') && !remainingText.startsWith('\n')) {
+                    contentToInsert += '\n';
+                }
+                edit.insert(document.uri, document.positionAt(insertInfo.insertPosition), contentToInsert);
+            }
+        }
+
+        try {
+            const success = await vscode.workspace.applyEdit(edit);
+            if (success) {
+                await document.save();
+                return true;
+            }
+        } catch (error) {
+            console.error('Failed to apply copyright notice:', error);
+        }
+
+        return false;
+    }
+
+    /**
+     * Find the optimal position to insert copyright notice
+     * @param {string} text - Document text
+     * @returns {Object} Insertion information
+     */
+    findOptimalInsertPosition(text) {
+        const lines = text.split('\n');
+        let insertPosition = 0;
+        let foundContent = false;
+        let lineIndex = 0;
+        let leadingEmptyLines = 0;
+        let hasShebang = false;
+        let shebangEndPosition = 0;
+
+        // Calculate byte offset for a line index
+        const getOffsetForLine = (lineIdx) => {
+            let offset = 0;
+            for (let j = 0; j < lineIdx && j < lines.length; j++) {
+                offset += lines[j].length + 1; // +1 for newline
+            }
+            return offset;
+        };
+
+        while (lineIndex < lines.length) {
+            const line = lines[lineIndex];
+            const trimmedLine = line.trim();
+
+            if (trimmedLine === '') {
+                leadingEmptyLines++;
+                lineIndex++;
+                continue;
+            }
+
+            if (trimmedLine.startsWith('#!')) {
+                hasShebang = true;
+                leadingEmptyLines = 0; // Reset
+                lineIndex++;
+                shebangEndPosition = getOffsetForLine(lineIndex);
+                continue;
+            }
+
+            // Found first content
+            insertPosition = getOffsetForLine(lineIndex);
+            foundContent = true;
+            break;
+        }
+
+        // Handle files with only whitespace
+        if (!foundContent) {
+            insertPosition = 0;
+            foundContent = true;
+        }
+
+        return {
+            insertPosition,
+            foundContent,
+            leadingEmptyLines,
+            hasShebang,
+            shebangEndPosition
+        };
+    }
+
+    /**
      * Add copyright notice to document if needed
      * @param {vscode.TextEditor} editor - The active text editor
      * @returns {Promise<boolean>} Promise resolving to true if notice was added
@@ -230,228 +464,11 @@ class CopyrightHandler {
         // If well-formed copyright already exists, try to update timestamp if enabled
         const wellFormedCopyrightExists = this.hasCopyrightNotice(text);
         if (wellFormedCopyrightExists) {
-            const updated = this.updateTimestampIfNeeded(editor);
-            if (updated) {
-                return true; // Successfully updated
-            }
-            return false; // Valid copyright, but timestamp update failed or not enabled
+            return await this.handleExistingCopyright(editor);
         } else if (this.hasMalformedCopyright(text)) {
-            // Malformed copyright detected, replace with proper copyright
-            const config = this.getConfig();
-            const currentYear = new Date().getFullYear();
-            let formattedTemplate = config.template.replace(/{year}/g, currentYear.toString());
-
-            const now = new Date();
-            if (config.includeTimestamp) {
-                const timestamp = this.formatTimestamp(now, config.timestampFormat);
-                formattedTemplate = formattedTemplate.replace(/{timestamp}/g, timestamp);
-            }
-            if (config.includeUpdateTime) {
-                const updateTime = this.formatTimestamp(now, config.updateTimeFormat);
-                formattedTemplate = formattedTemplate.replace(/{updatetime}/g, updateTime);
-            }
-
-            const lines = text.split('\n');
-            let endMalformedIndex = -1;
-
-            // Find the end of the malformed comment block
-            // This logic needs to be robust for various malformed comment types.
-            // Prioritize finding the end of /* ... */ or // ... or # ...
-            for (let i = 0; i < Math.min(10, lines.length); i++) {
-                const line = lines[i];
-                if (line.includes("Copyright (c)") || line.includes("Copyright")) {
-                    // If it's a multiline comment start, look for its end
-                    if (line.trim().startsWith("/*")) {
-                        const closeIndex = text.indexOf("*/", text.indexOf(line));
-                        if (closeIndex !== -1) {
-                            endMalformedIndex = closeIndex + 2; // Include */
-                        } else {
-                            // Unclosed multiline comment, assume it ends at the end of the line
-                            endMalformedIndex = text.indexOf(line) + line.length;
-                        }
-                    } else if (line.trim().startsWith("//") || line.trim().startsWith("#")) {
-                        // Single line comment, end at the end of this line
-                        endMalformedIndex = text.indexOf(line) + line.length;
-                    }
-                    // If endMalformedIndex is found, we might need to include subsequent empty lines
-                    if (endMalformedIndex !== -1) {
-                        let nextLineIndex = i + 1;
-                        while (nextLineIndex < lines.length && lines[nextLineIndex].trim() === '') {
-                            endMalformedIndex = text.indexOf(lines[nextLineIndex]) + lines[nextLineIndex].length;
-                            nextLineIndex++;
-                        }
-                    }
-                    break;
-                }
-            }
-
-            if (endMalformedIndex !== -1) {
-                const afterCopyright = text.substring(endMalformedIndex).replace(/^\s*\n/, '');
-                const newContent = formattedTemplate + afterCopyright;
-
-                const edit = new vscode.WorkspaceEdit();
-                edit.replace(document.uri, new vscode.Range(
-                    document.positionAt(0),
-                    document.positionAt(text.length)
-                ), newContent);
-
-                try {
-                    const success = await vscode.workspace.applyEdit(edit);
-                    if (success) {
-                        await document.save();
-                        return true;
-                    }
-                } catch (error) {
-                    console.error('Failed to fix malformed copyright:', error);
-                }
-            }
-            return false;
+            return await this.fixMalformedCopyright(editor);
         } else {
-            // No copyright found, insert at an appropriate position.
-            const config = this.getConfig();
-            const currentYear = new Date().getFullYear();
-            let formattedTemplate = config.template.replace(/{year}/g, currentYear.toString());
-
-            const now = new Date();
-            if (config.includeTimestamp) {
-                const timestamp = this.formatTimestamp(now, config.timestampFormat);
-                formattedTemplate = formattedTemplate.replace(/{timestamp}/g, timestamp);
-            }
-            if (config.includeUpdateTime) {
-                const updateTime = this.formatTimestamp(now, config.updateTimeFormat);
-                formattedTemplate = formattedTemplate.replace(/{updatetime}/g, updateTime);
-            }
-
-            const edit = new vscode.WorkspaceEdit();
-
-            if (text.length === 0) {
-                edit.insert(document.uri, new vscode.Position(0, 0), formattedTemplate);
-            } else {
-                const lines = text.split('\n');
-                let insertPosition = 0;
-                let foundContent = false;
-                let lineIndex = 0;
-
-                // Calculate byte offset for a given line index
-                const getOffsetForLine = (lineIdx) => {
-                    let offset = 0;
-                    for (let j = 0; j < lineIdx && j < lines.length; j++) {
-                        offset += lines[j].length + 1; // +1 for newline character
-                    }
-                    return offset;
-                };
-
-                let leadingEmptyLines = 0;
-                let hasShebang = false;
-                let shebangEndPosition = 0;
-
-                while (lineIndex < lines.length) {
-                    const line = lines[lineIndex];
-                    const trimmedLine = line.trim();
-
-                    // Track leading empty lines
-                    if (trimmedLine === '') {
-                        leadingEmptyLines++;
-                        lineIndex++;
-                        continue;
-                    }
-
-                    // Check for shebang - copyright should go AFTER shebang with blank line
-                    if (trimmedLine.startsWith('#!')) {
-                        hasShebang = true;
-                        leadingEmptyLines = 0; // Reset - empty lines after shebang are not "leading"
-                        lineIndex++;
-                        // Store position right after shebang line (including its newline)
-                        shebangEndPosition = getOffsetForLine(lineIndex);
-                        continue;
-                    }
-
-                    // Found first non-empty, non-shebang line
-                    insertPosition = getOffsetForLine(lineIndex);
-                    foundContent = true;
-                    break;
-                }
-
-                // If file has only whitespace/empty lines, insert at beginning
-                if (!foundContent) {
-                    insertPosition = 0;
-                    foundContent = true;
-                }
-
-                // Prepare content to insert
-                let contentToInsert = formattedTemplate;
-
-                if (foundContent) {
-                    // Ensure the template ends with at least one newline
-                    if (!contentToInsert.endsWith('\n')) {
-                        contentToInsert += '\n';
-                    }
-
-                    // Handle different cases
-                    if (hasShebang) {
-                        // After shebang: insert right after shebang, replacing any empty lines
-                        const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
-
-                        // Add blank line before copyright if template doesn't already have it
-                        if (!templateEndsWithDoubleNewline) {
-                            contentToInsert = '\n' + contentToInsert;
-                        }
-
-                        // Replace from end of shebang to start of actual content
-                        // This removes any empty lines between shebang and content
-                        edit.replace(document.uri, new vscode.Range(
-                            document.positionAt(shebangEndPosition),
-                            document.positionAt(insertPosition)
-                        ), contentToInsert);
-                    } else if (leadingEmptyLines > 0 || insertPosition === 0) {
-                        // File has leading empty lines or only whitespace - replace from start
-                        const remainingText = text.substring(insertPosition);
-                        const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
-                        const remainingIsOnlyWhitespace = remainingText.trim().length === 0;
-
-                        // For whitespace-only files, don't add extra spacing
-                        if (!remainingIsOnlyWhitespace && !templateEndsWithDoubleNewline && remainingText && !remainingText.startsWith('\n')) {
-                            contentToInsert += '\n';
-                        }
-
-                        // Replace from position 0 to remove leading empty lines
-                        // For whitespace-only files, replace entire content
-                        const endPosition = remainingIsOnlyWhitespace ? text.length : insertPosition;
-                        edit.replace(document.uri, new vscode.Range(
-                            document.positionAt(0),
-                            document.positionAt(endPosition)
-                        ), contentToInsert);
-                    } else {
-                        // Normal case - insert at current position
-                        const remainingText = text.substring(insertPosition);
-                        const templateEndsWithDoubleNewline = contentToInsert.endsWith('\n\n');
-                        const remainingStartsWithNewline = remainingText.startsWith('\n');
-
-                        if (!templateEndsWithDoubleNewline && !remainingStartsWithNewline) {
-                            contentToInsert += '\n';
-                        }
-
-                        edit.insert(document.uri, document.positionAt(insertPosition), contentToInsert);
-                    }
-                } else {
-                    // Fallback - should not reach here
-                    if (!contentToInsert.endsWith('\n')) {
-                        contentToInsert += '\n';
-                    }
-                    edit.insert(document.uri, document.positionAt(0), contentToInsert);
-                }
-            }
-
-            try {
-                const success = await vscode.workspace.applyEdit(edit);
-                if (success) {
-                    await document.save();
-                    return true;
-                }
-            } catch (error) {
-                console.error('Failed to apply copyright notice:', error);
-            }
-            return false;
+            return await this.insertNewCopyright(editor);
         }
     }
 

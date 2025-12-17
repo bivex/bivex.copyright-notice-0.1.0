@@ -1,5 +1,6 @@
 {
 	"name": "copyright-notice",
+	"type": "module",
 	"displayName": "⚖️ Copyright Header Generator Pro",
 	"description": "Auto-insert customizable copyright headers in any file format. Smart templating with dynamic year, timestamps, and multi-language support.",
 	"version": "1.1.1",
@@ -114,11 +115,16 @@
 		"package:unix": "bash scripts/pack.sh"
 	},
 	"devDependencies": {
-		"typescript": "^5.0.0",
-		"@types/vscode": "^1.17.0",
-		"@types/node": "^20.0.0",
 		"@types/mocha": "^10.0.0",
-		"@vscode/vsce": "^3.0.0"
+		"@types/node": "^20.0.0",
+		"@types/vscode": "^1.17.0",
+		"@typescript-eslint/eslint-plugin": "^8.50.0",
+		"@typescript-eslint/parser": "^8.50.0",
+		"@vscode/vsce": "^3.0.0",
+		"complexity-report": "^2.0.0-alpha",
+		"eslint": "^9.39.2",
+		"eslint-plugin-complexity": "^1.0.2",
+		"typescript": "^5.0.0"
 	},
 	"__metadata": {
 		"size": 6790
