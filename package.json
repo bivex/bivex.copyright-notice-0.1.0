@@ -69,8 +69,23 @@
 				},
 				"copyright-notice.excludedFiles": {
 					"type": "array",
-					"default": [],
-					"description": "File patterns to exclude from copyright notices (e.g., ['*.json', '*.config.js', 'package.json']). Supports glob patterns."
+					"default": [
+						"**/node_modules/**",
+						"**/.git/**",
+						"**/.vscode/**",
+						"**/dist/**",
+						"**/build/**",
+						"**/.next/**",
+						"**/.nuxt/**",
+						"**/coverage/**",
+						"**/.nyc_output/**",
+						"**/*.log",
+						"**/package-lock.json",
+						"**/yarn.lock",
+						"**/.DS_Store",
+						"**/Thumbs.db"
+					],
+					"description": "File patterns to exclude from copyright notices. Supports glob patterns. Defaults include common build/dependency folders."
 				},
 				"copyright-notice.template": {
 					"type": "string",
@@ -113,6 +128,14 @@
 					"minimum": 500,
 					"maximum": 10000,
 					"description": "Delay in milliseconds before applying background copyright updates after typing stops."
+				},
+				"copyright-notice.allowedFolders": {
+					"type": "array",
+					"default": [],
+					"items": {
+						"type": "string"
+					},
+					"description": "Comma-separated list of folder paths where copyright notices can be applied. If empty, applies to all folders. Paths can be relative to workspace root or absolute. (e.g., ['src', 'lib', 'app/components'])"
 				}
 			}
 		}

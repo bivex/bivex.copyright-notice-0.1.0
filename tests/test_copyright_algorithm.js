@@ -173,13 +173,13 @@ const testCases = [
     },
     {
         name: 'File without copyright',
-        input: 'function test() {\n    console.log("Hello");\n}',
-        expected: '/*\n * Copyright (c) 2025 bivex\n */\n\nfunction test() {\n    console.log("Hello");\n}',
+        input: 'function test() {\n    //console.log("Hello");\n}',
+        expected: '/*\n * Copyright (c) 2025 bivex\n */\n\nfunction test() {\n    //console.log("Hello");\n}',
         shouldAdd: true
     },
     {
         name: 'File with existing copyright',
-        input: '/*\n * Copyright (c) 2025 bivex\n */\n\nfunction test() {\n    console.log("Hello");\n}',
+        input: '/*\n * Copyright (c) 2025 bivex\n */\n\nfunction test() {\n    //console.log("Hello");\n}',
         expected: null, // Should not add
         shouldAdd: false
     }
@@ -190,23 +190,23 @@ function runTests() {
     let passed = 0;
     let failed = 0;
 
-    console.log('🧪 Running copyright insertion algorithm tests...\n');
+    //console.log('🧪 Running copyright insertion algorithm tests...\n');
 
     testCases.forEach((testCase, index) => {
-        console.log(`Test ${index + 1}: ${testCase.name}`);
+        //console.log(`Test ${index + 1}: ${testCase.name}`);
 
         try {
             const document = new MockDocument(testCase.input);
             const result = handler.addCopyrightIfNeeded(document);
 
             if (result.added !== testCase.shouldAdd) {
-                console.log(`❌ FAIL: Expected ${testCase.shouldAdd ? 'to add' : 'not to add'} copyright, but ${result.added ? 'added' : 'did not add'}`);
+                //console.log(`❌ FAIL: Expected ${testCase.shouldAdd ? 'to add' : 'not to add'} copyright, but ${result.added ? 'added' : 'did not add'}`);
                 failed++;
                 return;
             }
 
             if (!testCase.shouldAdd) {
-                console.log('✅ PASS: Correctly skipped adding copyright');
+                //console.log('✅ PASS: Correctly skipped adding copyright');
                 passed++;
                 return;
             }
@@ -224,30 +224,30 @@ function runTests() {
             }
 
             if (resultText === testCase.expected) {
-                console.log('✅ PASS: Copyright inserted correctly');
+                //console.log('✅ PASS: Copyright inserted correctly');
                 passed++;
             } else {
-                console.log('❌ FAIL: Unexpected result');
-                console.log('Expected:');
-                console.log(testCase.expected);
-                console.log('Got:');
-                console.log(resultText);
+                //console.log('❌ FAIL: Unexpected result');
+                //console.log('Expected:');
+                //console.log(testCase.expected);
+                //console.log('Got:');
+                //console.log(resultText);
                 failed++;
             }
         } catch (error) {
-            console.log(`❌ FAIL: Exception thrown: ${error.message}`);
+            //console.log(`❌ FAIL: Exception thrown: ${error.message}`);
             failed++;
         }
 
-        console.log('');
+        //console.log('');
     });
 
-    console.log(`📊 Results: ${passed} passed, ${failed} failed`);
+    //console.log(`📊 Results: ${passed} passed, ${failed} failed`);
 
     if (failed === 0) {
-        console.log('🎉 All tests passed!');
+        //console.log('🎉 All tests passed!');
     } else {
-        console.log('⚠️  Some tests failed. Please review the algorithm.');
+        //console.log('⚠️  Some tests failed. Please review the algorithm.');
     }
 }
 

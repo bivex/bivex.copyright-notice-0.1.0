@@ -339,9 +339,9 @@ const testCases = [
 // ============================================================================
 
 function runTests() {
-    console.log('🧪 Running Comprehensive CopyrightHandler Tests\n');
-    console.log('='.repeat(80));
-    console.log('\n');
+    //console.log('🧪 Running Comprehensive CopyrightHandler Tests\n');
+    //console.log('='.repeat(80));
+    //console.log('\n');
 
     const handler = new CopyrightHandler();
     let passed = 0;
@@ -350,8 +350,8 @@ function runTests() {
 
     testCases.forEach((testCase, index) => {
         const testNumber = index + 1;
-        console.log(`Test ${testNumber}/${testCases.length}: ${testCase.name}`);
-        console.log(`Description: ${testCase.description}`);
+        //console.log(`Test ${testNumber}/${testCases.length}: ${testCase.name}`);
+        //console.log(`Description: ${testCase.description}`);
 
         try {
             const document = new MockDocument(testCase.input);
@@ -361,7 +361,7 @@ function runTests() {
             const hasCopyright = handler.hasCopyrightNotice(testCase.input);
 
             if (hasCopyright && !testCase.shouldInsert) {
-                console.log('✅ PASS: Correctly detected existing copyright');
+                //console.log('✅ PASS: Correctly detected existing copyright');
                 passed++;
             } else if (!hasCopyright && testCase.shouldInsert) {
                 // Simulate insertion
@@ -369,9 +369,9 @@ function runTests() {
 
                 // Check against pattern
                 if (testCase.expectedPattern && !testCase.expectedPattern.test(resultText)) {
-                    console.log(`❌ FAIL: Result doesn't match expected pattern`);
-                    console.log(`Expected pattern: ${testCase.expectedPattern}`);
-                    console.log(`Got:\n${resultText.substring(0, 200)}...`);
+                    //console.log(`❌ FAIL: Result doesn't match expected pattern`);
+                    //console.log(`Expected pattern: ${testCase.expectedPattern}`);
+                    //console.log(`Got:\n${resultText.substring(0, 200)}...`);
                     failures.push({
                         test: testCase.name,
                         reason: 'Pattern mismatch',
@@ -380,11 +380,11 @@ function runTests() {
                     });
                     failed++;
                 } else {
-                    console.log('✅ PASS: Copyright inserted correctly');
+                    //console.log('✅ PASS: Copyright inserted correctly');
                     passed++;
                 }
             } else {
-                console.log(`❌ FAIL: Unexpected insertion behavior`);
+                //console.log(`❌ FAIL: Unexpected insertion behavior`);
                 failures.push({
                     test: testCase.name,
                     reason: `Expected ${testCase.shouldInsert ? 'insertion' : 'no insertion'}, got ${!hasCopyright ? 'insertion' : 'no insertion'}`
@@ -392,8 +392,8 @@ function runTests() {
                 failed++;
             }
         } catch (error) {
-            console.log(`❌ FAIL: Exception thrown: ${error.message}`);
-            console.log(`Stack: ${error.stack}`);
+            //console.log(`❌ FAIL: Exception thrown: ${error.message}`);
+            //console.log(`Stack: ${error.stack}`);
             failures.push({
                 test: testCase.name,
                 reason: `Exception: ${error.message}`,
@@ -402,32 +402,32 @@ function runTests() {
             failed++;
         }
 
-        console.log('');
+        //console.log('');
     });
 
     // Summary
-    console.log('='.repeat(80));
-    console.log('\n📊 Test Results Summary\n');
-    console.log(`Total Tests: ${testCases.length}`);
-    console.log(`✅ Passed: ${passed}`);
-    console.log(`❌ Failed: ${failed}`);
-    console.log(`Success Rate: ${((passed / testCases.length) * 100).toFixed(2)}%`);
+    //console.log('='.repeat(80));
+    //console.log('\n📊 Test Results Summary\n');
+    //console.log(`Total Tests: ${testCases.length}`);
+    //console.log(`✅ Passed: ${passed}`);
+    //console.log(`❌ Failed: ${failed}`);
+    //console.log(`Success Rate: ${((passed / testCases.length) * 100).toFixed(2)}%`);
 
     if (failed > 0) {
-        console.log('\n⚠️  Failed Tests:\n');
+        //console.log('\n⚠️  Failed Tests:\n');
         failures.forEach((failure, index) => {
-            console.log(`${index + 1}. ${failure.test}`);
-            console.log(`   Reason: ${failure.reason}`);
+            //console.log(`${index + 1}. ${failure.test}`);
+            //console.log(`   Reason: ${failure.reason}`);
             if (failure.expected) {
-                console.log(`   Expected: ${failure.expected}`);
+                //console.log(`   Expected: ${failure.expected}`);
             }
             if (failure.got) {
-                console.log(`   Got: ${failure.got}`);
+                //console.log(`   Got: ${failure.got}`);
             }
-            console.log('');
+            //console.log('');
         });
     } else {
-        console.log('\n🎉 All tests passed!\n');
+        //console.log('\n🎉 All tests passed!\n');
     }
 
     return failed === 0;

@@ -53,7 +53,26 @@ Remove all emojis from any file using the "Remove All Emojis from File" command.
 ### Core Settings
 - `copyright-notice.languages`: Languages that the extension will be activated for (default: all languages)
 - `copyright-notice.fileExtensions`: File extensions to which the copyright notice will be applied (e.g., ['.js', '.ts', '.py']). Use ['*'] for all files.
-- `copyright-notice.excludedFiles`: File patterns to exclude from copyright notices (e.g., ['*.json', '*.config.js']). Supports glob patterns.
+- `copyright-notice.excludedFiles`: File patterns to exclude from copyright notices. Supports glob patterns. Defaults include common build/dependency folders like node_modules, .git, dist, build, etc.
+
+### Default Exclusions
+
+The extension automatically excludes these common folders and files by default:
+- `**/node_modules/**` - Node.js dependencies
+- `**/.git/**` - Git repository data
+- `**/.vscode/**` - VS Code settings
+- `**/dist/**` - Distribution/build output
+- `**/build/**` - Build artifacts
+- `**/.next/**` - Next.js build files
+- `**/.nuxt/**` - Nuxt.js build files
+- `**/coverage/**` - Test coverage reports
+- `**/.nyc_output/**` - NYC coverage output
+- `**/*.log` - Log files
+- `**/package-lock.json` - NPM lock file
+- `**/yarn.lock` - Yarn lock file
+- `**/.DS_Store` - macOS system files
+- `**/Thumbs.db` - Windows system files
+- `copyright-notice.allowedFolders`: Comma-separated list of folder paths where copyright notices can be applied. If empty, applies to all folders. Paths can be relative to workspace root or absolute (e.g., ['src', 'lib', 'app/components']).
 - `copyright-notice.template`: Copyright notice template. Use {year} for the current year, {timestamp} for creation time, and {updatetime} for last update time.
 
 ### Timestamp Configuration
@@ -192,6 +211,38 @@ This configuration enables completely silent operation with copyright notices ad
 ```
 
 This configuration shows notifications and applies changes quickly, with automatic timestamp updates.
+
+### Restricted Folders Mode
+
+```json
+{
+  "copyright-notice.allowedFolders": ["src", "lib", "app/components"],
+  "copyright-notice.silentMode": true,
+  "copyright-notice.backgroundUpdateDelay": 2000
+}
+```
+
+This configuration only applies copyright notices to files in the specified folders (`src`, `lib`, and `app/components`), leaving other folders untouched.
+
+### Custom Exclusions
+
+```json
+{
+  "copyright-notice.excludedFiles": [
+    "**/node_modules/**",
+    "**/.git/**",
+    "**/.vscode/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/temp/**",
+    "**/cache/**",
+    "**/*.tmp",
+    "**/*.bak"
+  ]
+}
+```
+
+This configuration adds custom exclusions (temp, cache, temporary files) in addition to the default exclusions.
 
 ### Individual Entrepreneur / Sole Proprietor
 

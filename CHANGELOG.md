@@ -8,8 +8,11 @@ All notable changes to the "copyright-notice" extension will be documented in th
 - Smart caching system for improved performance
 - Advanced document opening handler
 - Comprehensive diagnostic and testing tools
+- Folder restriction functionality to limit copyright application
+- Comprehensive default exclusions for common folders (node_modules, .git, dist, etc.)
 - `copyright-notice.silentMode` setting (default: true)
 - `copyright-notice.backgroundUpdateDelay` setting (default: 1500ms)
+- `copyright-notice.allowedFolders` setting for folder-based restrictions
 ### Fixed
 - Method binding issue causing runtime errors in document save handler
 - Improved copyright detection with better pattern recognition

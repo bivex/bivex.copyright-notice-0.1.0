@@ -92,11 +92,11 @@ class IntegrationMutationTester {
 
     // Test all files in test_files directory
     runIntegrationTests() {
-        console.log('🔗 Running Integration Mutation Tests...\n');
-        console.log(`Testing against real files in: ${this.testFilesDir}\n`);
+        //console.log('🔗 Running Integration Mutation Tests...\n');
+        //console.log(`Testing against real files in: ${this.testFilesDir}\n`);
 
         if (!fs.existsSync(this.testFilesDir)) {
-            console.log('❌ Test files directory not found!');
+            //console.log('❌ Test files directory not found!');
             return { error: 'test_files_directory_not_found' };
         }
 
@@ -117,7 +117,7 @@ class IntegrationMutationTester {
             const filePath = path.join(this.testFilesDir, fileName);
             const content = fs.readFileSync(filePath, 'utf8');
 
-            console.log(`📄 Testing ${fileName} (${content.split('\n').length} lines)`);
+            //console.log(`📄 Testing ${fileName} (${content.split('\n').length} lines)`);
 
             try {
                 const result = this.simulateCopyrightInsertion(content);
@@ -166,19 +166,19 @@ class IntegrationMutationTester {
 
                 if (isValid) {
                     passedTests++;
-                    console.log(`✅ PASS: ${result.action} (${result.reason})`);
+                    //console.log(`✅ PASS: ${result.action} (${result.reason})`);
 
                     // Additional validation
                     if (result.result) {
                         const lines = result.result.split('\n');
                         if (lines.length > 0 && lines[0].trim() === '') {
-                            console.log('   ⚠️  Warning: Result starts with empty line');
+                            //console.log('   ⚠️  Warning: Result starts with empty line');
                         }
                     }
                 } else {
                     failedTests++;
-                    console.log(`❌ FAIL: ${result.action} (${result.reason})`);
-                    issues.forEach(issue => console.log(`   - ${issue}`));
+                    //console.log(`❌ FAIL: ${result.action} (${result.reason})`);
+                    issues.forEach(issue => //console.log(`   - ${issue}`));
                 }
 
                 // Store result for analysis
@@ -194,7 +194,7 @@ class IntegrationMutationTester {
 
             } catch (error) {
                 failedTests++;
-                console.log(`❌ ERROR: Exception in ${fileName}: ${error.message}`);
+                //console.log(`❌ ERROR: Exception in ${fileName}: ${error.message}`);
                 this.results.push({
                     file: fileName,
                     error: error.message,
@@ -202,10 +202,10 @@ class IntegrationMutationTester {
                 });
             }
 
-            console.log('');
+            //console.log('');
         });
 
-        console.log(`📊 Integration Test Results: ${passedTests}/${totalTests} files processed successfully`);
+        //console.log(`📊 Integration Test Results: ${passedTests}/${totalTests} files processed successfully`);
 
         // Analyze results
         this.analyzeResults();
@@ -220,7 +220,7 @@ class IntegrationMutationTester {
 
     // Analyze test results for patterns and issues
     analyzeResults() {
-        console.log('\n📈 ANALYSIS OF TEST RESULTS\n');
+        //console.log('\n📈 ANALYSIS OF TEST RESULTS\n');
 
         const actions = {};
         const reasons = {};
@@ -239,20 +239,20 @@ class IntegrationMutationTester {
             }
         });
 
-        console.log('Actions taken:');
+        //console.log('Actions taken:');
         Object.entries(actions).forEach(([action, count]) => {
-            console.log(`  ${action}: ${count} files`);
+            //console.log(`  ${action}: ${count} files`);
         });
 
-        console.log('\nReasons:');
+        //console.log('\nReasons:');
         Object.entries(reasons).forEach(([reason, count]) => {
-            console.log(`  ${reason}: ${count} files`);
+            //console.log(`  ${reason}: ${count} files`);
         });
 
         if (Object.keys(issues).length > 0) {
-            console.log('\nIssues found:');
+            //console.log('\nIssues found:');
             Object.entries(issues).forEach(([issue, count]) => {
-                console.log(`  ${issue}: ${count} occurrences`);
+                //console.log(`  ${issue}: ${count} occurrences`);
             });
         }
 
@@ -261,12 +261,12 @@ class IntegrationMutationTester {
         const fixedFiles = this.results.filter(r => r.action === 'fixed').length;
 
         if (fixedFiles > 0) {
-            console.log(`\n⚠️  ${fixedFiles} files had malformed copyright that was fixed.`);
-            console.log('   This indicates the algorithm is working correctly for edge cases.');
+            //console.log(`\n⚠️  ${fixedFiles} files had malformed copyright that was fixed.`);
+            //console.log('   This indicates the algorithm is working correctly for edge cases.');
         }
 
         if (skippedFiles > 0) {
-            console.log(`\nℹ️  ${skippedFiles} files already had valid copyright and were skipped.`);
+            //console.log(`\nℹ️  ${skippedFiles} files already had valid copyright and were skipped.`);
         }
 
         // Save detailed results
@@ -283,12 +283,12 @@ class IntegrationMutationTester {
             detailedResults: this.results
         }, null, 2));
 
-        console.log('\n📝 Detailed results saved to integration_test_results.json');
+        //console.log('\n📝 Detailed results saved to integration_test_results.json');
     }
 
     // Run targeted tests for specific scenarios
     runTargetedTests() {
-        console.log('\n🎯 Running Targeted Edge Case Tests...\n');
+        //console.log('\n🎯 Running Targeted Edge Case Tests...\n');
 
         const edgeCases = [
             {
@@ -322,19 +322,19 @@ class IntegrationMutationTester {
 
                 if (result.action === testCase.expectedAction) {
                     targetedPassed++;
-                    console.log(`✅ Targeted ${index + 1} PASS: ${testCase.name}`);
+                    //console.log(`✅ Targeted ${index + 1} PASS: ${testCase.name}`);
                 } else {
                     targetedFailed++;
-                    console.log(`❌ Targeted ${index + 1} FAIL: ${testCase.name}`);
-                    console.log(`   Expected: ${testCase.expectedAction}, Got: ${result.action}`);
+                    //console.log(`❌ Targeted ${index + 1} FAIL: ${testCase.name}`);
+                    //console.log(`   Expected: ${testCase.expectedAction}, Got: ${result.action}`);
                 }
             } catch (error) {
                 targetedFailed++;
-                console.log(`❌ Targeted ${index + 1} ERROR: ${testCase.name} - ${error.message}`);
+                //console.log(`❌ Targeted ${index + 1} ERROR: ${testCase.name} - ${error.message}`);
             }
         });
 
-        console.log(`\n🎯 Targeted Test Results: ${targetedPassed} passed, ${targetedFailed} failed`);
+        //console.log(`\n🎯 Targeted Test Results: ${targetedPassed} passed, ${targetedFailed} failed`);
         return { targetedPassed, targetedFailed };
     }
 }
@@ -343,7 +343,7 @@ class IntegrationMutationTester {
 if (require.main === module) {
     const tester = new IntegrationMutationTester();
 
-    console.log('🚀 COMPREHENSIVE INTEGRATION TESTING SUITE\n');
+    //console.log('🚀 COMPREHENSIVE INTEGRATION TESTING SUITE\n');
 
     const integrationResults = tester.runIntegrationTests();
     const targetedResults = tester.runTargetedTests();
@@ -352,17 +352,17 @@ if (require.main === module) {
     const totalFailed = integrationResults.failed + targetedResults.targetedFailed;
     const totalTests = integrationResults.totalFiles + 4; // 4 targeted tests
 
-    console.log('\n' + '='.repeat(50));
-    console.log('🏆 FINAL INTEGRATION TEST SUMMARY');
-    console.log('='.repeat(50));
-    console.log(`Integration Tests: ${integrationResults.passed}/${integrationResults.totalFiles} passed`);
-    console.log(`Targeted Tests: ${targetedResults.targetedPassed}/4 passed`);
-    console.log(`OVERALL: ${totalPassed}/${totalTests} tests passed`);
+    //console.log('\n' + '='.repeat(50));
+    //console.log('🏆 FINAL INTEGRATION TEST SUMMARY');
+    //console.log('='.repeat(50));
+    //console.log(`Integration Tests: ${integrationResults.passed}/${integrationResults.totalFiles} passed`);
+    //console.log(`Targeted Tests: ${targetedResults.targetedPassed}/4 passed`);
+    //console.log(`OVERALL: ${totalPassed}/${totalTests} tests passed`);
 
     if (totalFailed === 0) {
-        console.log('\n🎊 ALL INTEGRATION TESTS PASSED! Algorithm is production-ready.');
+        //console.log('\n🎊 ALL INTEGRATION TESTS PASSED! Algorithm is production-ready.');
     } else {
-        console.log(`\n⚠️  ${totalFailed} integration tests failed. Review real-world usage.`);
+        //console.log(`\n⚠️  ${totalFailed} integration tests failed. Review real-world usage.`);
     }
 }
 

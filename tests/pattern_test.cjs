@@ -1,18 +1,18 @@
 const fs = require('fs');
 
 // Test copyright detection patterns
-console.log('🧪 Testing Copyright Detection Patterns\n');
+//console.log('🧪 Testing Copyright Detection Patterns\n');
 
 function testPattern(text, label) {
-    console.log(`📋 Testing: ${label}`);
-    console.log(`   Text: "${text.replace(/\n/g, '\\n')}"`);
+    //console.log(`📋 Testing: ${label}`);
+    //console.log(`   Text: "${text.replace(/\n/g, '\\n')}"`);
 
     // Current implementation
     const wellFormedCopyrightRegex = /\/\*\*?[\s\S]*?(Copyright|©)[\s\S]*?\d{4}[\s\S]*?\*\//;
     const isWellFormed = wellFormedCopyrightRegex.test(text) && text.trim().startsWith('/*');
 
-    console.log(`   Well-formed: ${isWellFormed ? '✅' : '❌'}`);
-    console.log('');
+    //console.log(`   Well-formed: ${isWellFormed ? '✅' : '❌'}`);
+    //console.log('');
 }
 
 // Test cases
@@ -35,7 +35,7 @@ function test() {}`, 'malformed comment');
 testPattern(`function test() {}`, 'no copyright');
 
 // Test real files
-console.log('📂 Testing real files:');
+//console.log('📂 Testing real files:');
 const files = ['test_files/with_copyright.ts', 'test_files/with_copyright.js'];
 
 files.forEach(filePath => {
@@ -44,19 +44,19 @@ files.forEach(filePath => {
         const lines = content.split('\n').slice(0, 6); // First 6 lines
         const firstBlock = lines.join('\n');
 
-        console.log(`\n📄 ${filePath}:`);
-        console.log(`   Content: "${firstBlock.replace(/\n/g, '\\n')}"`);
+        //console.log(`\n📄 ${filePath}:`);
+        //console.log(`   Content: "${firstBlock.replace(/\n/g, '\\n')}"`);
 
         const wellFormedCopyrightRegex = /\/\*\*?[\s\S]*?(Copyright|©)[\s\S]*?\d{4}[\s\S]*?\*\//;
         const isWellFormed = wellFormedCopyrightRegex.test(firstBlock) && firstBlock.trim().startsWith('/*');
 
-        console.log(`   Well-formed: ${isWellFormed ? '✅' : '❌'}`);
-        console.log(`   Starts with /*: ${firstBlock.trim().startsWith('/*') ? '✅' : '❌'}`);
-        console.log(`   Regex match: ${wellFormedCopyrightRegex.test(firstBlock) ? '✅' : '❌'}`);
+        //console.log(`   Well-formed: ${isWellFormed ? '✅' : '❌'}`);
+        //console.log(`   Starts with /*: ${firstBlock.trim().startsWith('/*') ? '✅' : '❌'}`);
+        //console.log(`   Regex match: ${wellFormedCopyrightRegex.test(firstBlock) ? '✅' : '❌'}`);
 
     } catch (error) {
-        console.log(`   ❌ Error reading ${filePath}: ${error.message}`);
+        //console.log(`   ❌ Error reading ${filePath}: ${error.message}`);
     }
 });
 
-console.log('\n✅ Pattern test completed!');
+//console.log('\n✅ Pattern test completed!');

@@ -2,7 +2,7 @@ const fs = require('fs');
 
 // Test the copyright insertion algorithm
 function testCopyrightInsertion() {
-    console.log('Testing copyright insertion algorithm...\n');
+    //console.log('Testing copyright insertion algorithm...\n');
 
     // Test cases
     const testCases = [
@@ -13,12 +13,12 @@ function testCopyrightInsertion() {
         },
         {
             name: 'File without copyright',
-            content: 'function test() {\n    console.log("Hello");\n}',
+            content: 'function test() {\n    //console.log("Hello");\n}',
             expectedStart: '/*\n * Copyright (c) 2025'
         },
         {
             name: 'File with shebang',
-            content: '#!/usr/bin/env node\nconsole.log("Hello");',
+            content: '#!/usr/bin/env node\n//console.log("Hello");',
             shouldContain: '#!/usr/bin/env node'
         },
         {
@@ -30,8 +30,8 @@ function testCopyrightInsertion() {
 
     // Mock the algorithm behavior
     testCases.forEach((testCase, index) => {
-        console.log(`Test ${index + 1}: ${testCase.name}`);
-        console.log(`Input: "${testCase.content.replace(/\n/g, '\\n')}"`);
+        //console.log(`Test ${index + 1}: ${testCase.name}`);
+        //console.log(`Input: "${testCase.content.replace(/\n/g, '\\n')}"`);
 
         // Simulate the algorithm logic
         let result = testCase.content;
@@ -48,20 +48,20 @@ function testCopyrightInsertion() {
             }
         }
 
-        console.log(`Output: "${result.replace(/\n/g, '\\n')}"`);
+        //console.log(`Output: "${result.replace(/\n/g, '\\n')}"`);
 
         // Check expectations
         if (testCase.expectedStart && result.startsWith(testCase.expectedStart)) {
-            console.log('✅ PASS: Copyright inserted correctly');
+            //console.log('✅ PASS: Copyright inserted correctly');
         } else if (testCase.shouldContain && result.includes(testCase.shouldContain)) {
-            console.log('✅ PASS: Contains expected content');
+            //console.log('✅ PASS: Contains expected content');
         } else if (hasCopyright) {
-            console.log('✅ PASS: Copyright already exists, skipped');
+            //console.log('✅ PASS: Copyright already exists, skipped');
         } else {
-            console.log('❌ FAIL: Unexpected result');
+            //console.log('❌ FAIL: Unexpected result');
         }
 
-        console.log('---\n');
+        //console.log('---\n');
     });
 }
 

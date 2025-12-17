@@ -38,21 +38,21 @@ class TestFileGenerator:
         # Basic JS file without copyright
         self.create_file(
             "basic.js",
-            "function hello() {\n    console.log('Hello, World!');\n}\n",
+            "function hello() {\n    //console.log('Hello, World!');\n}\n",
             "Basic JS without copyright notice"
         )
         
         # JS file with existing copyright
         self.create_file(
             "with_copyright.js",
-            "/**\n * Copyright (c) 2023 Test Company\n * All rights reserved.\n */\n\nfunction hello() {\n    console.log('Hello, World!');\n}\n",
+            "/**\n * Copyright (c) 2023 Test Company\n * All rights reserved.\n */\n\nfunction hello() {\n    //console.log('Hello, World!');\n}\n",
             "JS with existing copyright notice"
         )
         
         # JS file with different copyright format
         self.create_file(
             "different_copyright.js",
-            "/* Copyright (c) 2023 Another Company */\n\nfunction hello() {\n    console.log('Hello, World!');\n}\n",
+            "/* Copyright (c) 2023 Another Company */\n\nfunction hello() {\n    //console.log('Hello, World!');\n}\n",
             "JS with different copyright format"
         )
     

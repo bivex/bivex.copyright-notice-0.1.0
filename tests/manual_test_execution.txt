@@ -61,22 +61,22 @@ Expected action: FIX by replacing malformed block with proper copyright
    Status: ✅ VALID
 
 2. File with Shebang
-   Input: "#!/usr/bin/env node\nconsole.log('hi');"
+   Input: "#!/usr/bin/env node\n//console.log('hi');"
    Expected: Insert copyright after shebang
    Status: ✅ VALID
 
 3. File with License Comment
-   Input: "// License: MIT\nconsole.log('hi');"
+   Input: "// License: MIT\n//console.log('hi');"
    Expected: Skip license comment, insert before code
    Status: ✅ VALID
 
 4. File with Existing Valid Copyright
-   Input: "/*\n * Copyright (c) 2025 bivex\n */\nconsole.log('hi');"
+   Input: "/*\n * Copyright (c) 2025 bivex\n */\n//console.log('hi');"
    Expected: Skip insertion (copyright already exists)
    Status: ✅ VALID
 
 5. File with Malformed Copyright
-   Input: "/* Copyright (c) 2025 bivex\nconsole.log('hi');"
+   Input: "/* Copyright (c) 2025 bivex\n//console.log('hi');"
    Expected: Fix malformed copyright with proper format
    Status: ✅ VALID
 
