@@ -1,44 +1,73 @@
 # Copyright Notice Generator
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
+[![Version](https://img.shields.io/badge/version-1.1.1-blue.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 [![Installs](https://img.shields.io/badge/installs-new-brightgreen.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 [![Rating](https://img.shields.io/badge/rating-5%20stars-yellow.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 
 Automatically add customizable copyright notices to your code files across multiple programming languages. Perfect for ensuring proper intellectual property protection in your projects.
 
+## ✨ What's New in v1.1.1
+
+- 🔇 **Silent Background Operation**: Works invisibly without interrupting your workflow
+- ⚡ **Performance Optimized**: Smart caching and configurable delays for smooth operation
+- 🎯 **Advanced Detection**: Improved copyright pattern recognition
+- 📊 **Comprehensive Diagnostics**: Built-in testing and analysis tools
+- 🔧 **Configurable Timing**: Customize delays and behavior to match your workflow
+
 ![Extension Demo](images/image.png)
 
 ## Key Features
 
-- ✨ **Automatic Insertion**: Adds copyright notice when typing in a new file
+- ✨ **Automatic Background Insertion**: Silently adds copyright notices to new files in the background
 - 🔄 **Manual Command**: Apply notice on demand with the Command Palette
 - 😀 **Emoji Removal**: Remove all emojis from files with a single command
 - 🌐 **Multi-language Support**: Works with all programming languages
 - 📝 **Customizable Templates**: Use your own copyright text with dynamic year insertion
 - 🕒 **Timestamp Support**: Include creation date and time in your notices
 - 🔄 **Update Time Tracking**: Automatically updates the "last modified" timestamp
-- 🔍 **Smart Detection**: Avoids duplicate notices
+- 🔍 **Smart Detection**: Avoids duplicate notices with advanced pattern recognition
 - 🧩 **File Extension Filtering**: Target specific file types
+- 🔇 **Silent Mode**: Works invisibly in the background without notifications
+- ⚡ **Performance Optimized**: Smart caching and configurable delays for smooth operation
+- 📊 **Advanced Diagnostics**: Comprehensive analysis and detailed reporting
 
 ## How It Works
 
-While you are typing, this extension checks if there's a copyright notice at the beginning of the file. If not, it adds one automatically based on your custom template.
+### Background Operation
+The extension works silently in the background, automatically adding copyright notices to new files without interrupting your workflow. When you open a file without a copyright notice, it gets added seamlessly after a configurable delay.
 
-You can also manually trigger the extension by running the "Apply Copyright Notice" command from the Command Palette (Ctrl+Shift+P).
+### Smart Detection
+Uses advanced pattern recognition to detect existing copyright notices, avoiding duplicates and handling various comment formats across different programming languages.
 
-Additionally, you can remove all emojis from any file using the "Remove All Emojis from File" command. This is useful for cleaning up code that contains unwanted emoji characters.
+### Multiple Trigger Points
+- **File Opening**: Automatically processes files when first opened
+- **Typing Pauses**: Adds copyright during editing after configurable delay
+- **Manual Command**: Apply notice on demand with the Command Palette (Ctrl+Shift+P)
+- **Editor Switching**: Processes files when switching between editors
+
+### Emoji Management
+Remove all emojis from any file using the "Remove All Emojis from File" command. This is useful for cleaning up code that contains unwanted emoji characters.
 
 ## Configuration Options
 
+### Core Settings
 - `copyright-notice.languages`: Languages that the extension will be activated for (default: all languages)
 - `copyright-notice.fileExtensions`: File extensions to which the copyright notice will be applied (e.g., ['.js', '.ts', '.py']). Use ['*'] for all files.
+- `copyright-notice.excludedFiles`: File patterns to exclude from copyright notices (e.g., ['*.json', '*.config.js']). Supports glob patterns.
 - `copyright-notice.template`: Copyright notice template. Use {year} for the current year, {timestamp} for creation time, and {updatetime} for last update time.
+
+### Timestamp Configuration
 - `copyright-notice.includeTimestamp`: Whether to include timestamp when the copyright notice was added (default: false).
 - `copyright-notice.timestampFormat`: Format for the timestamp (default: "YYYY-MM-DD HH:mm:ss").
 - `copyright-notice.includeUpdateTime`: Whether to include and update the "last updated" timestamp (default: false).
 - `copyright-notice.updateTimeFormat`: Format for the update timestamp (default: "YYYY-MM-DD HH:mm:ss").
+
+### Background Operation
+- `copyright-notice.silentMode`: Whether to apply copyright changes silently in the background without showing notifications (default: true).
+- `copyright-notice.backgroundUpdateDelay`: Delay in milliseconds before applying background copyright updates after typing stops (default: 1500, min: 500, max: 10000).
+
+### Additional Features
 - `copyright-notice.autoRemoveEmojis`: Whether to automatically remove all emojis from files when they are saved (default: false).
-- `copyright-notice.excludedFiles`: File patterns to exclude from copyright notices (e.g., ['*.json', '*.config.js']). Supports glob patterns.
 
 ## Example Settings
 
@@ -139,6 +168,31 @@ Additionally, you can remove all emojis from any file using the "Remove All Emoj
 
 **Note**: The extension now works with `.ahk2` files even if VS Code doesn't recognize the language ID. Simply add the file extension to the `fileExtensions` array.
 
+### Silent Background Mode
+
+```json
+{
+  "copyright-notice.silentMode": true,
+  "copyright-notice.backgroundUpdateDelay": 1000,
+  "copyright-notice.template": "/* Copyright (c) {year} Your Company */\n\n"
+}
+```
+
+This configuration enables completely silent operation with copyright notices added automatically in the background with a 1-second delay after typing stops.
+
+### Fast Interactive Mode
+
+```json
+{
+  "copyright-notice.silentMode": false,
+  "copyright-notice.backgroundUpdateDelay": 500,
+  "copyright-notice.includeUpdateTime": true,
+  "copyright-notice.template": "/**\n * Copyright (c) {year} Your Company\n * Last Updated: {updatetime}\n */\n\n"
+}
+```
+
+This configuration shows notifications and applies changes quickly, with automatic timestamp updates.
+
 ### Individual Entrepreneur / Sole Proprietor
 
 ```json
@@ -159,6 +213,24 @@ The extension comes with a variety of pre-configured templates for different sce
 - Language-specific templates (Python, HTML, Shell)
 
 See the [template-examples.json](https://github.com/bivex/bivex.copyright-notice-0.1.0/blob/main/template-examples.json) file for a complete list of examples that you can copy into your configuration.
+
+## Performance & Background Operation
+
+### Smart Caching
+The extension uses intelligent caching to optimize performance:
+- File analysis results are cached for 30 seconds
+- Files with existing copyright are processed faster
+- Reduces unnecessary re-analysis during editing
+
+### Configurable Delays
+- **Background Update Delay**: Configurable pause before applying changes (500-10000ms)
+- **Debounced Processing**: Prevents excessive processing during rapid typing
+- **Optimized Timing**: Balances responsiveness with performance
+
+### Silent Operation
+- **Zero Interruptions**: Works invisibly in the background
+- **No Notifications**: Unless explicitly configured otherwise
+- **Seamless Integration**: Doesn't interfere with your workflow
 
 ## Why Use Copyright Notices?
 
@@ -200,6 +272,27 @@ npm run package        # Direct vsce command
 
 See [scripts/README.md](scripts/README.md) for detailed packaging instructions.
 
+## Testing & Diagnostics
+
+The extension includes comprehensive testing tools for validation:
+
+```bash
+# Run background mode tests
+node tests/background_mode_test.cjs
+
+# Run diagnostic analysis
+node tests/diagnostic_test.cjs
+
+# Run pattern recognition tests
+node tests/pattern_test.cjs
+```
+
+### Diagnostic Features
+- **File Analysis**: Comprehensive copyright detection analysis
+- **Configuration Validation**: Settings verification
+- **Performance Monitoring**: Cache and timing diagnostics
+- **Error Reporting**: Detailed error analysis and reporting
+
 ## Requirements
 
 ### For Users
@@ -212,9 +305,30 @@ No additional requirements or dependencies needed.
 
 ## Known Issues
 
-None currently reported. Please submit issues on our [GitHub repository](https://github.com/bivex/bivex.copyright-notice-0.1.0/issues).
+None currently reported. The extension has been thoroughly tested with comprehensive diagnostics and performance optimizations.
+
+### Troubleshooting
+If you encounter issues:
+1. Check VS Code developer console (Help → Toggle Developer Tools)
+2. Run diagnostic tests: `node tests/diagnostic_test.cjs`
+3. Verify your configuration settings
+4. Ensure VS Code is updated to the latest version
+
+Please submit issues on our [GitHub repository](https://github.com/bivex/bivex.copyright-notice-0.1.0/issues).
 
 ## Release Notes
+
+### 1.1.1
+
+Major performance and usability improvements:
+- **Added**: Silent background mode for unobtrusive operation
+- **Added**: Configurable background update delay (500-10000ms)
+- **Added**: Smart caching system for improved performance
+- **Added**: Advanced document opening handler
+- **Improved**: Copyright detection with better pattern recognition
+- **Improved**: Comprehensive file state analysis
+- **Fixed**: Module loading issues for better VS Code compatibility
+- **Added**: Detailed diagnostic and testing tools
 
 ### 1.0.1
 

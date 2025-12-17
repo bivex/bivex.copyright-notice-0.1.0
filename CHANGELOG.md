@@ -1,13 +1,20 @@
 # Change Log
 All notable changes to the "copyright-notice" extension will be documented in this file.
 
-## [1.1.1] - 2025-12-04
+## [1.1.1] - 2025-12-17
 ### Added
-- `copyright-notice.autoRemoveEmojis` setting for automatic emoji removal on file save
+- Silent background mode for unobtrusive copyright management
+- Configurable background update delay (500-10000ms)
+- Smart caching system for improved performance
+- Advanced document opening handler
+- Comprehensive diagnostic and testing tools
+- `copyright-notice.silentMode` setting (default: true)
+- `copyright-notice.backgroundUpdateDelay` setting (default: 1500ms)
 ### Fixed
-- Copyright notice insertion now properly handles existing file content and maintains correct line breaks
-- Improved copyright detection algorithm to avoid false positives with multi-line comments
-- Enhanced insertion logic to preserve file structure and properly close multi-line comments
+- Method binding issue causing runtime errors in document save handler
+- Improved copyright detection with better pattern recognition
+- Enhanced insertion logic to preserve file structure
+- Module loading compatibility issues resolved
 
 ## [1.1.0] - 2025-12-04
 ### Added

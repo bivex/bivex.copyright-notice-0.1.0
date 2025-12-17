@@ -1,6 +1,5 @@
 {
 	"name": "copyright-notice",
-	"type": "module",
 	"displayName": "⚖️ Copyright Header Generator Pro",
 	"description": "Auto-insert customizable copyright headers in any file format. Smart templating with dynamic year, timestamps, and multi-language support.",
 	"version": "1.1.1",
@@ -38,7 +37,7 @@
 	"activationEvents": [
 		"onStartupFinished"
 	],
-	"main": "./out/extension",
+	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
@@ -102,6 +101,18 @@
 					"type": "boolean",
 					"default": false,
 					"description": "Whether to automatically remove all emojis from files when they are saved."
+				},
+				"copyright-notice.silentMode": {
+					"type": "boolean",
+					"default": true,
+					"description": "Whether to apply copyright changes silently in the background without showing notifications."
+				},
+				"copyright-notice.backgroundUpdateDelay": {
+					"type": "number",
+					"default": 1500,
+					"minimum": 500,
+					"maximum": 10000,
+					"description": "Delay in milliseconds before applying background copyright updates after typing stops."
 				}
 			}
 		}

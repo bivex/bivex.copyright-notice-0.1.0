@@ -33,7 +33,7 @@ function activate(context) {
                         vscode.window.showInformationMessage(`Copyright notice ${result.action.replace('_', ' ')} successfully!`);
                     }
                 } else {
-                    vscode.window.showInformationMessage(`Could not apply copyright notice: ${result.details}`);
+                    vscode.window.showErrorMessage(`Could not apply copyright notice: ${result.details}`);
                 }
             } catch (error) {
                 vscode.window.showErrorMessage(`Error applying copyright notice: ${error.message}`);
