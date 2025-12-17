@@ -9,10 +9,13 @@ Automatically add customizable copyright notices to your code files across multi
 ## ✨ What's New in v1.1.1
 
 - 🔇 **Silent Background Operation**: Works invisibly without interrupting your workflow
-- ⚡ **Performance Optimized**: Smart caching and configurable delays for smooth operation
-- 🎯 **Advanced Detection**: Improved copyright pattern recognition
-- 📊 **Comprehensive Diagnostics**: Built-in testing and analysis tools
+- ⚡ **Smart Debouncing**: Intelligent delay management adapts to file activity levels
+- 🎯 **Advanced Detection**: Improved copyright pattern recognition with confidence scoring
+- 📁 **Folder Restrictions**: Control where copyright notices are applied
+- 🛡️ **Comprehensive Exclusions**: Auto-excludes common build/dependency folders
+- 📊 **Performance Optimized**: Smart caching and configurable delays for smooth operation
 - 🔧 **Configurable Timing**: Customize delays and behavior to match your workflow
+- 📈 **Enhanced Diagnostics**: Built-in testing and analysis tools
 
 ![Extension Demo](images/image.png)
 
@@ -27,6 +30,9 @@ Automatically add customizable copyright notices to your code files across multi
 - 🔄 **Update Time Tracking**: Automatically updates the "last modified" timestamp
 - 🔍 **Smart Detection**: Avoids duplicate notices with advanced pattern recognition
 - 🧩 **File Extension Filtering**: Target specific file types
+- 📁 **Folder Restrictions**: Control where copyright notices are applied
+- 🛡️ **Smart Exclusions**: Auto-excludes common build/dependency folders (node_modules, .git, dist, etc.)
+- 🧠 **Intelligent Debouncing**: Adapts delay based on file activity for optimal performance
 - 🔇 **Silent Mode**: Works invisibly in the background without notifications
 - ⚡ **Performance Optimized**: Smart caching and configurable delays for smooth operation
 - 📊 **Advanced Diagnostics**: Comprehensive analysis and detailed reporting
@@ -42,8 +48,10 @@ Uses advanced pattern recognition to detect existing copyright notices, avoiding
 ### Multiple Trigger Points
 - **File Opening**: Automatically processes files when first opened
 - **Typing Pauses**: Adds copyright during editing after configurable delay
+- **Smart Debouncing**: Adapts delay based on how recently you worked with the file
 - **Manual Command**: Apply notice on demand with the Command Palette (Ctrl+Shift+P)
 - **Editor Switching**: Processes files when switching between editors
+- **Inactive File Detection**: Immediately updates copyright when switching to long-unused files
 
 ### Emoji Management
 Remove all emojis from any file using the "Remove All Emojis from File" command. This is useful for cleaning up code that contains unwanted emoji characters.
@@ -54,6 +62,8 @@ Remove all emojis from any file using the "Remove All Emojis from File" command.
 - `copyright-notice.languages`: Languages that the extension will be activated for (default: all languages)
 - `copyright-notice.fileExtensions`: File extensions to which the copyright notice will be applied (e.g., ['.js', '.ts', '.py']). Use ['*'] for all files.
 - `copyright-notice.excludedFiles`: File patterns to exclude from copyright notices. Supports glob patterns. Defaults include common build/dependency folders like node_modules, .git, dist, build, etc.
+- `copyright-notice.allowedFolders`: Comma-separated list of folder paths where copyright notices can be applied. If empty, applies to all folders. Paths can be relative to workspace root or absolute (e.g., ['src', 'lib', 'app/components']).
+- `copyright-notice.template`: Copyright notice template. Use {year} for the current year, {timestamp} for creation time, and {updatetime} for last update time.
 
 ### Default Exclusions
 
@@ -72,8 +82,6 @@ The extension automatically excludes these common folders and files by default:
 - `**/yarn.lock` - Yarn lock file
 - `**/.DS_Store` - macOS system files
 - `**/Thumbs.db` - Windows system files
-- `copyright-notice.allowedFolders`: Comma-separated list of folder paths where copyright notices can be applied. If empty, applies to all folders. Paths can be relative to workspace root or absolute (e.g., ['src', 'lib', 'app/components']).
-- `copyright-notice.template`: Copyright notice template. Use {year} for the current year, {timestamp} for creation time, and {updatetime} for last update time.
 
 ### Timestamp Configuration
 - `copyright-notice.includeTimestamp`: Whether to include timestamp when the copyright notice was added (default: false).
@@ -84,6 +92,9 @@ The extension automatically excludes these common folders and files by default:
 ### Background Operation
 - `copyright-notice.silentMode`: Whether to apply copyright changes silently in the background without showing notifications (default: true).
 - `copyright-notice.backgroundUpdateDelay`: Delay in milliseconds before applying background copyright updates after typing stops (default: 1500, min: 500, max: 10000).
+- `copyright-notice.smartDebouncing`: Enable smart debouncing that increases delay for files that haven't been modified recently, allowing copyright updates even for inactive files (default: true).
+- `copyright-notice.smartDebounceMultiplier`: Multiplier for debounce delay when file hasn't been modified for a while (default: 2.0, min: 1.0, max: 5.0).
+- `copyright-notice.smartDebounceThreshold`: Time in milliseconds after which smart debouncing activates (default: 300000 = 5 minutes).
 
 ### Additional Features
 - `copyright-notice.autoRemoveEmojis`: Whether to automatically remove all emojis from files when they are saved (default: false).
@@ -224,6 +235,19 @@ This configuration shows notifications and applies changes quickly, with automat
 
 This configuration only applies copyright notices to files in the specified folders (`src`, `lib`, and `app/components`), leaving other folders untouched.
 
+### Smart Debouncing Mode
+
+```json
+{
+  "copyright-notice.smartDebouncing": true,
+  "copyright-notice.smartDebounceMultiplier": 3.0,
+  "copyright-notice.smartDebounceThreshold": 600000,
+  "copyright-notice.silentMode": true
+}
+```
+
+This configuration enables smart debouncing with 3x delay increase for files inactive for more than 10 minutes, ensuring copyright updates even for files you haven't worked on recently.
+
 ### Custom Exclusions
 
 ```json
@@ -275,8 +299,9 @@ The extension uses intelligent caching to optimize performance:
 
 ### Configurable Delays
 - **Background Update Delay**: Configurable pause before applying changes (500-10000ms)
+- **Smart Debouncing**: Automatically adjusts delay based on file activity (1x-5x multiplier)
 - **Debounced Processing**: Prevents excessive processing during rapid typing
-- **Optimized Timing**: Balances responsiveness with performance
+- **Optimized Timing**: Balances responsiveness with performance for different file types
 
 ### Silent Operation
 - **Zero Interruptions**: Works invisibly in the background
@@ -331,11 +356,17 @@ The extension includes comprehensive testing tools for validation:
 # Run background mode tests
 node tests/background_mode_test.cjs
 
+# Run smart debouncing tests
+node tests/smart_debouncing_test.cjs
+
 # Run diagnostic analysis
 node tests/diagnostic_test.cjs
 
 # Run pattern recognition tests
 node tests/pattern_test.cjs
+
+# Run exclusions demonstration
+node tests/simple_exclusions_demo.cjs
 ```
 
 ### Diagnostic Features
@@ -373,10 +404,14 @@ Please submit issues on our [GitHub repository](https://github.com/bivex/bivex.c
 
 Major performance and usability improvements:
 - **Added**: Silent background mode for unobtrusive operation
+- **Added**: Smart debouncing with adaptive delay management
+- **Added**: Folder restriction controls for targeted application
+- **Added**: Comprehensive default exclusions (node_modules, .git, dist, etc.)
+- **Added**: Inactive file detection for immediate copyright updates
 - **Added**: Configurable background update delay (500-10000ms)
 - **Added**: Smart caching system for improved performance
 - **Added**: Advanced document opening handler
-- **Improved**: Copyright detection with better pattern recognition
+- **Improved**: Copyright detection with confidence scoring
 - **Improved**: Comprehensive file state analysis
 - **Fixed**: Module loading issues for better VS Code compatibility
 - **Added**: Detailed diagnostic and testing tools

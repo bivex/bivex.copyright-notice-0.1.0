@@ -136,6 +136,25 @@
 						"type": "string"
 					},
 					"description": "Comma-separated list of folder paths where copyright notices can be applied. If empty, applies to all folders. Paths can be relative to workspace root or absolute. (e.g., ['src', 'lib', 'app/components'])"
+				},
+				"copyright-notice.smartDebouncing": {
+					"type": "boolean",
+					"default": true,
+					"description": "Enable smart debouncing that increases delay for files that haven't been modified recently, allowing copyright updates even for inactive files."
+				},
+				"copyright-notice.smartDebounceMultiplier": {
+					"type": "number",
+					"default": 2.0,
+					"minimum": 1.0,
+					"maximum": 5.0,
+					"description": "Multiplier for debounce delay when file hasn't been modified for a while (1.0 = no increase, 5.0 = 5x increase)."
+				},
+				"copyright-notice.smartDebounceThreshold": {
+					"type": "number",
+					"default": 300000,
+					"minimum": 60000,
+					"maximum": 1800000,
+					"description": "Time in milliseconds after which smart debouncing activates (default: 5 minutes)."
 				}
 			}
 		}

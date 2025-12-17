@@ -43,8 +43,68 @@ class CopyrightHandler {
             updateTimeFormat: config.get('updateTimeFormat', this.DEFAULT_TIMESTAMP_FORMAT),
             autoRemoveEmojis: config.get('autoRemoveEmojis', false),
             silentMode: config.get('silentMode', true),
-            backgroundUpdateDelay: config.get('backgroundUpdateDelay', 1500)
+            backgroundUpdateDelay: config.get('backgroundUpdateDelay', 1500),
+            smartDebouncing: config.get('smartDebouncing', true),
+            smartDebounceMultiplier: config.get('smartDebounceMultiplier', 2.0),
+            smartDebounceThreshold: config.get('smartDebounceThreshold', 300000)
         };
+    }
+
+    /**
+     * Check if file should be updated immediately (inactive file detection)
+     * @param {vscode.TextDocument} document - The document to check
+     * @param {Object} config - Extension configuration
+     * @returns {boolean} True if file should be updated immediately
+     */
+    shouldUpdateInactiveFile(document, config) {
+        if (!config.smartDebouncing) {
+            return false;
+        }
+
+        // Get cached state for this file
+        const cachedState = this.getCachedFileState(document);
+        if (!cachedState) {
+            return false;
+        }
+
+        const timeSinceCache = Date.now() - cachedState.cachedAt;
+        const threshold = config.smartDebounceThreshold * 2; // More aggressive threshold for immediate updates
+
+        // If file hasn't been processed for a while, update immediately when user switches to it
+        return timeSinceCache > threshold;
+    }
+
+    /**
+     * Calculate dynamic debounce delay based on file activity
+     * @returns {number} Debounce delay in milliseconds
+     */
+    getDebounceDelay() {
+        const config = this.getConfig();
+        const baseDelay = config.backgroundUpdateDelay || this.debounceInterval;
+
+        if (!config.smartDebouncing) {
+            return baseDelay;
+        }
+
+        const timeSinceLastEdit = Date.now() - this.lastEditTime;
+        const threshold = config.smartDebounceThreshold;
+
+        if (timeSinceLastEdit < threshold) {
+            // Normal delay for recently edited files
+            return baseDelay;
+        }
+
+        // Calculate multiplier based on how long file has been inactive
+        const multiplier = Math.min(
+            config.smartDebounceMultiplier +
+            Math.floor(timeSinceLastEdit / threshold) * 0.5, // Additional 0.5x per threshold period
+            5.0 // Max multiplier of 5.0
+        );
+
+        const smartDelay = Math.min(baseDelay * multiplier, 10000); // Max 10 seconds
+
+        //console.log(`[Copyright] Smart debouncing: ${timeSinceLastEdit}ms since last edit → multiplier: ${multiplier.toFixed(1)}x → ${smartDelay}ms delay`);
+        return smartDelay;
     }
 
     /**
@@ -971,8 +1031,8 @@ class CopyrightHandler {
         const now = Date.now();
         const config = this.getConfig();
 
-        // Use configurable debounce interval
-        const debounceInterval = config.backgroundUpdateDelay || this.debounceInterval;
+        // Use dynamic debounce delay (smart debouncing)
+        const debounceInterval = this.getDebounceDelay();
         //console.log(`[Copyright] Debounce interval: ${debounceInterval}ms, time since last edit: ${now - this.lastEditTime}ms`);
 
         // Only proceed if enough time has passed since last edit
@@ -1033,15 +1093,32 @@ class CopyrightHandler {
         if (editor) {
             const config = this.getConfig();
             //console.log(`[Copyright] Processing editor change for ${editor.document.fileName}`);
-            this.addCopyrightIfNeeded(editor).then(result => {
-                //console.log(`[Copyright] handleEditorChange result:`, result);
-                // Only log successful actions in non-silent mode
-                if (!config.silentMode && result.success && result.action !== 'no_action') {
-                    //console.log(`Copyright ${result.action} applied to ${editor.document.fileName}: ${result.details}`);
-                }
-            }).catch(error => {
-                console.error('[Copyright] Error in editor change copyright handling:', error);
-            });
+
+            // Check if this is an inactive file that needs immediate update
+            const shouldUpdateImmediately = this.shouldUpdateInactiveFile(editor.document, config);
+
+            if (shouldUpdateImmediately) {
+                //console.log(`[Copyright] Inactive file detected, updating immediately`);
+                this.addCopyrightIfNeeded(editor).then(result => {
+                    //console.log(`[Copyright] Immediate update result:`, result);
+                    if (!config.silentMode && result.success && result.action !== 'no_action') {
+                        //console.log(`Copyright ${result.action} applied immediately to ${editor.document.fileName}`);
+                    }
+                }).catch(error => {
+                    console.error('[Copyright] Error in immediate copyright update:', error);
+                });
+            } else {
+                // Normal processing with debouncing
+                this.addCopyrightIfNeeded(editor).then(result => {
+                    //console.log(`[Copyright] handleEditorChange result:`, result);
+                    // Only log successful actions in non-silent mode
+                    if (!config.silentMode && result.success && result.action !== 'no_action') {
+                        //console.log(`Copyright ${result.action} applied to ${editor.document.fileName}: ${result.details}`);
+                    }
+                }).catch(error => {
+                    console.error('[Copyright] Error in editor change copyright handling:', error);
+                });
+            }
         } else {
             //console.log(`[Copyright] handleEditorChange called with null editor`);
         }
