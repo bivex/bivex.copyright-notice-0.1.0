@@ -220,18 +220,18 @@ class CopyrightHandler {
      * @returns {string} Formatted template
      */
     formatCopyrightTemplate(config) {
-        const currentYear = new Date().getFullYear();
-        let formattedTemplate = config.template.replace(/{year}/g, currentYear.toString());
+            const currentYear = new Date().getFullYear();
+            let formattedTemplate = config.template.replace(/{year}/g, currentYear.toString());
 
-        const now = new Date();
-        if (config.includeTimestamp) {
-            const timestamp = this.formatTimestamp(now, config.timestampFormat);
-            formattedTemplate = formattedTemplate.replace(/{timestamp}/g, timestamp);
-        }
-        if (config.includeUpdateTime) {
-            const updateTime = this.formatTimestamp(now, config.updateTimeFormat);
-            formattedTemplate = formattedTemplate.replace(/{updatetime}/g, updateTime);
-        }
+            const now = new Date();
+            if (config.includeTimestamp) {
+                const timestamp = this.formatTimestamp(now, config.timestampFormat);
+                formattedTemplate = formattedTemplate.replace(/{timestamp}/g, timestamp);
+            }
+            if (config.includeUpdateTime) {
+                const updateTime = this.formatTimestamp(now, config.updateTimeFormat);
+                formattedTemplate = formattedTemplate.replace(/{updatetime}/g, updateTime);
+            }
 
         return formattedTemplate;
     }
@@ -257,57 +257,57 @@ class CopyrightHandler {
 
         const document = editor.document;
         const text = document.getText();
-        const lines = text.split('\n');
-        let endMalformedIndex = -1;
+            const lines = text.split('\n');
+            let endMalformedIndex = -1;
 
-        // Find the end of the malformed comment block
-        for (let i = 0; i < Math.min(10, lines.length); i++) {
-            const line = lines[i];
-            if (line.includes("Copyright (c)") || line.includes("Copyright")) {
+            // Find the end of the malformed comment block
+            for (let i = 0; i < Math.min(10, lines.length); i++) {
+                const line = lines[i];
+                if (line.includes("Copyright (c)") || line.includes("Copyright")) {
                 // Handle multiline comments
-                if (line.trim().startsWith("/*")) {
-                    const closeIndex = text.indexOf("*/", text.indexOf(line));
+                    if (line.trim().startsWith("/*")) {
+                        const closeIndex = text.indexOf("*/", text.indexOf(line));
                     endMalformedIndex = closeIndex !== -1 ? closeIndex + 2 : text.indexOf(line) + line.length;
                 }
                 // Handle single line comments
                 else if (line.trim().startsWith("//") || line.trim().startsWith("#")) {
-                    endMalformedIndex = text.indexOf(line) + line.length;
-                }
+                        endMalformedIndex = text.indexOf(line) + line.length;
+                    }
 
                 // Include subsequent empty lines
-                if (endMalformedIndex !== -1) {
-                    let nextLineIndex = i + 1;
-                    while (nextLineIndex < lines.length && lines[nextLineIndex].trim() === '') {
-                        endMalformedIndex = text.indexOf(lines[nextLineIndex]) + lines[nextLineIndex].length;
-                        nextLineIndex++;
+                    if (endMalformedIndex !== -1) {
+                        let nextLineIndex = i + 1;
+                        while (nextLineIndex < lines.length && lines[nextLineIndex].trim() === '') {
+                            endMalformedIndex = text.indexOf(lines[nextLineIndex]) + lines[nextLineIndex].length;
+                            nextLineIndex++;
+                        }
                     }
+                    break;
                 }
-                break;
             }
-        }
 
         if (endMalformedIndex === -1) {
             return false; // Could not find malformed copyright end
         }
 
-        const afterCopyright = text.substring(endMalformedIndex).replace(/^\s*\n/, '');
-        const newContent = formattedTemplate + afterCopyright;
+                const afterCopyright = text.substring(endMalformedIndex).replace(/^\s*\n/, '');
+                const newContent = formattedTemplate + afterCopyright;
 
-        const edit = new vscode.WorkspaceEdit();
-        edit.replace(document.uri, new vscode.Range(
-            document.positionAt(0),
-            document.positionAt(text.length)
-        ), newContent);
+                const edit = new vscode.WorkspaceEdit();
+                edit.replace(document.uri, new vscode.Range(
+                    document.positionAt(0),
+                    document.positionAt(text.length)
+                ), newContent);
 
-        try {
-            const success = await vscode.workspace.applyEdit(edit);
-            if (success) {
-                await document.save();
-                return true;
-            }
-        } catch (error) {
-            console.error('Failed to fix malformed copyright:', error);
-        }
+                try {
+                    const success = await vscode.workspace.applyEdit(edit);
+                    if (success) {
+                        await document.save();
+                        return true;
+                    }
+                } catch (error) {
+                    console.error('Failed to fix malformed copyright:', error);
+                }
 
         return false;
     }
@@ -392,52 +392,52 @@ class CopyrightHandler {
      * @returns {Object} Insertion information
      */
     findOptimalInsertPosition(text) {
-        const lines = text.split('\n');
-        let insertPosition = 0;
-        let foundContent = false;
-        let lineIndex = 0;
+                const lines = text.split('\n');
+                let insertPosition = 0;
+                let foundContent = false;
+                let lineIndex = 0;
         let leadingEmptyLines = 0;
         let hasShebang = false;
         let shebangEndPosition = 0;
 
         // Calculate byte offset for a line index
-        const getOffsetForLine = (lineIdx) => {
-            let offset = 0;
-            for (let j = 0; j < lineIdx && j < lines.length; j++) {
+                const getOffsetForLine = (lineIdx) => {
+                    let offset = 0;
+                    for (let j = 0; j < lineIdx && j < lines.length; j++) {
                 offset += lines[j].length + 1; // +1 for newline
-            }
-            return offset;
-        };
+                    }
+                    return offset;
+                };
 
-        while (lineIndex < lines.length) {
-            const line = lines[lineIndex];
-            const trimmedLine = line.trim();
+                while (lineIndex < lines.length) {
+                    const line = lines[lineIndex];
+                    const trimmedLine = line.trim();
 
-            if (trimmedLine === '') {
-                leadingEmptyLines++;
-                lineIndex++;
-                continue;
-            }
+                    if (trimmedLine === '') {
+                        leadingEmptyLines++;
+                        lineIndex++;
+                        continue;
+                    }
 
-            if (trimmedLine.startsWith('#!')) {
-                hasShebang = true;
+                    if (trimmedLine.startsWith('#!')) {
+                        hasShebang = true;
                 leadingEmptyLines = 0; // Reset
-                lineIndex++;
-                shebangEndPosition = getOffsetForLine(lineIndex);
-                continue;
-            }
+                        lineIndex++;
+                        shebangEndPosition = getOffsetForLine(lineIndex);
+                        continue;
+                    }
 
             // Found first content
-            insertPosition = getOffsetForLine(lineIndex);
-            foundContent = true;
-            break;
-        }
+                    insertPosition = getOffsetForLine(lineIndex);
+                    foundContent = true;
+                    break;
+                }
 
         // Handle files with only whitespace
-        if (!foundContent) {
-            insertPosition = 0;
-            foundContent = true;
-        }
+                if (!foundContent) {
+                    insertPosition = 0;
+                    foundContent = true;
+                }
 
         return {
             insertPosition,
@@ -449,26 +449,288 @@ class CopyrightHandler {
     }
 
     /**
-     * Add copyright notice to document if needed
+     * Smart copyright management with comprehensive file analysis
      * @param {vscode.TextEditor} editor - The active text editor
-     * @returns {Promise<boolean>} Promise resolving to true if notice was added
+     * @returns {Promise<Object>} Promise resolving to action result with details
      */
     async addCopyrightIfNeeded(editor) {
-        if (!this.isEnabled(editor.document)) {
-            return false;
+        const analysis = this.analyzeDocumentState(editor);
+
+        if (!analysis.shouldProcess) {
+            return {
+                success: false,
+                action: 'skipped',
+                reason: analysis.skipReason
+            };
         }
 
+        const action = this.determineOptimalAction(analysis);
+        const result = await this.executeAction(editor, action, analysis);
+
+        return {
+            success: result.success,
+            action: action.type,
+            details: result.details,
+            fileState: analysis.state
+        };
+    }
+
+    /**
+     * Comprehensive document state analysis
+     * @param {vscode.TextEditor} editor - The active text editor
+     * @returns {Object} Analysis results with file state and recommendations
+     */
+    analyzeDocumentState(editor) {
         const document = editor.document;
         const text = document.getText();
 
-        // If well-formed copyright already exists, try to update timestamp if enabled
-        const wellFormedCopyrightExists = this.hasCopyrightNotice(text);
-        if (wellFormedCopyrightExists) {
-            return await this.handleExistingCopyright(editor);
-        } else if (this.hasMalformedCopyright(text)) {
-            return await this.fixMalformedCopyright(editor);
-        } else {
-            return await this.insertNewCopyright(editor);
+        // Quick eligibility check
+        if (!this.isEnabled(document)) {
+            return {
+                shouldProcess: false,
+                skipReason: 'file_not_eligible',
+                state: null
+            };
+        }
+
+        // Empty file check
+        if (!text || text.trim().length === 0) {
+            return {
+                shouldProcess: true,
+                skipReason: null,
+                state: {
+                    type: 'empty',
+                    hasCopyright: false,
+                    isMalformed: false,
+                    needsTimestampUpdate: false,
+                    confidence: 1.0
+                }
+            };
+        }
+
+        // Analyze copyright state with confidence scoring
+        const copyrightAnalysis = this.analyzeCopyrightState(text);
+        const timestampAnalysis = this.analyzeTimestampState(text, copyrightAnalysis);
+
+        return {
+            shouldProcess: true,
+            skipReason: null,
+            state: Object.assign({}, copyrightAnalysis, timestampAnalysis, {
+                fileSize: text.length,
+                lineCount: text.split('\n').length,
+                lastModified: document.isDirty ? 'unsaved' : 'saved'
+            })
+        };
+    }
+
+    /**
+     * Analyze copyright presence and quality
+     * @param {string} text - Document content
+     * @returns {Object} Copyright analysis results
+     */
+    analyzeCopyrightState(text) {
+        const lines = text.split('\n');
+        const firstTenLines = lines.slice(0, Math.min(10, lines.length)).join('\n');
+
+        const hasWellFormed = this.hasCopyrightNotice(text);
+        const hasMalformed = this.hasMalformedCopyright(text);
+
+        // Calculate confidence based on pattern strength
+        let confidence = 0.5;
+        if (hasWellFormed) {
+            confidence = 0.95;
+        } else if (hasMalformed) {
+            confidence = 0.8;
+        } else if (firstTenLines.includes('Copyright') || firstTenLines.includes('©')) {
+            confidence = 0.6;
+        }
+
+        return {
+            type: hasWellFormed ? 'well_formed' : hasMalformed ? 'malformed' : 'missing',
+            hasCopyright: hasWellFormed || hasMalformed,
+            isWellFormed: hasWellFormed,
+            isMalformed: hasMalformed,
+            copyrightLine: hasWellFormed || hasMalformed ? this.findCopyrightLine(lines) : null,
+            confidence: confidence
+        };
+    }
+
+    /**
+     * Analyze timestamp update requirements
+     * @param {string} text - Document content
+     * @param {Object} copyrightAnalysis - Copyright analysis results
+     * @returns {Object} Timestamp analysis results
+     */
+    analyzeTimestampState(text, copyrightAnalysis) {
+        if (!copyrightAnalysis.isWellFormed) {
+            return { needsTimestampUpdate: false };
+        }
+
+        const config = this.getConfig();
+        if (!config.includeUpdateTime) {
+            return { needsTimestampUpdate: false };
+        }
+
+        // Check if timestamp exists and is current
+        const lines = text.split('\n');
+        const copyrightBlock = this.extractCopyrightBlock(lines);
+        const updateLineRegex = /(.*Last\s+Updated:)([^]*?)(\n\s*\*|$)/i;
+        const lineMatch = copyrightBlock.match(updateLineRegex);
+
+        if (!lineMatch) {
+            return { needsTimestampUpdate: true, reason: 'missing_timestamp' };
+        }
+
+        // Check if timestamp is outdated (more than 1 day old)
+        const timestampText = lineMatch[2].trim();
+        const isOutdated = this.isTimestampOutdated(timestampText);
+
+        return {
+            needsTimestampUpdate: isOutdated,
+            reason: isOutdated ? 'outdated' : 'current',
+            currentTimestamp: timestampText
+        };
+    }
+
+    /**
+     * Determine the optimal action based on analysis
+     * @param {Object} analysis - Document analysis results
+     * @returns {Object} Recommended action
+     */
+    determineOptimalAction(analysis) {
+        const state = analysis.state;
+        const config = this.getConfig();
+
+        // Priority order: update timestamp > fix malformed > insert new
+        if (state.needsTimestampUpdate) {
+            return {
+                type: 'update_timestamp',
+                priority: 'high',
+                reason: state.reason
+            };
+        }
+
+        if (state.isMalformed) {
+            return {
+                type: 'fix_malformed',
+                priority: 'high',
+                reason: 'malformed_copyright_detected'
+            };
+        }
+
+        if (!state.hasCopyright) {
+            return {
+                type: 'insert_new',
+                priority: 'medium',
+                reason: 'copyright_missing'
+            };
+        }
+
+        // Copyright is well-formed and up-to-date
+        return {
+            type: 'no_action',
+            priority: 'low',
+            reason: 'copyright_current'
+        };
+    }
+
+    /**
+     * Execute the determined action
+     * @param {vscode.TextEditor} editor - The active text editor
+     * @param {Object} action - Action to execute
+     * @param {Object} analysis - Analysis results
+     * @returns {Promise<Object>} Action execution result
+     */
+    async executeAction(editor, action, analysis) {
+        try {
+            switch (action.type) {
+                case 'update_timestamp': {
+                    const updated = await this.updateTimestampIfNeeded(editor);
+                    return {
+                        success: updated,
+                        details: updated ? 'timestamp_updated' : 'timestamp_update_failed'
+                    };
+                }
+
+                case 'fix_malformed': {
+                    const fixed = await this.fixMalformedCopyright(editor);
+                    return {
+                        success: fixed,
+                        details: fixed ? 'malformed_copyright_fixed' : 'malformed_copyright_fix_failed'
+                    };
+                }
+
+                case 'insert_new': {
+                    const inserted = await this.insertNewCopyright(editor);
+                    return {
+                        success: inserted,
+                        details: inserted ? 'copyright_inserted' : 'copyright_insertion_failed'
+                    };
+                }
+
+                case 'no_action':
+                default:
+                    return {
+                        success: true,
+                        details: 'no_action_needed'
+                    };
+                }
+            } catch (error) {
+            console.error(`Error executing action ${action.type}:`, error);
+            return {
+                success: false,
+                details: `error: ${error.message}`,
+                error: error
+            };
+        }
+    }
+
+    /**
+     * Find the line number containing copyright
+     * @param {string[]} lines - Document lines
+     * @returns {number|null} Line number or null
+     */
+    findCopyrightLine(lines) {
+        for (let i = 0; i < Math.min(10, lines.length); i++) {
+            if (lines[i].includes("Copyright (c)") || lines[i].includes("Copyright")) {
+                return i + 1; // 1-based line numbering
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Extract the copyright block from document lines
+     * @param {string[]} lines - Document lines
+     * @returns {string} Copyright block text
+     */
+    extractCopyrightBlock(lines) {
+        const copyrightRegex = /\/\*[\s\S]*?\*\//;
+        const text = lines.join('\n');
+        const blockMatch = text.match(copyrightRegex);
+        return blockMatch ? blockMatch[0] : '';
+    }
+
+    /**
+     * Check if timestamp is outdated
+     * @param {string} timestampText - Timestamp string
+     * @returns {boolean} True if outdated
+     */
+    isTimestampOutdated(timestampText) {
+        try {
+            // Simple check - if timestamp is more than 24 hours old
+            const timestampMatch = timestampText.match(/(\d{4}-\d{2}-\d{2})/);
+            if (!timestampMatch) return true;
+
+            const timestampDate = new Date(timestampMatch[1]);
+            const now = new Date();
+            const diffTime = Math.abs(now - timestampDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            return diffDays > 1;
+        } catch (error) {
+            // If we can't parse the timestamp, consider it outdated
+            return true;
         }
     }
 
@@ -532,7 +794,13 @@ class CopyrightHandler {
                         this.updateTimestampIfNeeded(editor);
                     } else {
                         // Otherwise just check if we need to add a copyright
-                        this.addCopyrightIfNeeded(editor);
+                        this.addCopyrightIfNeeded(editor).then(result => {
+                            if (result.success && result.action !== 'no_action') {
+                                console.log(`Copyright ${result.action} applied: ${result.details}`);
+                            }
+                        }).catch(error => {
+                            console.error('Error in automatic copyright update:', error);
+                        });
                     }
                 }
             }, this.debounceInterval);
@@ -545,7 +813,14 @@ class CopyrightHandler {
      */
     handleEditorChange(editor) {
         if (editor) {
-            this.addCopyrightIfNeeded(editor);
+            this.addCopyrightIfNeeded(editor).then(result => {
+                // Log successful actions for debugging
+                if (result.success && result.action !== 'no_action') {
+                    console.log(`Copyright ${result.action} applied to ${editor.document.fileName}: ${result.details}`);
+                }
+            }).catch(error => {
+                console.error('Error in editor change copyright handling:', error);
+            });
         }
     }
 

@@ -25,11 +25,15 @@ function activate(context) {
             }
 
             try {
-                const added = await copyrightHandler.addCopyrightIfNeeded(editor);
-                if (added) {
-                    vscode.window.showInformationMessage('Copyright notice applied!');
+                const result = await copyrightHandler.addCopyrightIfNeeded(editor);
+                if (result.success) {
+                    if (result.action === 'no_action') {
+                        vscode.window.showInformationMessage('Copyright notice is already current.');
+                    } else {
+                        vscode.window.showInformationMessage(`Copyright notice ${result.action.replace('_', ' ')} successfully!`);
+                    }
                 } else {
-                    vscode.window.showInformationMessage('No copyright notice needed or could not be applied.');
+                    vscode.window.showInformationMessage(`Could not apply copyright notice: ${result.details}`);
                 }
             } catch (error) {
                 vscode.window.showErrorMessage(`Error applying copyright notice: ${error.message}`);
