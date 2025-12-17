@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Test for background mode functionality
-//console.log('🧪 Testing Background Mode Copyright Extension...\n');
+console.log('🧪 Testing Background Mode Copyright Extension...\n');
 
 // Mock VS Code classes for testing
 class MockWorkspaceEdit {
@@ -67,9 +67,9 @@ class MockEditor {
 const CopyrightHandler = require('../out/CopyrightHandler.js').CopyrightHandler;
 
 async function runBackgroundModeTest() {
-    //console.log('📋 Test 1: Basic file without copyright');
+    console.log('📋 Test 1: Basic file without copyright');
     const testFile1 = `function hello() {
-    //console.log("Hello World");
+    console.log("Hello World");
     return true;
 }`;
 
@@ -80,27 +80,27 @@ async function runBackgroundModeTest() {
     // Override applyEdit for testing
     const originalApplyEdit = vscode.workspace.applyEdit;
     vscode.workspace.applyEdit = (edit) => {
-        //console.log('   📝 Edit operations:', edit.operations.length);
+        console.log('   📝 Edit operations:', edit.operations.length);
         edit.operations.forEach((op, i) => {
-            //console.log(`     ${i + 1}. ${op.type}: ${op.content ? op.content.substring(0, 50) + '...' : 'replace'}`);
+            console.log(`     ${i + 1}. ${op.type}: ${op.content ? op.content.substring(0, 50) + '...' : 'replace'}`);
         });
         return Promise.resolve(true);
     };
 
     try {
         const result = await handler.addCopyrightIfNeeded(editor1);
-        //console.log('   ✅ Result:', result);
-        //console.log('   📊 Action:', result.action);
-        //console.log('   📝 Details:', result.details);
+        console.log('   ✅ Result:', result);
+        console.log('   📊 Action:', result.action);
+        console.log('   📝 Details:', result.details);
     } catch (error) {
-        //console.log('   ❌ Error:', error.message);
+        console.log('   ❌ Error:', error.message);
     }
 
-    //console.log('\n📋 Test 2: File with existing copyright');
+    console.log('\n📋 Test 2: File with existing copyright');
     const testFile2 = `/* Copyright (c) 2024 bivex */
 
 function hello() {
-    //console.log("Hello World");
+    console.log("Hello World");
     return true;
 }`;
 
@@ -109,24 +109,24 @@ function hello() {
 
     try {
         const result = await handler.addCopyrightIfNeeded(editor2);
-        //console.log('   ✅ Result:', result);
-        //console.log('   📊 Action:', result.action);
-        //console.log('   📝 Details:', result.details);
+        console.log('   ✅ Result:', result);
+        console.log('   📊 Action:', result.action);
+        console.log('   📝 Details:', result.details);
     } catch (error) {
-        //console.log('   ❌ Error:', error.message);
+        console.log('   ❌ Error:', error.message);
     }
 
-    //console.log('\n📋 Test 3: Silent mode behavior');
+    console.log('\n📋 Test 3: Silent mode behavior');
     // Test with silent mode enabled (default)
-    //console.log('   🔇 Silent mode: ON (default)');
+    console.log('   🔇 Silent mode: ON (default)');
 
-    //console.log('\n📋 Test 4: Cache functionality');
+    console.log('\n📋 Test 4: Cache functionality');
     // Test caching
-    //console.log('   💾 Testing cache...');
+    console.log('   💾 Testing cache...');
     const cachedState = handler.getCachedFileState(document1);
-    //console.log('   📦 Cache state:', cachedState ? 'EXISTS' : 'EMPTY');
+    console.log('   📦 Cache state:', cachedState ? 'EXISTS' : 'EMPTY');
 
-    //console.log('\n📋 Test 5: Malformed copyright detection');
+    console.log('\n📋 Test 5: Malformed copyright detection');
     const testFile3 = `// Copyright 2024
 // Some old license
 
@@ -139,17 +139,17 @@ function test() {
 
     try {
         const result = await handler.addCopyrightIfNeeded(editor3);
-        //console.log('   ✅ Result:', result);
-        //console.log('   📊 Action:', result.action);
-        //console.log('   📝 Details:', result.details);
+        console.log('   ✅ Result:', result);
+        console.log('   📊 Action:', result.action);
+        console.log('   📝 Details:', result.details);
     } catch (error) {
-        //console.log('   ❌ Error:', error.message);
+        console.log('   ❌ Error:', error.message);
     }
 
     // Restore original applyEdit
     vscode.workspace.applyEdit = originalApplyEdit;
 
-    //console.log('\n🎉 Background mode tests completed!');
+    console.log('\n🎉 Background mode tests completed!');
 }
 
 // Mock VS Code API for testing

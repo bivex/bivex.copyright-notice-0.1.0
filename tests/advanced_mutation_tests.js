@@ -12,7 +12,7 @@ class AdvancedMutationTester extends MutationTester {
 
     // Test false positives in copyright detection
     testCopyrightDetectionEdgeCases() {
-        //console.log('🔍 Testing Copyright Detection Edge Cases...\n');
+        console.log('🔍 Testing Copyright Detection Edge Cases...\n');
 
         const detectionTests = [
             // False positives that should NOT be detected as copyright
@@ -69,22 +69,22 @@ class AdvancedMutationTester extends MutationTester {
 
             if (correct) {
                 detectionPassed++;
-                //console.log(`✅ Detection ${index + 1} PASS: ${test.name}`);
+                console.log(`✅ Detection ${index + 1} PASS: ${test.name}`);
             } else {
                 detectionFailed++;
-                //console.log(`❌ Detection ${index + 1} FAIL: ${test.name}`);
-                //console.log(`   Expected: ${test.shouldDetect ? 'DETECT' : 'NOT DETECT'}`);
-                //console.log(`   Got: ${detected ? 'DETECTED' : 'NOT DETECTED'}`);
+                console.log(`❌ Detection ${index + 1} FAIL: ${test.name}`);
+                console.log(`   Expected: ${test.shouldDetect ? 'DETECT' : 'NOT DETECT'}`);
+                console.log(`   Got: ${detected ? 'DETECTED' : 'NOT DETECTED'}`);
             }
         });
 
-        //console.log(`\n🔍 Detection Test Results: ${detectionPassed} passed, ${detectionFailed} failed`);
+        console.log(`\n🔍 Detection Test Results: ${detectionPassed} passed, ${detectionFailed} failed`);
         return { detectionPassed, detectionFailed };
     }
 
     // Test insertion point calculation edge cases
     testInsertionPointEdgeCases() {
-        //console.log('\n📍 Testing Insertion Point Calculation...\n');
+        console.log('\n📍 Testing Insertion Point Calculation...\n');
 
         const insertionTests = [
             {
@@ -133,22 +133,22 @@ class AdvancedMutationTester extends MutationTester {
 
             if (correct) {
                 insertionPassed++;
-                //console.log(`✅ Insertion ${index + 1} PASS: ${test.name} (line ${insertLine})`);
+                console.log(`✅ Insertion ${index + 1} PASS: ${test.name} (line ${insertLine})`);
             } else {
                 insertionFailed++;
-                //console.log(`❌ Insertion ${index + 1} FAIL: ${test.name}`);
-                //console.log(`   Expected line: ${test.expectedInsertLine}`);
-                //console.log(`   Got line: ${insertLine}`);
+                console.log(`❌ Insertion ${index + 1} FAIL: ${test.name}`);
+                console.log(`   Expected line: ${test.expectedInsertLine}`);
+                console.log(`   Got line: ${insertLine}`);
             }
         });
 
-        //console.log(`\n📍 Insertion Test Results: ${insertionPassed} passed, ${insertionFailed} failed`);
+        console.log(`\n📍 Insertion Test Results: ${insertionPassed} passed, ${insertionFailed} failed`);
         return { insertionPassed, insertionFailed };
     }
 
     // Test malformed copyright repair
     testMalformedCopyrightRepair() {
-        //console.log('\n🔧 Testing Malformed Copyright Repair...\n');
+        console.log('\n🔧 Testing Malformed Copyright Repair...\n');
 
         const repairTests = [
             {
@@ -212,25 +212,25 @@ class AdvancedMutationTester extends MutationTester {
 
             if (repaired === test.shouldRepair) {
                 repairPassed++;
-                //console.log(`✅ Repair ${index + 1} PASS: ${test.name}`);
+                console.log(`✅ Repair ${index + 1} PASS: ${test.name}`);
             } else {
                 repairFailed++;
-                //console.log(`❌ Repair ${index + 1} FAIL: ${test.name}`);
-                //console.log(`   Expected repair: ${test.shouldRepair}`);
-                //console.log(`   Got action: ${result.action}`);
+                console.log(`❌ Repair ${index + 1} FAIL: ${test.name}`);
+                console.log(`   Expected repair: ${test.shouldRepair}`);
+                console.log(`   Got action: ${result.action}`);
             }
         });
 
-        //console.log(`\n🔧 Repair Test Results: ${repairPassed} passed, ${repairFailed} failed`);
+        console.log(`\n🔧 Repair Test Results: ${repairPassed} passed, ${repairFailed} failed`);
         return { repairPassed, repairFailed };
     }
 
     // Test race conditions and concurrent modifications
     testConcurrencyEdgeCases() {
-        //console.log('\n🔄 Testing Concurrency Edge Cases...\n');
+        console.log('\n🔄 Testing Concurrency Edge Cases...\n');
 
         // Test what happens when file changes during processing
-        const baseContent = 'function test() {\n    //console.log("Hello");\n}';
+        const baseContent = 'function test() {\n    console.log("Hello");\n}';
 
         // Simulate file that gets modified during processing
         const modifiedContent = '/* Existing copyright */\n' + baseContent;
@@ -245,23 +245,23 @@ class AdvancedMutationTester extends MutationTester {
 
             if (result1.action === 'inserted' && result2.action === 'skipped') {
                 concurrencyPassed++;
-                //console.log('✅ Concurrency test 1 PASS: Handles content changes correctly');
+                console.log('✅ Concurrency test 1 PASS: Handles content changes correctly');
             } else {
                 concurrencyFailed++;
-                //console.log('❌ Concurrency test 1 FAIL: Incorrect handling of content changes');
+                console.log('❌ Concurrency test 1 FAIL: Incorrect handling of content changes');
             }
         } catch (error) {
             concurrencyFailed++;
-            //console.log(`❌ Concurrency test 1 ERROR: ${error.message}`);
+            console.log(`❌ Concurrency test 1 ERROR: ${error.message}`);
         }
 
-        //console.log(`\n🔄 Concurrency Test Results: ${concurrencyPassed} passed, ${concurrencyFailed} failed`);
+        console.log(`\n🔄 Concurrency Test Results: ${concurrencyPassed} passed, ${concurrencyFailed} failed`);
         return { concurrencyPassed, concurrencyFailed };
     }
 
     // Test with different template formats
     testTemplateVariations() {
-        //console.log('\n📝 Testing Template Variations...\n');
+        console.log('\n📝 Testing Template Variations...\n');
 
         const templates = [
             "/* Copyright (c) 2025 bivex */\n\n",
@@ -270,7 +270,7 @@ class AdvancedMutationTester extends MutationTester {
             "# Copyright (c) 2025 bivex\n\n"
         ];
 
-        const testContent = 'function test() {\n    //console.log("Hello");\n}';
+        const testContent = 'function test() {\n    console.log("Hello");\n}';
 
         let templatePassed = 0;
         let templateFailed = 0;
@@ -282,25 +282,25 @@ class AdvancedMutationTester extends MutationTester {
 
                 if (result.action === 'inserted' && hasCopyright) {
                     templatePassed++;
-                    //console.log(`✅ Template ${index + 1} PASS: ${template.split('\n')[0]}...`);
+                    console.log(`✅ Template ${index + 1} PASS: ${template.split('\n')[0]}...`);
                 } else {
                     templateFailed++;
-                    //console.log(`❌ Template ${index + 1} FAIL: ${template.split('\n')[0]}...`);
+                    console.log(`❌ Template ${index + 1} FAIL: ${template.split('\n')[0]}...`);
                 }
             } catch (error) {
                 templateFailed++;
-                //console.log(`❌ Template ${index + 1} ERROR: ${error.message}`);
+                console.log(`❌ Template ${index + 1} ERROR: ${error.message}`);
             }
         });
 
-        //console.log(`\n📝 Template Test Results: ${templatePassed} passed, ${templateFailed} failed`);
+        console.log(`\n📝 Template Test Results: ${templatePassed} passed, ${templateFailed} failed`);
         return { templatePassed, templateFailed };
     }
 
     // Run comprehensive advanced tests
     runAdvancedTests() {
-        //console.log('🧬🧬 ADVANCED MUTATION TESTING SUITE 🧬🧬\n');
-        //console.log('Testing algorithm robustness with edge cases and mutations\n');
+        console.log('🧬🧬 ADVANCED MUTATION TESTING SUITE 🧬🧬\n');
+        console.log('Testing algorithm robustness with edge cases and mutations\n');
 
         const detection = this.testCopyrightDetectionEdgeCases();
         const insertion = this.testInsertionPointEdgeCases();
@@ -327,21 +327,21 @@ class AdvancedMutationTester extends MutationTester {
                           templates.templatePassed + templates.templateFailed +
                           basic.passed + basic.failed;
 
-        //console.log('\n' + '='.repeat(60));
-        //console.log('🎯 ADVANCED MUTATION TEST SUMMARY');
-        //console.log('='.repeat(60));
-        //console.log(`Copyright Detection: ${detection.detectionPassed}/${detection.detectionPassed + detection.detectionFailed} passed`);
-        //console.log(`Insertion Points: ${insertion.insertionPassed}/${insertion.insertionPassed + insertion.insertionFailed} passed`);
-        //console.log(`Copyright Repair: ${repair.repairPassed}/${repair.repairPassed + repair.repairFailed} passed`);
-        //console.log(`Concurrency: ${concurrency.concurrencyPassed}/${concurrency.concurrencyPassed + concurrency.concurrencyFailed} passed`);
-        //console.log(`Templates: ${templates.templatePassed}/${templates.templatePassed + templates.templateFailed} passed`);
-        //console.log(`Basic Mutations: ${basic.passed}/${basic.total} passed`);
-        //console.log(`TOTAL: ${totalPassed}/${totalTests} tests passed`);
+        console.log('\n' + '='.repeat(60));
+        console.log('🎯 ADVANCED MUTATION TEST SUMMARY');
+        console.log('='.repeat(60));
+        console.log(`Copyright Detection: ${detection.detectionPassed}/${detection.detectionPassed + detection.detectionFailed} passed`);
+        console.log(`Insertion Points: ${insertion.insertionPassed}/${insertion.insertionPassed + insertion.insertionFailed} passed`);
+        console.log(`Copyright Repair: ${repair.repairPassed}/${repair.repairPassed + repair.repairFailed} passed`);
+        console.log(`Concurrency: ${concurrency.concurrencyPassed}/${concurrency.concurrencyPassed + concurrency.concurrencyFailed} passed`);
+        console.log(`Templates: ${templates.templatePassed}/${templates.templatePassed + templates.templateFailed} passed`);
+        console.log(`Basic Mutations: ${basic.passed}/${basic.total} passed`);
+        console.log(`TOTAL: ${totalPassed}/${totalTests} tests passed`);
 
         if (totalFailed === 0) {
-            //console.log('\n🎊 ALL ADVANCED TESTS PASSED! Algorithm is bulletproof.');
+            console.log('\n🎊 ALL ADVANCED TESTS PASSED! Algorithm is bulletproof.');
         } else {
-            //console.log(`\n⚠️  ${totalFailed} advanced tests failed. Algorithm needs hardening.`);
+            console.log(`\n⚠️  ${totalFailed} advanced tests failed. Algorithm needs hardening.`);
         }
 
         // Save comprehensive results
@@ -357,7 +357,7 @@ class AdvancedMutationTester extends MutationTester {
         };
 
         fs.writeFileSync('tests/advanced_mutation_results.json', JSON.stringify(advancedSummary, null, 2));
-        //console.log('📝 Advanced results saved to tests/advanced_mutation_results.json');
+        console.log('📝 Advanced results saved to tests/advanced_mutation_results.json');
 
         return advancedSummary;
     }

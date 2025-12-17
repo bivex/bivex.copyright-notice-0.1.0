@@ -243,7 +243,7 @@ class MutationTester {
 
     // Test mutations
     runMutationTests() {
-        //console.log('🧬 Running Mutation Tests for Copyright Insertion Algorithm\\n');
+        console.log('🧬 Running Mutation Tests for Copyright Insertion Algorithm\\n');
 
         const mutations = [
             // Basic cases
@@ -255,7 +255,7 @@ class MutationTester {
             },
             {
                 name: 'Simple code file',
-                input: `function test() {\n    //console.log("Hello");\n}`,
+                input: `function test() {\n    console.log("Hello");\n}`,
                 expectedAction: 'inserted',
                 expectedReason: 'at_beginning'
             },
@@ -263,13 +263,13 @@ class MutationTester {
             // Shebang cases
             {
                 name: 'File with shebang',
-                input: `#!/usr/bin/env node\n//console.log("Hello");`,
+                input: `#!/usr/bin/env node\nconsole.log("Hello");`,
                 expectedAction: 'inserted',
                 expectedReason: 'before_code'
             },
             {
                 name: 'Shebang with empty line',
-                input: `#!/usr/bin/env node\n\n//console.log("Hello");`,
+                input: `#!/usr/bin/env node\n\nconsole.log("Hello");`,
                 expectedAction: 'inserted',
                 expectedReason: 'before_code'
             },
@@ -365,44 +365,44 @@ class MutationTester {
         let failed = 0;
 
         mutations.forEach((mutation, index) => {
-            //console.log(`Mutation ${index + 1}: ${mutation.name}`);
-            //console.log(`Input: "${mutation.input.replace(/\n/g, '\\n')}"`);
+            console.log(`Mutation ${index + 1}: ${mutation.name}`);
+            console.log(`Input: "${mutation.input.replace(/\n/g, '\\n')}"`);
 
             try {
                 const result = this.simulateCopyrightInsertion(mutation.input);
 
                 if (result.action === mutation.expectedAction && result.reason === mutation.expectedReason) {
-                    //console.log(`✅ PASS: ${result.action} (${result.reason})`);
+                    console.log(`✅ PASS: ${result.action} (${result.reason})`);
                     passed++;
 
                     // Additional validation for inserted content
                     if (result.action === 'inserted' || result.action === 'fixed') {
                         const hasCopyrightAfter = this.hasInsertedCopyrightNotice(result.result);
                         if (hasCopyrightAfter) {
-                            //console.log('   ✓ Copyright correctly added');
+                            console.log('   ✓ Copyright correctly added');
                         } else {
-                            //console.log('   ❌ Copyright not found after insertion');
+                            console.log('   ❌ Copyright not found after insertion');
                             failed++;
                         }
                     }
                 } else {
-                    //console.log(`❌ FAIL: Expected ${mutation.expectedAction} (${mutation.expectedReason}), got ${result.action} (${result.reason})`);
+                    console.log(`❌ FAIL: Expected ${mutation.expectedAction} (${mutation.expectedReason}), got ${result.action} (${result.reason})`);
                     failed++;
                 }
             } catch (error) {
-                //console.log(`❌ ERROR: Exception thrown: ${error.message}`);
+                console.log(`❌ ERROR: Exception thrown: ${error.message}`);
                 failed++;
             }
 
-            //console.log('');
+            console.log('');
         });
 
-        //console.log(`📊 Mutation Test Results: ${passed} passed, ${failed} failed`);
+        console.log(`📊 Mutation Test Results: ${passed} passed, ${failed} failed`);
 
         if (failed === 0) {
-            //console.log('🎉 All mutation tests passed! Algorithm is robust.');
+            console.log('🎉 All mutation tests passed! Algorithm is robust.');
         } else {
-            //console.log('⚠️  Some mutations exposed weaknesses in the algorithm.');
+            console.log('⚠️  Some mutations exposed weaknesses in the algorithm.');
         }
 
         return { passed, failed, total: mutations.length };
@@ -410,7 +410,7 @@ class MutationTester {
 
     // Stress tests
     runStressTests() {
-        //console.log('\n🏋️  Running Stress Tests...\n');
+        console.log('\n🏋️  Running Stress Tests...\n');
 
         let stressPassed = 0;
         let stressFailed = 0;
@@ -421,39 +421,39 @@ class MutationTester {
             const result = this.simulateCopyrightInsertion(largeContent);
             if (result.action === 'inserted') {
                 stressPassed++;
-                //console.log('✅ Large file test passed');
+                console.log('✅ Large file test passed');
             } else {
                 stressFailed++;
-                //console.log('❌ Large file test failed');
+                console.log('❌ Large file test failed');
             }
         } catch (error) {
             stressFailed++;
-            //console.log(`❌ Large file test error: ${error.message}`);
+            console.log(`❌ Large file test error: ${error.message}`);
         }
 
         // Test with Unicode content
-        const unicodeContent = '/* 注释 */\nfunction test() {\n    //console.log("Hello 🌍");\n}';
+        const unicodeContent = '/* 注释 */\nfunction test() {\n    console.log("Hello 🌍");\n}';
         try {
             const result = this.simulateCopyrightInsertion(unicodeContent);
             if (result.action === 'inserted') {
                 stressPassed++;
-                //console.log('✅ Unicode content test passed');
+                console.log('✅ Unicode content test passed');
             } else {
                 stressFailed++;
-                //console.log('❌ Unicode content test failed');
+                console.log('❌ Unicode content test failed');
             }
         } catch (error) {
             stressFailed++;
-            //console.log(`❌ Unicode content test error: ${error.message}`);
+            console.log(`❌ Unicode content test error: ${error.message}`);
         }
 
-        //console.log(`\n🏋️  Stress Test Results: ${stressPassed} passed, ${stressFailed} failed`);
+        console.log(`\n🏋️  Stress Test Results: ${stressPassed} passed, ${stressFailed} failed`);
         return { stressPassed, stressFailed };
     }
 
     // Boundary tests
     runBoundaryTests() {
-        //console.log('\n🎯 Running Boundary Tests...\n');
+        console.log('\n🎯 Running Boundary Tests...\n');
 
         let boundaryPassed = 0;
         let boundaryFailed = 0;
@@ -472,18 +472,18 @@ class MutationTester {
                 const result = this.simulateCopyrightInsertion(test.input);
                 if (result.action === test.expected) {
                     boundaryPassed++;
-                    //console.log(`✅ ${test.name} passed`);
+                    console.log(`✅ ${test.name} passed`);
                 } else {
                     boundaryFailed++;
-                    //console.log(`❌ ${test.name} failed: expected ${test.expected}, got ${result.action}`);
+                    console.log(`❌ ${test.name} failed: expected ${test.expected}, got ${result.action}`);
                 }
             } catch (error) {
                 boundaryFailed++;
-                //console.log(`❌ ${test.name} error: ${error.message}`);
+                console.log(`❌ ${test.name} error: ${error.message}`);
             }
         });
 
-        //console.log(`\n🎯 Boundary Test Results: ${boundaryPassed} passed, ${boundaryFailed} failed`);
+        console.log(`\n🎯 Boundary Test Results: ${boundaryPassed} passed, ${boundaryFailed} failed`);
         return { boundaryPassed, boundaryFailed, totalBoundaryTests: boundaryTests.length };
     }
 
@@ -497,18 +497,18 @@ class MutationTester {
         const totalFailed = mutationResults.failed + stressResults.stressFailed + boundaryResults.boundaryFailed;
         const totalTests = mutationResults.total + 2 + boundaryResults.totalBoundaryTests; // 2 stress tests
 
-        //console.log('\n' + '='.repeat(50));
-        //console.log('📈 COMPREHENSIVE TEST SUMMARY');
-        //console.log('='.repeat(50));
-        //console.log(`Mutation Tests: ${mutationResults.passed}/${mutationResults.total} passed`);
-        //console.log(`Stress Tests: ${stressResults.stressPassed}/2 passed`);
-        //console.log(`Boundary Tests: ${boundaryResults.boundaryPassed}/${boundaryResults.totalBoundaryTests} passed`);
-        //console.log(`TOTAL: ${totalPassed}/${totalTests} tests passed`);
+        console.log('\n' + '='.repeat(50));
+        console.log('📈 COMPREHENSIVE TEST SUMMARY');
+        console.log('='.repeat(50));
+        console.log(`Mutation Tests: ${mutationResults.passed}/${mutationResults.total} passed`);
+        console.log(`Stress Tests: ${stressResults.stressPassed}/2 passed`);
+        console.log(`Boundary Tests: ${boundaryResults.boundaryPassed}/${boundaryResults.totalBoundaryTests} passed`);
+        console.log(`TOTAL: ${totalPassed}/${totalTests} tests passed`);
 
         if (totalFailed === 0) {
-            //console.log('\n🎊 ALL TESTS PASSED! Algorithm is production-ready.');
+            console.log('\n🎊 ALL TESTS PASSED! Algorithm is production-ready.');
         } else {
-            //console.log(`\n⚠️  ${totalFailed} tests failed. Review algorithm for improvements.`);
+            console.log(`\n⚠️  ${totalFailed} tests failed. Review algorithm for improvements.`);
         }
 
         // Save results to file
@@ -521,7 +521,7 @@ class MutationTester {
         };
 
         fs.writeFileSync('tests/mutation_test_results.json', JSON.stringify(summary, null, 2));
-        //console.log('📝 Detailed results saved to tests/mutation_test_results.json');
+        console.log('📝 Detailed results saved to tests/mutation_test_results.json');
 
         return summary;
     }

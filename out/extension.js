@@ -73,7 +73,7 @@ function activate(context) {
         ...handlerDisposables
     );
     
-    //console.log('Copyright Notice extension activated');
+    console.log('Copyright Notice extension activated');
 }
 
 /**
@@ -81,7 +81,7 @@ function activate(context) {
  */
 function deactivate() {
     // Nothing to clean up
-    //console.log('Copyright Notice extension deactivated');
+    console.log('Copyright Notice extension deactivated');
 }
 
 exports.activate = activate;

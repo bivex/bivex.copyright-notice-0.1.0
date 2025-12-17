@@ -116,7 +116,7 @@ function isEnabled(document, config) {
 }
 
 // Run comprehensive test
-//console.log('Testing default exclusions functionality...\n');
+console.log('Testing default exclusions functionality...\n');
 
 const config = {
     excludedFiles: [
@@ -195,34 +195,34 @@ exclusionTests.forEach(testCase => {
         passed++;
     } else {
         failed++;
-        //console.log(`${status} [${testCase.category}] ${testCase.file}`);
-        //console.log(`   Expected: ${testCase.expected}, Got: ${result}`);
+        console.log(`${status} [${testCase.category}] ${testCase.file}`);
+        console.log(`   Expected: ${testCase.expected}, Got: ${result}`);
     }
 });
 
 // Group results by category
-//console.log('\n📊 **Default Exclusions Test Results by Category:**\n');
+console.log('\n📊 **Default Exclusions Test Results by Category:**\n');
 
 Object.keys(results).forEach(category => {
-    //console.log(`🔍 **${category}:**`);
+    console.log(`🔍 **${category}:**`);
     results[category].forEach(({ testCase, result, status }) => {
-        //console.log(`   ${status} ${testCase.file} → ${result ? 'ALLOWED' : 'EXCLUDED'}`);
+        console.log(`   ${status} ${testCase.file} → ${result ? 'ALLOWED' : 'EXCLUDED'}`);
     });
-    //console.log('');
+    console.log('');
 });
 
-//console.log(`\n📈 **Overall Results:** ${passed} passed, ${failed} failed`);
+console.log(`\n📈 **Overall Results:** ${passed} passed, ${failed} failed`);
 
 if (failed === 0) {
-    //console.log('🎉 All default exclusions working correctly!');
-    //console.log('\n📋 **Summary of protected folders:**');
-    //console.log('- Dependencies: node_modules, lock files');
-    //console.log('- Build outputs: dist, build, .next, .nuxt');
-    //console.log('- Version control: .git');
-    //console.log('- IDE settings: .vscode');
-    //console.log('- Test artifacts: coverage, .nyc_output');
-    //console.log('- System files: .DS_Store, Thumbs.db, *.log');
+    console.log('🎉 All default exclusions working correctly!');
+    console.log('\n📋 **Summary of protected folders:**');
+    console.log('- Dependencies: node_modules, lock files');
+    console.log('- Build outputs: dist, build, .next, .nuxt');
+    console.log('- Version control: .git');
+    console.log('- IDE settings: .vscode');
+    console.log('- Test artifacts: coverage, .nyc_output');
+    console.log('- System files: .DS_Store, Thumbs.db, *.log');
 } else {
-    //console.log('❌ Some exclusions failed!');
+    console.log('❌ Some exclusions failed!');
     process.exit(1);
 }

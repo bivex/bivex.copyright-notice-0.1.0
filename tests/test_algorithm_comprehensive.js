@@ -18,20 +18,20 @@ const testScenarios = [
     },
     {
         name: 'File without copyright',
-        content: 'function test() {\n    //console.log("Hello");\n}',
-        expected: '/*\n * Copyright (c) 2025 bivex\n */\n\nfunction test() {\n    //console.log("Hello");\n}',
+        content: 'function test() {\n    console.log("Hello");\n}',
+        expected: '/*\n * Copyright (c) 2025 bivex\n */\n\nfunction test() {\n    console.log("Hello");\n}',
         description: 'Should insert copyright at beginning'
     },
     {
         name: 'File with valid copyright',
-        content: '/*\n * Copyright (c) 2025 bivex\n */\n\nfunction test() {\n    //console.log("Hello");\n}',
+        content: '/*\n * Copyright (c) 2025 bivex\n */\n\nfunction test() {\n    console.log("Hello");\n}',
         expected: null, // Should not change
         description: 'Should leave valid copyright unchanged'
     },
     {
         name: 'File with malformed copyright',
-        content: '/* Copyright (c) 2025 bivex\nfunction test() {\n    //console.log("Hello");\n}',
-        expected: '/*\n * Copyright (c) 2025 bivex\n */\n\nfunction test() {\n    //console.log("Hello");\n}',
+        content: '/* Copyright (c) 2025 bivex\nfunction test() {\n    console.log("Hello");\n}',
+        expected: '/*\n * Copyright (c) 2025 bivex\n */\n\nfunction test() {\n    console.log("Hello");\n}',
         description: 'Should fix malformed copyright'
     }
 ];
@@ -136,48 +136,48 @@ function simulateCopyrightInsertion(content) {
 }
 
 // Run tests
-//console.log('🧪 Running comprehensive copyright algorithm tests...\n');
+console.log('🧪 Running comprehensive copyright algorithm tests...\n');
 
 let passed = 0;
 let failed = 0;
 
 testScenarios.forEach((scenario, index) => {
-    //console.log(`Test ${index + 1}: ${scenario.name}`);
-    //console.log(`Description: ${scenario.description}`);
+    console.log(`Test ${index + 1}: ${scenario.name}`);
+    console.log(`Description: ${scenario.description}`);
 
     const result = simulateCopyrightInsertion(scenario.content);
 
     if (scenario.expected === null) {
         // Should not change
         if (result === scenario.content) {
-            //console.log('✅ PASS: Content unchanged as expected');
+            console.log('✅ PASS: Content unchanged as expected');
             passed++;
         } else {
-            //console.log('❌ FAIL: Content was modified unexpectedly');
+            console.log('❌ FAIL: Content was modified unexpectedly');
             failed++;
         }
     } else {
         // Should change to expected
         if (result === scenario.expected) {
-            //console.log('✅ PASS: Correct transformation');
+            console.log('✅ PASS: Correct transformation');
             passed++;
         } else {
-            //console.log('❌ FAIL: Unexpected result');
-            //console.log('Expected:');
-            //console.log(scenario.expected);
-            //console.log('Got:');
-            //console.log(result);
+            console.log('❌ FAIL: Unexpected result');
+            console.log('Expected:');
+            console.log(scenario.expected);
+            console.log('Got:');
+            console.log(result);
             failed++;
         }
     }
 
-    //console.log('---\n');
+    console.log('---\n');
 });
 
-//console.log(`📊 Results: ${passed} passed, ${failed} failed`);
+console.log(`📊 Results: ${passed} passed, ${failed} failed`);
 
 if (failed === 0) {
-    //console.log('🎉 All tests passed!');
+    console.log('🎉 All tests passed!');
 } else {
-    //console.log('⚠️  Some tests failed. Algorithm needs improvement.');
+    console.log('⚠️  Some tests failed. Algorithm needs improvement.');
 }

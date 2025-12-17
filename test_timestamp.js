@@ -1,7 +1,7 @@
 // Test timestamp update logic
 const fs = require('fs');
 
-//console.log('Testing timestamp update logic...\n');
+console.log('Testing timestamp update logic...\n');
 
 // Test cases (2 minutes threshold)
 const testCases = [
@@ -53,12 +53,12 @@ function isTimestampOutdated(timestampText) {
 
 // Fixed test time: 2025-12-17 08:15:00
 const testNow = new Date('2025-12-17T08:15:00');
-//console.log('Test time:', testNow.toISOString());
-//console.log('');
+console.log('Test time:', testNow.toISOString());
+console.log('');
 
 testCases.forEach(testCase => {
     const result = isTimestampOutdated(testCase);
-    //console.log(`"${testCase}" -> ${result ? 'UPDATE NEEDED' : 'CURRENT'}`);
+    console.log(`"${testCase}" -> ${result ? 'UPDATE NEEDED' : 'CURRENT'}`);
 });
 
-//console.log('\n✅ Timestamp test completed!');
+console.log('\n✅ Timestamp test completed!');

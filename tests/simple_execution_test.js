@@ -1,7 +1,7 @@
 const fs = require('fs');
 const { execSync } = require('child_process');
 
-//console.log('🧪 Simple Test Execution\n');
+console.log('🧪 Simple Test Execution\n');
 
 const results = {
     timestamp: new Date().toISOString(),
@@ -9,7 +9,7 @@ const results = {
 };
 
 // Test 1: Check if files exist
-//console.log('📁 Checking test files...');
+console.log('📁 Checking test files...');
 const testFiles = [
     'debug_test.js',
     'mutation_tests.js',
@@ -19,7 +19,7 @@ const testFiles = [
 
 testFiles.forEach(file => {
     const exists = fs.existsSync(file);
-    //console.log(`${exists ? '✅' : '❌'} ${file}: ${exists ? 'Found' : 'Missing'}`);
+    console.log(`${exists ? '✅' : '❌'} ${file}: ${exists ? 'Found' : 'Missing'}`);
     results.tests.push({
         name: `File Check: ${file}`,
         status: exists ? 'PASS' : 'FAIL',
@@ -28,17 +28,17 @@ testFiles.forEach(file => {
 });
 
 // Test 2: Try to run a simple Node.js command
-//console.log('\n🔧 Testing Node.js execution...');
+console.log('\n🔧 Testing Node.js execution...');
 try {
     const nodeVersion = execSync('node --version', { encoding: 'utf8' }).trim();
-    //console.log(`✅ Node.js version: ${nodeVersion}`);
+    console.log(`✅ Node.js version: ${nodeVersion}`);
     results.tests.push({
         name: 'Node.js Check',
         status: 'PASS',
         result: `Version: ${nodeVersion}`
     });
 } catch (error) {
-    //console.log(`❌ Node.js check failed: ${error.message}`);
+    console.log(`❌ Node.js check failed: ${error.message}`);
     results.tests.push({
         name: 'Node.js Check',
         status: 'FAIL',
@@ -47,7 +47,7 @@ try {
 }
 
 // Test 3: Try to execute a simple test
-//console.log('\n🎯 Testing algorithm execution...');
+console.log('\n🎯 Testing algorithm execution...');
 try {
     // Import and run a simple test
     const testContent = `#include <iostream>
@@ -59,7 +59,7 @@ int main() {
 
     // Simple copyright check
     const hasCopyright = testContent.includes('Copyright (c)');
-    //console.log(`✅ Copyright detection test: ${hasCopyright ? 'Found' : 'Not found'} (expected: Not found)`);
+    console.log(`✅ Copyright detection test: ${hasCopyright ? 'Found' : 'Not found'} (expected: Not found)`);
 
     results.tests.push({
         name: 'Copyright Detection Test',
@@ -72,7 +72,7 @@ int main() {
     const result = template + testContent;
     const hasCopyrightAfter = result.includes('Copyright (c) 2025 bivex');
 
-    //console.log(`✅ Copyright insertion test: ${hasCopyrightAfter ? 'Success' : 'Failed'}`);
+    console.log(`✅ Copyright insertion test: ${hasCopyrightAfter ? 'Success' : 'Failed'}`);
 
     results.tests.push({
         name: 'Copyright Insertion Test',
@@ -81,7 +81,7 @@ int main() {
     });
 
 } catch (error) {
-    //console.log(`❌ Algorithm test failed: ${error.message}`);
+    console.log(`❌ Algorithm test failed: ${error.message}`);
     results.tests.push({
         name: 'Algorithm Test',
         status: 'FAIL',
@@ -101,10 +101,10 @@ results.summary = {
     successRate: totalTests > 0 ? ((passedTests / totalTests) * 100).toFixed(2) : 0
 };
 
-//console.log(`\n📊 Summary: ${passedTests}/${totalTests} tests passed (${results.summary.successRate}%)`);
+console.log(`\n📊 Summary: ${passedTests}/${totalTests} tests passed (${results.summary.successRate}%)`);
 
 // Save results
 fs.writeFileSync('simple_test_execution_results.json', JSON.stringify(results, null, 2));
-//console.log('📝 Results saved to simple_test_execution_results.json');
+console.log('📝 Results saved to simple_test_execution_results.json');
 
-//console.log('\n✅ Simple test execution completed!');
+console.log('\n✅ Simple test execution completed!');

@@ -15,7 +15,7 @@ class MutationTestOrchestrator {
     }
 
     async runTestSuite(suiteName, testFile) {
-        //console.log(`\n🔬 Starting ${suiteName}...\n`);
+        console.log(`\n🔬 Starting ${suiteName}...\n`);
 
         try {
             const TestClass = require(`./${testFile}`);
@@ -37,7 +37,7 @@ class MutationTestOrchestrator {
                 result: result
             };
 
-            //console.log(`✅ ${suiteName} completed successfully`);
+            console.log(`✅ ${suiteName} completed successfully`);
 
         } catch (error) {
             console.error(`❌ ${suiteName} failed: ${error.message}`);
@@ -91,35 +91,35 @@ class MutationTestOrchestrator {
     printSummary() {
         const summary = this.results.summary;
 
-        //console.log('\n' + '='.repeat(70));
-        //console.log('🎯 MUTATION TESTING ORCHESTRATOR - FINAL REPORT');
-        //console.log('='.repeat(70));
-        //console.log(`Test Suites Run: ${summary.totalSuites}`);
-        //console.log(`Completed: ${summary.completedSuites}`);
-        //console.log(`Failed: ${summary.failedSuites}`);
-        //console.log('');
-        //console.log(`Individual Tests: ${summary.totalTests} total`);
-        //console.log(`Passed: ${summary.totalPassed}`);
-        //console.log(`Failed: ${summary.totalFailed}`);
-        //console.log(`Success Rate: ${summary.successRate}%`);
-        //console.log('');
+        console.log('\n' + '='.repeat(70));
+        console.log('🎯 MUTATION TESTING ORCHESTRATOR - FINAL REPORT');
+        console.log('='.repeat(70));
+        console.log(`Test Suites Run: ${summary.totalSuites}`);
+        console.log(`Completed: ${summary.completedSuites}`);
+        console.log(`Failed: ${summary.failedSuites}`);
+        console.log('');
+        console.log(`Individual Tests: ${summary.totalTests} total`);
+        console.log(`Passed: ${summary.totalPassed}`);
+        console.log(`Failed: ${summary.totalFailed}`);
+        console.log(`Success Rate: ${summary.successRate}%`);
+        console.log('');
 
         if (summary.failedSuites === 0 && summary.totalFailed === 0) {
-            //console.log('🎊 ALL TESTS PASSED! Algorithm is fully validated and production-ready.');
-            //console.log('🚀 The copyright insertion algorithm has proven robust against all mutations.');
+            console.log('🎊 ALL TESTS PASSED! Algorithm is fully validated and production-ready.');
+            console.log('🚀 The copyright insertion algorithm has proven robust against all mutations.');
         } else if (summary.failedSuites === 0) {
-            //console.log(`⚠️  ${summary.totalFailed} individual tests failed, but all test suites completed.`);
-            //console.log('🔧 Algorithm is stable but may need minor adjustments for edge cases.');
+            console.log(`⚠️  ${summary.totalFailed} individual tests failed, but all test suites completed.`);
+            console.log('🔧 Algorithm is stable but may need minor adjustments for edge cases.');
         } else {
-            //console.log(`❌ ${summary.failedSuites} test suites failed. Algorithm requires significant improvements.`);
+            console.log(`❌ ${summary.failedSuites} test suites failed. Algorithm requires significant improvements.`);
         }
 
-        //console.log('\n📊 Detailed results saved to tests/mutation_test_master_report.json');
+        console.log('\n📊 Detailed results saved to tests/mutation_test_master_report.json');
     }
 
     async runAllSuites() {
-        //console.log('🚀 MUTATION TESTING ORCHESTRATOR');
-        //console.log('Running comprehensive validation of copyright insertion algorithm\n');
+        console.log('🚀 MUTATION TESTING ORCHESTRATOR');
+        console.log('Running comprehensive validation of copyright insertion algorithm\n');
 
         const testSuites = [
             { name: 'Basic Mutation Tests', file: 'mutation_tests.js' },
@@ -223,7 +223,7 @@ class MutationTestOrchestrator {
 </html>`;
 
         fs.writeFileSync('tests/mutation_test_report.html', html);
-        //console.log('📄 HTML report generated: tests/mutation_test_report.html');
+        console.log('📄 HTML report generated: tests/mutation_test_report.html');
     }
 }
 
@@ -233,7 +233,7 @@ if (require.main === module) {
 
     orchestrator.runAllSuites().then(() => {
         orchestrator.generateHtmlReport();
-        //console.log('\n✨ Mutation testing complete! Check tests/ directory for detailed reports.');
+        console.log('\n✨ Mutation testing complete! Check tests/ directory for detailed reports.');
     }).catch(error => {
         console.error('💥 Fatal error during testing:', error);
         process.exit(1);

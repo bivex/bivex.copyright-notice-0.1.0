@@ -3,7 +3,7 @@
 // Contains various emojis: 😊 ❤️ 🎵 🎨 ⚽ 🏆
 
 function testFunction() {
-    //console.log("Hello World! 🌍");
+    console.log("Hello World! 🌍");
     // More emojis: 🔥💯✨
     return "Test complete 🎯";
 }

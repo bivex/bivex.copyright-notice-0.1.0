@@ -36,7 +36,7 @@ const mockDocument = (filePath, languageId = 'javascript') => ({
 });
 
 // Import and test the logic
-//console.log('Testing allowedFolders functionality...\n');
+console.log('Testing allowedFolders functionality...\n');
 
 // Test cases
 const testCases = [
@@ -131,24 +131,24 @@ testCases.forEach(testCase => {
     const result = isEnabled(document, config);
     const status = result === testCase.expected ? '✅ PASS' : '❌ FAIL';
 
-    //console.log(`${status} ${testCase.description}`);
-    //console.log(`   File: ${testCase.file}`);
-    //console.log(`   Expected: ${testCase.expected}, Got: ${result}`);
+    console.log(`${status} ${testCase.description}`);
+    console.log(`   File: ${testCase.file}`);
+    console.log(`   Expected: ${testCase.expected}, Got: ${result}`);
 
     if (result === testCase.expected) {
         passed++;
     } else {
         failed++;
-        //console.log(`   ERROR: Expected ${testCase.expected} but got ${result}`);
+        console.log(`   ERROR: Expected ${testCase.expected} but got ${result}`);
     }
-    //console.log('');
+    console.log('');
 });
 
-//console.log(`Test Results: ${passed} passed, ${failed} failed`);
+console.log(`Test Results: ${passed} passed, ${failed} failed`);
 
 if (failed === 0) {
-    //console.log('🎉 All tests passed!');
+    console.log('🎉 All tests passed!');
 } else {
-    //console.log('❌ Some tests failed!');
+    console.log('❌ Some tests failed!');
     process.exit(1);
 }

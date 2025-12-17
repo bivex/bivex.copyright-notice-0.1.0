@@ -103,7 +103,7 @@ class CopyrightHandler {
 
         const smartDelay = Math.min(baseDelay * multiplier, 10000); // Max 10 seconds
 
-        //console.log(`[Copyright] Smart debouncing: ${timeSinceLastEdit}ms since last edit → multiplier: ${multiplier.toFixed(1)}x → ${smartDelay}ms delay`);
+        console.log(`[Copyright] Smart debouncing: ${timeSinceLastEdit}ms since last edit → multiplier: ${multiplier.toFixed(1)}x → ${smartDelay}ms delay`);
         return smartDelay;
     }
 
@@ -294,8 +294,11 @@ class CopyrightHandler {
      * @returns {string} Formatted template
      */
     formatCopyrightTemplate(config, languageId) {
+        console.log(`[Copyright] formatCopyrightTemplate called with languageId: ${languageId}`);
+        console.log(`[Copyright] Original template: "${config.template}"`);
             const currentYear = new Date().getFullYear();
             let formattedTemplate = config.template.replace(/{year}/g, currentYear.toString());
+        console.log(`[Copyright] After year replacement: "${formattedTemplate}"`);
 
             const now = new Date();
             if (config.includeTimestamp) {
@@ -309,23 +312,35 @@ class CopyrightHandler {
 
             // Convert JavaScript-style comments to appropriate format for the language
             if (languageId === 'python' || languageId === 'shellscript') {
+                console.log(`[Copyright] Converting JavaScript comments to # style for ${languageId}`);
                 // Convert /** */ style comments to # style comments
+                const originalLines = formattedTemplate.split('\n');
+                console.log(`[Copyright] Original lines:`, originalLines);
                 formattedTemplate = formattedTemplate
                     .split('\n')
                     .map(line => {
                         if (line.startsWith('/**')) {
+                            console.log(`[Copyright] Removing opening /** line: "${line}"`);
                             return ''; // Remove opening /**
                         } else if (line.startsWith(' */')) {
+                            console.log(`[Copyright] Removing closing */ line: "${line}"`);
                             return ''; // Remove closing */
                         } else if (line.startsWith(' * ')) {
-                            return line.replace(/^ \* /, '# '); // Convert " * " to "# "
+                            const converted = line.replace(/^ \* /, '# ');
+                            console.log(`[Copyright] Converting " * " to "# ": "${line}" → "${converted}"`);
+                            return converted; // Convert " * " to "# "
                         } else if (line === ' *') {
+                            console.log(`[Copyright] Converting empty comment line " * " to "#": "${line}" → "#"`);
                             return '#'; // Convert empty comment line to "#"
                         }
+                        console.log(`[Copyright] Leaving line unchanged: "${line}"`);
                         return line;
                     })
                     .filter(line => line !== '') // Remove empty lines
                     .join('\n');
+                console.log(`[Copyright] Final converted template: "${formattedTemplate}"`);
+            } else {
+                console.log(`[Copyright] No comment conversion needed for languageId: ${languageId}`);
             }
 
         return formattedTemplate;
@@ -347,36 +362,36 @@ class CopyrightHandler {
      * @returns {Promise<boolean>} Promise resolving to true if malformed copyright was fixed
      */
     async fixMalformedCopyright(editor) {
-        //console.log(`[Copyright] fixMalformedCopyright called for ${editor.document.fileName}`);
+        console.log(`[Copyright] fixMalformedCopyright called for ${editor.document.fileName}`);
         const config = this.getConfig();
         const document = editor.document;
         const formattedTemplate = this.formatCopyrightTemplate(config, document.languageId);
-        //console.log(`[Copyright] Formatted template: "${formattedTemplate}"`);
+        console.log(`[Copyright] Formatted template: "${formattedTemplate}"`);
         const text = document.getText();
-        //console.log(`[Copyright] Original text length: ${text.length}`);
+        console.log(`[Copyright] Original text length: ${text.length}`);
             const lines = text.split('\n');
             let endMalformedIndex = -1;
 
             // Find the end of the malformed comment block
-            //console.log(`[Copyright] Searching for malformed copyright in first ${Math.min(20, lines.length)} lines`);
+            console.log(`[Copyright] Searching for malformed copyright in first ${Math.min(20, lines.length)} lines`);
             for (let i = 0; i < Math.min(20, lines.length); i++) {
                 const line = lines[i];
-                //console.log(`[Copyright] Line ${i + 1}: "${line}"`);
+                console.log(`[Copyright] Line ${i + 1}: "${line}"`);
                 if (line.includes("Copyright (c)") || line.includes("Copyright")) {
-                    //console.log(`[Copyright] Found copyright keyword in line ${i + 1}`);
+                    console.log(`[Copyright] Found copyright keyword in line ${i + 1}`);
                     // Handle multiline comments
                     if (line.trim().startsWith("/*")) {
                         const closeIndex = text.indexOf("*/", text.indexOf(line));
-                        //console.log(`[Copyright] Multiline comment detected, closeIndex: ${closeIndex}`);
+                        console.log(`[Copyright] Multiline comment detected, closeIndex: ${closeIndex}`);
                         endMalformedIndex = closeIndex !== -1 ? closeIndex + 2 : text.indexOf(line) + line.length;
-                        //console.log(`[Copyright] Set endMalformedIndex to: ${endMalformedIndex}`);
+                        console.log(`[Copyright] Set endMalformedIndex to: ${endMalformedIndex}`);
                     }
                     // Handle single line comments
                     else if (line.trim().startsWith("//") || line.trim().startsWith("#")) {
                         endMalformedIndex = text.indexOf(line) + line.length;
-                        //console.log(`[Copyright] Single line comment detected, endMalformedIndex: ${endMalformedIndex}`);
+                        console.log(`[Copyright] Single line comment detected, endMalformedIndex: ${endMalformedIndex}`);
                     } else {
-                        //console.log(`[Copyright] Copyright found but not in recognized comment format`);
+                        console.log(`[Copyright] Copyright found but not in recognized comment format`);
                     }
 
                     // Include subsequent empty lines
@@ -386,22 +401,22 @@ class CopyrightHandler {
                             endMalformedIndex = text.indexOf(lines[nextLineIndex]) + lines[nextLineIndex].length;
                             nextLineIndex++;
                         }
-                        //console.log(`[Copyright] After including empty lines, endMalformedIndex: ${endMalformedIndex}`);
+                        console.log(`[Copyright] After including empty lines, endMalformedIndex: ${endMalformedIndex}`);
                     }
                     break;
                 }
             }
 
         if (endMalformedIndex === -1) {
-            //console.log(`[Copyright] Could not find malformed copyright end - returning false`);
+            console.log(`[Copyright] Could not find malformed copyright end - returning false`);
             return false; // Could not find malformed copyright end
         }
 
-        //console.log(`[Copyright] Found malformed copyright end at index: ${endMalformedIndex}`);
+        console.log(`[Copyright] Found malformed copyright end at index: ${endMalformedIndex}`);
                 const afterCopyright = text.substring(endMalformedIndex).replace(/^\s*\n/, '');
-        //console.log(`[Copyright] Text after copyright: "${afterCopyright.substring(0, 50)}..."`);
+        console.log(`[Copyright] Text after copyright: "${afterCopyright.substring(0, 50)}..."`);
                 const newContent = formattedTemplate + afterCopyright;
-        //console.log(`[Copyright] New content length: ${newContent.length}`);
+        console.log(`[Copyright] New content length: ${newContent.length}`);
 
                 const edit = new vscode.WorkspaceEdit();
                 edit.replace(document.uri, new vscode.Range(
@@ -410,22 +425,22 @@ class CopyrightHandler {
                 ), newContent);
 
                 try {
-            //console.log(`[Copyright] Applying edit...`);
+            console.log(`[Copyright] Applying edit...`);
                     const success = await vscode.workspace.applyEdit(edit);
-            //console.log(`[Copyright] Edit applied: ${success}`);
+            console.log(`[Copyright] Edit applied: ${success}`);
                     if (success) {
-                //console.log(`[Copyright] Saving document...`);
+                console.log(`[Copyright] Saving document...`);
                         await document.save();
-                //console.log(`[Copyright] Document saved successfully`);
+                console.log(`[Copyright] Document saved successfully`);
                         return true;
             } else {
-                //console.log(`[Copyright] Edit was not successful`);
+                console.log(`[Copyright] Edit was not successful`);
                     }
                 } catch (error) {
             console.error('[Copyright] Failed to fix malformed copyright:', error);
         }
 
-        //console.log(`[Copyright] fixMalformedCopyright returning false`);
+        console.log(`[Copyright] fixMalformedCopyright returning false`);
         return false;
     }
 
@@ -435,18 +450,24 @@ class CopyrightHandler {
      * @returns {Promise<boolean>} Promise resolving to true if copyright was inserted
      */
     async insertNewCopyright(editor) {
+        console.log(`[Copyright] insertNewCopyright called for ${editor.document.fileName}`);
         const config = this.getConfig();
         const document = editor.document;
         const formattedTemplate = this.formatCopyrightTemplate(config, document.languageId);
+        console.log(`[Copyright] Using formatted template: "${formattedTemplate}"`);
         const text = document.getText();
+        console.log(`[Copyright] Original document text length: ${text.length}`);
             const edit = new vscode.WorkspaceEdit();
 
             if (text.length === 0) {
+                console.log(`[Copyright] Empty file detected, inserting at beginning`);
             // Empty file - insert at beginning
                 edit.insert(document.uri, new vscode.Position(0, 0), formattedTemplate);
             } else {
+                console.log(`[Copyright] Finding optimal insertion position`);
             // Find optimal insertion position
             const insertInfo = this.findOptimalInsertPosition(text, document.languageId);
+            console.log(`[Copyright] Insert info:`, insertInfo);
 
             let contentToInsert = formattedTemplate;
 
@@ -454,17 +475,21 @@ class CopyrightHandler {
             if (!contentToInsert.endsWith('\n')) {
                 contentToInsert += '\n';
             }
+            console.log(`[Copyright] Content to insert (after newline check): "${contentToInsert}"`);
 
             if (insertInfo.hasShebang) {
+                console.log(`[Copyright] Inserting after shebang`);
                 // Insert after shebang
                 if (!contentToInsert.endsWith('\n\n')) {
                     contentToInsert = '\n' + contentToInsert;
                 }
+                console.log(`[Copyright] Final content to insert after shebang: "${contentToInsert}"`);
                 edit.replace(document.uri, new vscode.Range(
                     document.positionAt(insertInfo.shebangEndPosition),
                     document.positionAt(insertInfo.insertPosition)
                 ), contentToInsert);
             } else if (insertInfo.leadingEmptyLines > 0 || insertInfo.insertPosition === 0) {
+                console.log(`[Copyright] Handling leading empty lines or insert at beginning`);
                 // Handle leading empty lines
                 const remainingText = text.substring(insertInfo.insertPosition);
                 const remainingIsOnlyWhitespace = remainingText.trim().length === 0;
@@ -475,28 +500,37 @@ class CopyrightHandler {
                 }
 
                 const endPosition = remainingIsOnlyWhitespace ? text.length : insertInfo.insertPosition;
+                console.log(`[Copyright] Replacing range from 0 to ${endPosition}`);
                 edit.replace(document.uri, new vscode.Range(
                     document.positionAt(0),
                     document.positionAt(endPosition)
                 ), contentToInsert);
             } else {
+                console.log(`[Copyright] Normal insertion at position ${insertInfo.insertPosition}`);
                 // Normal insertion
                 const remainingText = text.substring(insertInfo.insertPosition);
                 if (!contentToInsert.endsWith('\n\n') && !remainingText.startsWith('\n')) {
                     contentToInsert += '\n';
                 }
+                console.log(`[Copyright] Final content for normal insertion: "${contentToInsert}"`);
                 edit.insert(document.uri, document.positionAt(insertInfo.insertPosition), contentToInsert);
             }
         }
 
         try {
+            console.log(`[Copyright] Applying edit...`);
             const success = await vscode.workspace.applyEdit(edit);
+            console.log(`[Copyright] Edit applied: ${success}`);
             if (success) {
+                console.log(`[Copyright] Saving document...`);
                 await document.save();
+                console.log(`[Copyright] Document saved successfully`);
                 return true;
+            } else {
+                console.log(`[Copyright] Edit was not successful`);
             }
         } catch (error) {
-            console.error('Failed to apply copyright notice:', error);
+            console.error('[Copyright] Failed to apply copyright notice:', error);
         }
 
         return false;
@@ -642,12 +676,12 @@ class CopyrightHandler {
      * @returns {Promise<Object>} Promise resolving to action result with details
      */
     async addCopyrightIfNeeded(editor) {
-        //console.log(`[Copyright] addCopyrightIfNeeded called for ${editor.document.fileName}`);
+        console.log(`[Copyright] addCopyrightIfNeeded called for ${editor.document.fileName}`);
         const analysis = this.analyzeDocumentState(editor);
-        //console.log(`[Copyright] Document analysis:`, analysis);
+        console.log(`[Copyright] Document analysis:`, analysis);
 
         if (!analysis.shouldProcess) {
-            //console.log(`[Copyright] Skipping processing: ${analysis.skipReason}`);
+            console.log(`[Copyright] Skipping processing: ${analysis.skipReason}`);
             return {
                 success: false,
                 action: 'skipped',
@@ -675,20 +709,20 @@ class CopyrightHandler {
         const document = editor.document;
         const config = this.getConfig();
 
-        //console.log(`[Copyright] Analyzing document: ${document.fileName}`);
-        //console.log(`[Copyright] Document language: ${document.languageId}`);
-        //console.log(`[Copyright] Config: silentMode=${config.silentMode}, backgroundUpdateDelay=${config.backgroundUpdateDelay}`);
+        console.log(`[Copyright] Analyzing document: ${document.fileName}`);
+        console.log(`[Copyright] Document language: ${document.languageId}`);
+        console.log(`[Copyright] Config: silentMode=${config.silentMode}, backgroundUpdateDelay=${config.backgroundUpdateDelay}`);
 
         // Quick eligibility check
         if (!this.isEnabled(document)) {
-            //console.log(`[Copyright] Document not eligible for processing`);
+            console.log(`[Copyright] Document not eligible for processing`);
             return {
                 shouldProcess: false,
                 skipReason: 'file_not_eligible',
                 state: null
             };
         }
-        //console.log(`[Copyright] Document is eligible for processing`);
+        console.log(`[Copyright] Document is eligible for processing`);
 
         // Try to use cached state for background processing optimization
         // But don't skip processing for files that need copyright insertion
@@ -777,42 +811,42 @@ class CopyrightHandler {
      * @returns {Object} Timestamp analysis results
      */
     analyzeTimestampState(text, copyrightAnalysis) {
-        //console.log(`[Copyright] analyzeTimestampState called, isWellFormed: ${copyrightAnalysis.isWellFormed}`);
+        console.log(`[Copyright] analyzeTimestampState called, isWellFormed: ${copyrightAnalysis.isWellFormed}`);
 
         if (!copyrightAnalysis.isWellFormed) {
-            //console.log(`[Copyright] Skipping timestamp analysis - copyright not well-formed`);
+            console.log(`[Copyright] Skipping timestamp analysis - copyright not well-formed`);
             return { needsTimestampUpdate: false };
         }
 
         const config = this.getConfig();
-        //console.log(`[Copyright] includeUpdateTime config: ${config.includeUpdateTime}`);
+        console.log(`[Copyright] includeUpdateTime config: ${config.includeUpdateTime}`);
 
         if (!config.includeUpdateTime) {
-            //console.log(`[Copyright] Skipping timestamp analysis - update time disabled in config`);
+            console.log(`[Copyright] Skipping timestamp analysis - update time disabled in config`);
             return { needsTimestampUpdate: false };
         }
 
         // Check if timestamp exists and is current
         const lines = text.split('\n');
         const copyrightBlock = this.extractCopyrightBlock(lines);
-        //console.log(`[Copyright] Extracted copyright block: "${copyrightBlock.substring(0, 100)}..."`);
+        console.log(`[Copyright] Extracted copyright block: "${copyrightBlock.substring(0, 100)}..."`);
 
         const updateLineRegex = /(.*Last\s+Updated:)([^]*?)(\n\s*\*|$)/i;
         const lineMatch = copyrightBlock.match(updateLineRegex);
 
-        //console.log(`[Copyright] Timestamp line match:`, lineMatch ? 'found' : 'not found');
+        console.log(`[Copyright] Timestamp line match:`, lineMatch ? 'found' : 'not found');
 
         if (!lineMatch) {
-            //console.log(`[Copyright] No timestamp found - needs update`);
+            console.log(`[Copyright] No timestamp found - needs update`);
             return { needsTimestampUpdate: true, reason: 'missing_timestamp' };
         }
 
         // Check if timestamp is outdated (more than 1 day old)
         const timestampText = lineMatch[2].trim();
-        //console.log(`[Copyright] Found timestamp: "${timestampText}"`);
+        console.log(`[Copyright] Found timestamp: "${timestampText}"`);
 
         const isOutdated = this.isTimestampOutdated(timestampText);
-        //console.log(`[Copyright] Timestamp outdated: ${isOutdated}`);
+        console.log(`[Copyright] Timestamp outdated: ${isOutdated}`);
 
         return {
             needsTimestampUpdate: isOutdated,
@@ -830,7 +864,7 @@ class CopyrightHandler {
         const state = analysis.state;
         const config = this.getConfig();
 
-        //console.log(`[Copyright] Determining optimal action for state:`, state);
+        console.log(`[Copyright] Determining optimal action for state:`, state);
 
         // Priority order: update timestamp > fix malformed > insert new
         if (state.needsTimestampUpdate) {
@@ -873,7 +907,7 @@ class CopyrightHandler {
      * @returns {Promise<Object>} Action execution result
      */
     async executeAction(editor, action, analysis) {
-        //console.log(`[Copyright] Executing action:`, action);
+        console.log(`[Copyright] Executing action:`, action);
         try {
             switch (action.type) {
                 case 'update_timestamp': {
@@ -972,7 +1006,7 @@ class CopyrightHandler {
      * @returns {boolean} True if outdated
      */
     isTimestampOutdated(timestampText) {
-        //console.log(`[Copyright] Checking if timestamp outdated: "${timestampText}"`);
+        console.log(`[Copyright] Checking if timestamp outdated: "${timestampText}"`);
         try {
             // Parse the full timestamp (YYYY-MM-DD HH:mm)
             const fullTimestampMatch = timestampText.match(/(\d{4}-\d{2}-\d{2})\s+(\d{1,2}:\d{2})/);
@@ -981,11 +1015,11 @@ class CopyrightHandler {
                 // Fallback to date-only matching
                 const dateMatch = timestampText.match(/(\d{4}-\d{2}-\d{2})/);
                 if (!dateMatch) {
-                    //console.log(`[Copyright] No timestamp pattern found - considering outdated`);
+                    console.log(`[Copyright] No timestamp pattern found - considering outdated`);
                     return true;
                 }
                 // If only date is found, update it (old format)
-                //console.log(`[Copyright] Found date-only format - needs update to include time`);
+                console.log(`[Copyright] Found date-only format - needs update to include time`);
                 return true;
             }
 
@@ -997,8 +1031,8 @@ class CopyrightHandler {
 
             const now = new Date();
 
-            //console.log(`[Copyright] Parsed timestamp: ${timestampDate}`);
-            //console.log(`[Copyright] Current time: ${now}`);
+            console.log(`[Copyright] Parsed timestamp: ${timestampDate}`);
+            console.log(`[Copyright] Current time: ${now}`);
 
             // Update if timestamp is older than 2 minutes OR from a different day
             const diffMs = now - timestampDate;
@@ -1006,13 +1040,13 @@ class CopyrightHandler {
             const isDifferentDay = timestampDate.toDateString() !== now.toDateString();
 
             const needsUpdate = diffMinutes > 2 || isDifferentDay;
-            //console.log(`[Copyright] Time difference: ${diffHours.toFixed(2)} hours`);
-            //console.log(`[Copyright] Different day: ${isDifferentDay}`);
-            //console.log(`[Copyright] Needs update: ${needsUpdate}`);
+            console.log(`[Copyright] Time difference: ${diffHours.toFixed(2)} hours`);
+            console.log(`[Copyright] Different day: ${isDifferentDay}`);
+            console.log(`[Copyright] Needs update: ${needsUpdate}`);
 
             return needsUpdate;
         } catch (error) {
-            //console.log(`[Copyright] Error parsing timestamp: ${error.message}`);
+            console.log(`[Copyright] Error parsing timestamp: ${error.message}`);
             // If we can't parse the timestamp, consider it outdated
             return true;
         }
@@ -1090,60 +1124,60 @@ class CopyrightHandler {
      * @param {vscode.TextDocumentChangeEvent} event - The change event
      */
     handleTextChange(event) {
-        //console.log(`[Copyright] handleTextChange called for ${event.document.fileName}`);
+        console.log(`[Copyright] handleTextChange called for ${event.document.fileName}`);
         const now = Date.now();
         const config = this.getConfig();
 
         // Use dynamic debounce delay (smart debouncing)
         const debounceInterval = this.getDebounceDelay();
-        //console.log(`[Copyright] Debounce interval: ${debounceInterval}ms, time since last edit: ${now - this.lastEditTime}ms`);
+        console.log(`[Copyright] Debounce interval: ${debounceInterval}ms, time since last edit: ${now - this.lastEditTime}ms`);
 
         // Only proceed if enough time has passed since last edit
         if (now - this.lastEditTime > debounceInterval) {
-            //console.log(`[Copyright] Debounce threshold passed, processing...`);
+            console.log(`[Copyright] Debounce threshold passed, processing...`);
             this.lastEditTime = now;
 
             // Debounce to avoid processing during rapid typing
             setTimeout(() => {
-                //console.log(`[Copyright] Executing debounced action after ${debounceInterval}ms delay`);
+                console.log(`[Copyright] Executing debounced action after ${debounceInterval}ms delay`);
                 const editor = vscode.window.activeTextEditor;
-                //console.log(`[Copyright] Active editor: ${editor ? editor.document.fileName : 'none'}`);
-                //console.log(`[Copyright] Event document: ${event.document.fileName}`);
-                //console.log(`[Copyright] Documents match: ${editor && editor.document === event.document}`);
+                console.log(`[Copyright] Active editor: ${editor ? editor.document.fileName : 'none'}`);
+                console.log(`[Copyright] Event document: ${event.document.fileName}`);
+                console.log(`[Copyright] Documents match: ${editor && editor.document === event.document}`);
 
                 if (editor && editor.document === event.document) {
-                    //console.log(`[Copyright] Processing document: ${event.document.fileName}`);
-                    //console.log(`[Copyright] includeUpdateTime: ${config.includeUpdateTime}`);
-                    //console.log(`[Copyright] silentMode: ${config.silentMode}`);
+                    console.log(`[Copyright] Processing document: ${event.document.fileName}`);
+                    console.log(`[Copyright] includeUpdateTime: ${config.includeUpdateTime}`);
+                    console.log(`[Copyright] silentMode: ${config.silentMode}`);
 
                     // If we have an existing copyright with updatetime enabled,
                     // update the timestamp
                     if (config.includeUpdateTime) {
-                        //console.log(`[Copyright] Updating timestamp for existing copyright...`);
+                        console.log(`[Copyright] Updating timestamp for existing copyright...`);
                         this.updateTimestampIfNeeded(editor).then(result => {
-                            //console.log(`[Copyright] Timestamp update result: ${result}`);
+                            console.log(`[Copyright] Timestamp update result: ${result}`);
                         }).catch(error => {
                             console.error('[Copyright] Error updating timestamp:', error);
                         });
                     } else {
-                        //console.log(`[Copyright] Checking if copyright needed...`);
+                        console.log(`[Copyright] Checking if copyright needed...`);
                         // Otherwise just check if we need to add a copyright
                         this.addCopyrightIfNeeded(editor).then(result => {
-                            //console.log(`[Copyright] addCopyrightIfNeeded result:`, result);
+                            console.log(`[Copyright] addCopyrightIfNeeded result:`, result);
                             // Only log in non-silent mode for debugging
                             if (!config.silentMode && result.success && result.action !== 'no_action') {
-                                //console.log(`Copyright ${result.action} applied: ${result.details}`);
+                                console.log(`Copyright ${result.action} applied: ${result.details}`);
                             }
                         }).catch(error => {
                             console.error('[Copyright] Error in automatic copyright update:', error);
                         });
                     }
                 } else {
-                    //console.log(`[Copyright] Skipping - no matching editor or document`);
+                    console.log(`[Copyright] Skipping - no matching editor or document`);
                 }
             }, debounceInterval);
         } else {
-            //console.log(`[Copyright] Skipping due to debounce - too soon since last edit`);
+            console.log(`[Copyright] Skipping due to debounce - too soon since last edit`);
         }
     }
 
@@ -1152,20 +1186,20 @@ class CopyrightHandler {
      * @param {vscode.TextEditor} editor - The new active editor
      */
     handleEditorChange(editor) {
-        //console.log(`[Copyright] handleEditorChange called${editor ? ` for ${editor.document.fileName}` : ' with no editor'}`);
+        console.log(`[Copyright] handleEditorChange called${editor ? ` for ${editor.document.fileName}` : ' with no editor'}`);
         if (editor) {
             const config = this.getConfig();
-            //console.log(`[Copyright] Processing editor change for ${editor.document.fileName}`);
+            console.log(`[Copyright] Processing editor change for ${editor.document.fileName}`);
 
             // Check if this is an inactive file that needs immediate update
             const shouldUpdateImmediately = this.shouldUpdateInactiveFile(editor.document, config);
 
             if (shouldUpdateImmediately) {
-                //console.log(`[Copyright] Inactive file detected, updating immediately`);
+                console.log(`[Copyright] Inactive file detected, updating immediately`);
                 this.addCopyrightIfNeeded(editor).then(result => {
-                    //console.log(`[Copyright] Immediate update result:`, result);
+                    console.log(`[Copyright] Immediate update result:`, result);
                     if (!config.silentMode && result.success && result.action !== 'no_action') {
-                        //console.log(`Copyright ${result.action} applied immediately to ${editor.document.fileName}`);
+                        console.log(`Copyright ${result.action} applied immediately to ${editor.document.fileName}`);
                     }
                 }).catch(error => {
                     console.error('[Copyright] Error in immediate copyright update:', error);
@@ -1173,17 +1207,17 @@ class CopyrightHandler {
             } else {
                 // Normal processing with debouncing
                 this.addCopyrightIfNeeded(editor).then(result => {
-                    //console.log(`[Copyright] handleEditorChange result:`, result);
+                    console.log(`[Copyright] handleEditorChange result:`, result);
                     // Only log successful actions in non-silent mode
                     if (!config.silentMode && result.success && result.action !== 'no_action') {
-                        //console.log(`Copyright ${result.action} applied to ${editor.document.fileName}: ${result.details}`);
+                        console.log(`Copyright ${result.action} applied to ${editor.document.fileName}: ${result.details}`);
                     }
                 }).catch(error => {
                     console.error('[Copyright] Error in editor change copyright handling:', error);
                 });
             }
         } else {
-            //console.log(`[Copyright] handleEditorChange called with null editor`);
+            console.log(`[Copyright] handleEditorChange called with null editor`);
         }
     }
 
@@ -1192,25 +1226,25 @@ class CopyrightHandler {
      * @param {vscode.TextDocument} document - The opened document
      */
     handleDocumentOpen(document) {
-        //console.log(`[Copyright] handleDocumentOpen called for ${document.fileName}`);
+        console.log(`[Copyright] handleDocumentOpen called for ${document.fileName}`);
         // Only process if we have an active editor for this document
         const editor = vscode.window.visibleTextEditors.find(e => e.document === document);
-        //console.log(`[Copyright] Found editor for document: ${editor ? 'yes' : 'no'}`);
+        console.log(`[Copyright] Found editor for document: ${editor ? 'yes' : 'no'}`);
 
         if (editor) {
             const config = this.getConfig();
-            //console.log(`[Copyright] Processing document open for ${document.fileName}`);
+            console.log(`[Copyright] Processing document open for ${document.fileName}`);
             this.addCopyrightIfNeeded(editor).then(result => {
-                //console.log(`[Copyright] handleDocumentOpen result:`, result);
+                console.log(`[Copyright] handleDocumentOpen result:`, result);
                 // Only log successful actions in non-silent mode
                 if (!config.silentMode && result.success && result.action !== 'no_action') {
-                    //console.log(`Copyright ${result.action} applied to ${document.fileName}: ${result.details}`);
+                    console.log(`Copyright ${result.action} applied to ${document.fileName}: ${result.details}`);
                 }
             }).catch(error => {
                 console.error('[Copyright] Error in document open copyright handling:', error);
             });
         } else {
-            //console.log(`[Copyright] Skipping document open - no active editor for ${document.fileName}`);
+            console.log(`[Copyright] Skipping document open - no active editor for ${document.fileName}`);
         }
     }
 
