@@ -179,6 +179,20 @@ The extension automatically excludes these common folders and files by default:
 }
 ```
 
+### PHP Development
+
+```json
+{
+  "copyright-notice.languages": [
+    "php"
+  ],
+  "copyright-notice.fileExtensions": [
+    ".php"
+  ],
+  "copyright-notice.template": "/**\n * Copyright (c) {year} Your Company Name\n * All rights reserved.\n */\n\n"
+}
+```
+
 ### AutoHotkey Development (.ahk and .ahk2 files)
 
 ```json

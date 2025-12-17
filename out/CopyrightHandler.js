@@ -523,6 +523,15 @@ class CopyrightHandler {
                         continue;
                     }
 
+                    // Handle PHP opening tags
+                    if (trimmedLine.startsWith('<?php')) {
+                        hasShebang = true; // Treat PHP tags like shebang for insertion logic
+                leadingEmptyLines = 0; // Reset
+                        lineIndex++;
+                        shebangEndPosition = getOffsetForLine(lineIndex);
+                        continue;
+                    }
+
             // Found first content
                     insertPosition = getOffsetForLine(lineIndex);
                     foundContent = true;
