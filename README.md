@@ -27,6 +27,7 @@ Automatically add customizable copyright notices to your code files across multi
 - 🔄 **Manual Command**: Apply notice on demand with the Command Palette
 - 😀 **Emoji Removal**: Remove all emojis from files with a single command
 - 🌐 **Multi-language Support**: Works with all programming languages
+- 🔄 **Automatic Comment Conversion**: Templates automatically adapt to language-specific comment styles
 - 📝 **Customizable Templates**: Use your own copyright text with dynamic year insertion
 - 🕒 **Timestamp Support**: Include creation date and time in your notices
 - 🔄 **Update Time Tracking**: Automatically updates the "last modified" timestamp
