@@ -653,28 +653,42 @@ class CopyrightHandler {
      * @returns {Object} Timestamp analysis results
      */
     analyzeTimestampState(text, copyrightAnalysis) {
+        console.log(`[Copyright] analyzeTimestampState called, isWellFormed: ${copyrightAnalysis.isWellFormed}`);
+
         if (!copyrightAnalysis.isWellFormed) {
+            console.log(`[Copyright] Skipping timestamp analysis - copyright not well-formed`);
             return { needsTimestampUpdate: false };
         }
 
         const config = this.getConfig();
+        console.log(`[Copyright] includeUpdateTime config: ${config.includeUpdateTime}`);
+
         if (!config.includeUpdateTime) {
+            console.log(`[Copyright] Skipping timestamp analysis - update time disabled in config`);
             return { needsTimestampUpdate: false };
         }
 
         // Check if timestamp exists and is current
         const lines = text.split('\n');
         const copyrightBlock = this.extractCopyrightBlock(lines);
+        console.log(`[Copyright] Extracted copyright block: "${copyrightBlock.substring(0, 100)}..."`);
+
         const updateLineRegex = /(.*Last\s+Updated:)([^]*?)(\n\s*\*|$)/i;
         const lineMatch = copyrightBlock.match(updateLineRegex);
 
+        console.log(`[Copyright] Timestamp line match:`, lineMatch ? 'found' : 'not found');
+
         if (!lineMatch) {
+            console.log(`[Copyright] No timestamp found - needs update`);
             return { needsTimestampUpdate: true, reason: 'missing_timestamp' };
         }
 
         // Check if timestamp is outdated (more than 1 day old)
         const timestampText = lineMatch[2].trim();
+        console.log(`[Copyright] Found timestamp: "${timestampText}"`);
+
         const isOutdated = this.isTimestampOutdated(timestampText);
+        console.log(`[Copyright] Timestamp outdated: ${isOutdated}`);
 
         return {
             needsTimestampUpdate: isOutdated,
@@ -834,18 +848,47 @@ class CopyrightHandler {
      * @returns {boolean} True if outdated
      */
     isTimestampOutdated(timestampText) {
+        console.log(`[Copyright] Checking if timestamp outdated: "${timestampText}"`);
         try {
-            // Simple check - if timestamp is more than 24 hours old
-            const timestampMatch = timestampText.match(/(\d{4}-\d{2}-\d{2})/);
-            if (!timestampMatch) return true;
+            // Parse the full timestamp (YYYY-MM-DD HH:mm)
+            const fullTimestampMatch = timestampText.match(/(\d{4}-\d{2}-\d{2})\s+(\d{1,2}:\d{2})/);
 
-            const timestampDate = new Date(timestampMatch[1]);
+            if (!fullTimestampMatch) {
+                // Fallback to date-only matching
+                const dateMatch = timestampText.match(/(\d{4}-\d{2}-\d{2})/);
+                if (!dateMatch) {
+                    console.log(`[Copyright] No timestamp pattern found - considering outdated`);
+                    return true;
+                }
+                // If only date is found, update it (old format)
+                console.log(`[Copyright] Found date-only format - needs update to include time`);
+                return true;
+            }
+
+            const [, dateStr, timeStr] = fullTimestampMatch;
+            const [hours, minutes] = timeStr.split(':').map(Number);
+
+            const timestampDate = new Date(dateStr);
+            timestampDate.setHours(hours, minutes, 0, 0);
+
             const now = new Date();
-            const diffTime = Math.abs(now - timestampDate);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-            return diffDays > 1;
+            console.log(`[Copyright] Parsed timestamp: ${timestampDate}`);
+            console.log(`[Copyright] Current time: ${now}`);
+
+            // Update if timestamp is older than 2 minutes OR from a different day
+            const diffMs = now - timestampDate;
+            const diffMinutes = diffMs / (1000 * 60);
+            const isDifferentDay = timestampDate.toDateString() !== now.toDateString();
+
+            const needsUpdate = diffMinutes > 2 || isDifferentDay;
+            console.log(`[Copyright] Time difference: ${diffHours.toFixed(2)} hours`);
+            console.log(`[Copyright] Different day: ${isDifferentDay}`);
+            console.log(`[Copyright] Needs update: ${needsUpdate}`);
+
+            return needsUpdate;
         } catch (error) {
+            console.log(`[Copyright] Error parsing timestamp: ${error.message}`);
             // If we can't parse the timestamp, consider it outdated
             return true;
         }
