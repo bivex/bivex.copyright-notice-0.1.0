@@ -193,6 +193,22 @@ The extension automatically excludes these common folders and files by default:
 }
 ```
 
+### Shell Script Development
+
+```json
+{
+  "copyright-notice.languages": [
+    "shellscript"
+  ],
+  "copyright-notice.fileExtensions": [
+    ".sh",
+    ".bash",
+    ".zsh"
+  ],
+  "copyright-notice.template": "# Copyright (c) {year} Your Company Name\n# All rights reserved.\n\n"
+}
+```
+
 ### AutoHotkey Development (.ahk and .ahk2 files)
 
 ```json
