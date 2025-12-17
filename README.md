@@ -173,7 +173,8 @@ The extension automatically excludes these common folders and files by default:
     "python"
   ],
   "copyright-notice.fileExtensions": [
-    ".py"
+    ".py",
+    ".pyw"
   ],
   "copyright-notice.template": "# Copyright (c) {year} Your Company Name\n# All rights reserved.\n\n"
 }
