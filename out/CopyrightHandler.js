@@ -551,37 +551,21 @@ class CopyrightHandler {
         let hasShebang = false;
         let shebangEndPosition = 0;
 
-        // Special handling for Python files with module docstrings
+        // Special handling for Python files - always insert at the beginning
         if (languageId === 'python') {
-            // Check if file starts with a module docstring (triple-quoted string)
-            if (lines.length > 0 && lines[0].trim().startsWith('\"\"\"')) {
-                let docstringEndLine = 0;
-
-                // Check if docstring is on the same line (single line docstring)
-                if (lines[0].trim().endsWith('\"\"\"')) {
-                    docstringEndLine = 1; // Insert after this line
-                } else {
-                    // Multi-line docstring - find the closing quotes
-                    for (let i = 1; i < lines.length; i++) {
-                        if (lines[i].trim().endsWith('\"\"\"')) {
-                            docstringEndLine = i + 1; // Insert after this line
-                            break;
-                        }
-                    }
-                }
-
-                if (docstringEndLine > 0) {
-                    insertPosition = getOffsetForLine(docstringEndLine);
-                    foundContent = true;
-                    return {
-                        insertPosition,
-                        foundContent,
-                        leadingEmptyLines: 0,
-                        hasShebang: false,
-                        shebangEndPosition: 0
-                    };
-                }
-            }
+            // For all Python files, insert copyright at the very beginning
+            // This ensures consistent behavior regardless of file structure
+            insertPosition = 0;
+            foundContent = true;
+            // Check if file has shebang
+            const hasShebangLine = lines.length > 0 && lines[0].trim().startsWith('#!');
+            return {
+                insertPosition,
+                foundContent,
+                leadingEmptyLines: 0,
+                hasShebang: hasShebangLine,
+                shebangEndPosition: hasShebangLine ? lines[0].length + 1 : 0
+            };
         }
 
         // Calculate byte offset for a line index
