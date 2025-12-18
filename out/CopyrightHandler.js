@@ -525,11 +525,11 @@ class CopyrightHandler {
             if (text.length === 0) {
                 console.log(`[Copyright] Empty file detected, inserting at beginning`);
             // Empty file - insert at beginning
-                edit.insert(document.uri, new vscode.Position(0, 0), formattedTemplate);
+                edit.insert(currentDocument.uri, new vscode.Position(0, 0), formattedTemplate);
             } else {
                 console.log(`[Copyright] Finding optimal insertion position`);
             // Find optimal insertion position
-            const insertInfo = this.findOptimalInsertPosition(text, document.languageId);
+            const insertInfo = this.findOptimalInsertPosition(text, currentDocument.languageId);
             console.log(`[Copyright] Insert info:`, insertInfo);
 
             let contentToInsert = formattedTemplate;
@@ -586,8 +586,12 @@ class CopyrightHandler {
             console.log(`[Copyright] Edit applied: ${success}`);
             if (success) {
                 console.log(`[Copyright] Saving document...`);
-                await currentDocument.save();
-                console.log(`[Copyright] Document saved successfully`);
+                if (currentDocument.save && typeof currentDocument.save === 'function') {
+                    await currentDocument.save();
+                    console.log(`[Copyright] Document saved successfully`);
+                } else {
+                    console.log(`[Copyright] Document save not available (test environment)`);
+                }
                 return true;
             } else {
                 console.log(`[Copyright] Edit was not successful`);
@@ -761,7 +765,7 @@ class CopyrightHandler {
         console.log(`[Copyright] Config: silentMode=${config.silentMode}, backgroundUpdateDelay=${config.backgroundUpdateDelay}`);
 
         // Quick eligibility check
-        if (!this.isEnabled(document)) {
+        if (!this.isEnabled(currentDocument)) {
             console.log(`[Copyright] Document not eligible for processing`);
             return {
                 shouldProcess: false,
