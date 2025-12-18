@@ -6,6 +6,10 @@
 
 Automatically add customizable copyright notices to your code files across multiple programming languages. Perfect for ensuring proper intellectual property protection in your projects.
 
+## ✨ What's New in v1.1.11
+
+- 📁 **Apply to All Files**: New command "Apply Copyright Notice to All Files in Project" processes all eligible files in your workspace at once in the background
+
 ## ✨ What's New in v1.1.10
 
 - 🐍 **Fixed Python Timestamp Updates**: "Last Updated" timestamps now properly update in Python files using `#` style comments.
@@ -43,6 +47,7 @@ Automatically add customizable copyright notices to your code files across multi
 
 - ✨ **Automatic Background Insertion**: Silently adds copyright notices to new files in the background
 - 🔄 **Manual Command**: Apply notice on demand with the Command Palette
+- 📁 **Apply to All Files**: Process all eligible files in your project at once with background progress reporting
 - 😀 **Emoji Removal**: Remove all emojis from files with a single command
 - 🌐 **Multi-language Support**: Works with all programming languages
 - 🔄 **Automatic Comment Conversion**: Templates automatically adapt to language-specific comment styles
@@ -80,11 +85,32 @@ This means you can use the same JavaScript-style template across all your projec
 - **Typing Pauses**: Adds copyright during editing after configurable delay
 - **Smart Debouncing**: Adapts delay based on how recently you worked with the file
 - **Manual Command**: Apply notice on demand with the Command Palette (Ctrl+Shift+P)
+- **Apply to All Files**: Process entire project at once using "Apply Copyright Notice to All Files in Project" command
 - **Editor Switching**: Processes files when switching between editors
 - **Inactive File Detection**: Immediately updates copyright when switching to long-unused files
 
 ### Emoji Management
 Remove all emojis from any file using the "Remove All Emojis from File" command. This is useful for cleaning up code that contains unwanted emoji characters.
+
+### Apply to All Files
+Use the "Apply Copyright Notice to All Files in Project" command to process your entire project at once. This command:
+
+- 🔍 **Scans your entire workspace** for eligible files
+- 🎯 **Respects all your configuration** (file extensions, exclusions, allowed folders)
+- ⏳ **Shows progress** with a cancellable progress bar
+- 📊 **Reports results** with counts of processed, skipped, and error files
+- 🔇 **Works silently** without interrupting your workflow
+
+Perfect for:
+- ✅ **New projects** - Apply copyright to all files at once
+- 🔄 **Existing projects** - Bulk update copyright notices
+- 📁 **Large codebases** - Process thousands of files efficiently
+
+**How to use:**
+1. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
+2. Type "Apply Copyright Notice to All Files in Project"
+3. Press Enter to start processing
+4. Monitor progress in the notification area
 
 ## Configuration Options
 

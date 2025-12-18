@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to the "copyright-notice" extension will be documented in this file.
 
+## [1.1.11] - 2025-12-18
+### Added
+- New "Apply Copyright Notice to All Files in Project" command for bulk processing
+- Background progress reporting with cancellable progress bar
+- Comprehensive project-wide copyright application with detailed result reporting
+- Batch processing respects all existing configuration (exclusions, allowed folders, file extensions)
+
 ## [1.1.10] - 2025-12-18
 ### Fixed
 - "Last Updated" timestamps now properly update in Python files with `#` style comments
