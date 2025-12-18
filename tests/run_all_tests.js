@@ -52,6 +52,11 @@ const testSuites = [
         name: 'Quick Tests',
         command: 'node tests/quick_test.js',
         description: 'Fast algorithm verification'
+    },
+    {
+        name: 'Go & Rust Language Tests',
+        command: 'node tests/go_rust_language_tests.js',
+        description: 'Go and Rust language-specific copyright insertion tests'
     }
 ];
 

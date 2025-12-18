@@ -176,6 +176,7 @@
 		"test:simple": "node tests/simple_execution_test.js",
 		"test:background": "node tests/background_mode_test.js",
 		"test:algorithm": "node tests/test_copyright_algorithm.js",
+		"test:go-rust": "node tests/go_rust_language_tests.js",
 		"package": "vsce package",
 		"package:win": "scripts\\pack.bat",
 		"package:unix": "bash scripts/pack.sh"

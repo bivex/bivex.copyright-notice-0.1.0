@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-18T12:05:41.761Z",
+  "timestamp": "2025-12-18T12:11:57.665Z",
   "suites": [
     {
       "name": "Simple Execution Tests",
@@ -56,11 +56,19 @@
       "output": "",
       "error": null,
       "tests": []
+    },
+    {
+      "name": "Go & Rust Language Tests",
+      "description": "Go and Rust language-specific copyright insertion tests",
+      "status": "completed",
+      "output": "🧪 Go and Rust Language-Specific Tests\n\nTest 1/8: Go - Basic function without copyright\nLanguage: go\nDescription: Should insert copyright at the beginning of Go file\n[Copyright] formatCopyrightTemplate called with languageId: go\n[Copyright] Original template: \"/* Copyright (c) {year} */\n\n\"\n[Copyright] After year replacement: \"/* Copyright (c) 2025 */\n\n\"\n[Copyright] No comment conversion needed for languageId: go\n✅ PASS: Copyright inserted correctly\n   Result preview: /* Copyright (c) 2025 */\\n\\npackage main\\n\\nimport \"fmt\"\\n\\nfunc main() {\\n    fmt.Println(\"Hello, World!\")...\n\nTest 2/8: Go - File with existing copyright\nLanguage: go\nDescription: Should not insert if copyright already exists in Go file\n✅ PASS: Correctly detected existing copyright\n\nTest 3/8: Rust - Basic function without copyright\nLanguage: rust\nDescription: Should insert copyright at the beginning of Rust file\n[Copyright] formatCopyrightTemplate called with languageId: rust\n[Copyright] Original template: \"/* Copyright (c) {year} */\n\n\"\n[Copyright] After year replacement: \"/* Copyright (c) 2025 */\n\n\"\n[Copyright] No comment conversion needed for languageId: rust\n✅ PASS: Copyright inserted correctly\n   Result preview: /* Copyright (c) 2025 */\\n\\nfn main() {\\n    println!(\"Hello, World!\");\\n}...\n\nTest 4/8: Rust - File with existing copyright\nLanguage: rust\nDescription: Should not insert if copyright already exists in Rust file\n✅ PASS: Correctly detected existing copyright\n\nTest 5/8: Go - File with shebang (rare but possible)\nLanguage: go\nDescription: Should handle shebang in Go file\n[Copyright] formatCopyrightTemplate called with languageId: go\n[Copyright] Original template: \"/* Copyright (c) {year} */\n\n\"\n[Copyright] After year replacement: \"/* Copyright (c) 2025 */\n\n\"\n[Copyright] No comment conversion needed for languageId: go\n✅ PASS: Copyright inserted correctly\n   Result preview: #!/usr/bin/env gorun\\n/* Copyright (c) 2025 */\\n\\n\\npackage main\\n\\nimport \"fmt\"\\n\\nfunc main() {\\n    fmt.Pr...\n\nTest 6/8: Rust - Complex module structure\nLanguage: rust\nDescription: Should insert copyright before complex Rust code\n[Copyright] formatCopyrightTemplate called with languageId: rust\n[Copyright] Original template: \"/* Copyright (c) {year} */\n\n\"\n[Copyright] After year replacement: \"/* Copyright (c) 2025 */\n\n\"\n[Copyright] No comment conversion needed for languageId: rust\n✅ PASS: Copyright inserted correctly\n   Result preview: /* Copyright (c) 2025 */\\n\\nmod utils {\\n    pub fn helper() -> String {\\n        \"helper\".to_string()\\n ...\n\nTest 7/8: Go - With struct and methods\nLanguage: go\nDescription: Should insert copyright before Go struct and methods\n[Copyright] formatCopyrightTemplate called with languageId: go\n[Copyright] Original template: \"/* Copyright (c) {year} */\n\n\"\n[Copyright] After year replacement: \"/* Copyright (c) 2025 */\n\n\"\n[Copyright] No comment conversion needed for languageId: go\n✅ PASS: Copyright inserted correctly\n   Result preview: /* Copyright (c) 2025 */\\n\\npackage main\\n\\nimport \"fmt\"\\n\\ntype Person struct {\\n    name string\\n    age  ...\n\nTest 8/8: Rust - With struct and impl\nLanguage: rust\nDescription: Should insert copyright before Rust struct and impl\n[Copyright] formatCopyrightTemplate called with languageId: rust\n[Copyright] Original template: \"/* Copyright (c) {year} */\n\n\"\n[Copyright] After year replacement: \"/* Copyright (c) 2025 */\n\n\"\n[Copyright] No comment conversion needed for languageId: rust\n✅ PASS: Copyright inserted correctly\n   Result preview: /* Copyright (c) 2025 */\\n\\nstruct Person {\\n    name: String,\\n    age: u32,\\n}\\n\\nimpl Person {\\n    fn ne...\n\n============================================================\n📊 GO & RUST LANGUAGE TEST RESULTS\n============================================================\nTests run: 8\nPassed: 8\nFailed: 0\nSuccess rate: 100.0%\n\n🎉 All Go and Rust language tests passed!\n\n📝 Test completed!\n📄 Results saved to go_rust_test_results.json\n",
+      "error": null,
+      "tests": []
     }
   ],
   "summary": {
-    "totalSuites": 7,
-    "completedSuites": 7,
+    "totalSuites": 8,
+    "completedSuites": 8,
     "failedSuites": 0,
     "totalTests": 99,
     "passedTests": 89,

@@ -19,7 +19,10 @@ This directory contains comprehensive tests for the Copyright Notice VS Code ext
 - **integration_mutation_tests.js**: Integration mutation testing
 - **run_all_mutation_tests.js**: Complete mutation test suite runner
 
-### 4. Background Processing Tests
+### 4. Language-Specific Tests
+- **go_rust_language_tests.js**: Go and Rust language-specific copyright insertion tests
+
+### 5. Background Processing Tests
 - **background_mode_test.js**: Background processing functionality tests
 
 ### 5. Utility Tests
@@ -59,6 +62,9 @@ npm run test:background
 
 # Algorithm tests
 npm run test:algorithm
+
+# Go and Rust language tests
+npm run test:go-rust
 ```
 
 ### Run Tests Manually
@@ -93,6 +99,7 @@ The test suite covers:
 - Template formatting and placeholder replacement
 - File type recognition and filtering
 - Timestamp formatting and updating
+- **Go and Rust language support** - Proper comment formatting and insertion
 
 ### ✅ VS Code Integration
 - Document analysis and state management

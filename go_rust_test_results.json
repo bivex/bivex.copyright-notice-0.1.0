@@ -1,0 +1,11 @@
+{
+  "timestamp": "2025-12-18T12:11:57.872Z",
+  "language": "go_rust",
+  "summary": {
+    "totalTests": 8,
+    "passed": 8,
+    "failed": 0,
+    "successRate": "100.0"
+  },
+  "failures": []
+}
