@@ -14,7 +14,7 @@
 		"url": "https://github.com/bivex/bivex.copyright-notice-0.1.0/issues"
 	},
 	"engines": {
-		"vscode": "^1.107.0"
+		"vscode": "^1.105.0"
 	},
 	"categories": [
 		"Formatters",
@@ -170,7 +170,7 @@
 	"devDependencies": {
 		"@types/mocha": "^10.0.0",
 		"@types/node": "^20.0.0",
-		"@types/vscode": "^1.107.0",
+		"@types/vscode": "^1.105.0",
 		"@typescript-eslint/eslint-plugin": "^8.50.0",
 		"@typescript-eslint/parser": "^8.50.0",
 		"@vscode/vsce": "^3.0.0",
