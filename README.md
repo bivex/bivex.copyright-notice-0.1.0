@@ -1,10 +1,15 @@
 # Copyright Notice Generator
 
-[![Version](https://img.shields.io/badge/version-1.1.8-blue.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
+[![Version](https://img.shields.io/badge/version-1.1.9-blue.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 [![Installs](https://img.shields.io/badge/installs-new-brightgreen.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 [![Rating](https://img.shields.io/badge/rating-5%20stars-yellow.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 
 Automatically add customizable copyright notices to your code files across multiple programming languages. Perfect for ensuring proper intellectual property protection in your projects.
+
+## ✨ What's New in v1.1.9
+
+- 🌍 **UTC Timezone Support**: New `useUtc` configuration option for UTC timestamps instead of local timezone.
+- 🕐 **Enhanced Timestamp Parsing**: Improved parsing supports both UTC and local timezone timestamps.
 
 ## ✨ What's New in v1.1.8
 
@@ -109,6 +114,7 @@ The extension automatically excludes these common folders and files by default:
 - `copyright-notice.timestampFormat`: Format for the timestamp (default: "YYYY-MM-DDTHH:mm:ss"). ISO 8601-2:2019 compliant.
 - `copyright-notice.includeUpdateTime`: Whether to include and update the "last updated" timestamp (default: false).
 - `copyright-notice.updateTimeFormat`: Format for the update timestamp (default: "YYYY-MM-DDTHH:mm:ss"). ISO 8601-2:2019 compliant.
+- `copyright-notice.useUtc`: Whether to use UTC timezone for timestamps instead of local timezone (default: false).
 
 ### Background Operation
 - `copyright-notice.silentMode`: Whether to apply copyright changes silently in the background without showing notifications (default: true).
@@ -165,6 +171,18 @@ The extension automatically excludes these common folders and files by default:
   "copyright-notice.includeTimestamp": true,
   "copyright-notice.timestampFormat": "YYYY.MM.DD at HH:mm",
   "copyright-notice.template": "/**\n * Created on {timestamp}\n * Copyright (c) {year} Your Company Name\n * All rights reserved.\n */\n\n"
+}
+```
+
+### With UTC Timestamps
+
+```json
+{
+  "copyright-notice.includeTimestamp": true,
+  "copyright-notice.includeUpdateTime": true,
+  "copyright-notice.useUtc": true,
+  "copyright-notice.timestampFormat": "YYYY-MM-DDTHH:mm:ss",
+  "copyright-notice.template": "/**\n * Copyright (c) {year} Your Company Name\n * Created: {timestamp} (UTC)\n * Last Updated: {updatetime} (UTC)\n * All rights reserved.\n */\n\n"
 }
 ```
 

@@ -41,6 +41,7 @@ class CopyrightHandler {
             timestampFormat: config.get('timestampFormat', this.DEFAULT_TIMESTAMP_FORMAT),
             includeUpdateTime: config.get('includeUpdateTime', false),
             updateTimeFormat: config.get('updateTimeFormat', this.DEFAULT_TIMESTAMP_FORMAT),
+            useUtc: config.get('useUtc', false),
             autoRemoveEmojis: config.get('autoRemoveEmojis', false),
             silentMode: config.get('silentMode', true),
             backgroundUpdateDelay: config.get('backgroundUpdateDelay', 1500),
@@ -139,15 +140,16 @@ class CopyrightHandler {
      * Format a timestamp according to the specified format
      * @param {Date} date - The date to format
      * @param {string} format - The format string
+     * @param {boolean} useUtc - Whether to use UTC timezone
      * @returns {string} The formatted timestamp
      */
-    formatTimestamp(date, format) {
-        const year = date.getFullYear().toString();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        const seconds = date.getSeconds().toString().padStart(2, '0');
+    formatTimestamp(date, format, useUtc = false) {
+        const year = (useUtc ? date.getUTCFullYear() : date.getFullYear()).toString();
+        const month = (useUtc ? date.getUTCMonth() + 1 : date.getMonth() + 1).toString().padStart(2, '0');
+        const day = (useUtc ? date.getUTCDate() : date.getDate()).toString().padStart(2, '0');
+        const hours = (useUtc ? date.getUTCHours() : date.getHours()).toString().padStart(2, '0');
+        const minutes = (useUtc ? date.getUTCMinutes() : date.getMinutes()).toString().padStart(2, '0');
+        const seconds = (useUtc ? date.getUTCSeconds() : date.getSeconds()).toString().padStart(2, '0');
 
         // Handle ISO 8601 format with T separator
         return format
@@ -261,7 +263,7 @@ class CopyrightHandler {
 
         // Format the new timestamp
         const now = new Date();
-        const newTimestamp = this.formatTimestamp(now, config.updateTimeFormat);
+        const newTimestamp = this.formatTimestamp(now, config.updateTimeFormat, config.useUtc);
 
         // Create new "Last Updated" line with proper spacing preserved
         const newContent = ` ${newTimestamp}`;
@@ -304,11 +306,11 @@ class CopyrightHandler {
 
             const now = new Date();
             if (config.includeTimestamp) {
-                const timestamp = this.formatTimestamp(now, config.timestampFormat);
+                const timestamp = this.formatTimestamp(now, config.timestampFormat, config.useUtc);
                 formattedTemplate = formattedTemplate.replace(/{timestamp}/g, timestamp);
             }
             if (config.includeUpdateTime) {
-                const updateTime = this.formatTimestamp(now, config.updateTimeFormat);
+                const updateTime = this.formatTimestamp(now, config.updateTimeFormat, config.useUtc);
                 formattedTemplate = formattedTemplate.replace(/{updatetime}/g, updateTime);
             }
 
@@ -987,55 +989,108 @@ class CopyrightHandler {
     }
 
     /**
+     * Parse timestamp from various formats
+     * @param {string} timestampText - Timestamp string to parse
+     * @returns {Date|null} Parsed Date object or null if parsing failed
+     */
+    parseTimestamp(timestampText) {
+        console.log(`[Copyright] Parsing timestamp: "${timestampText}"`);
+
+        const trimmedText = timestampText.trim();
+
+        // First, try to parse as ISO 8601 string (handles both UTC and local time)
+        if (trimmedText.includes('T') || trimmedText.includes('Z') || /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(trimmedText)) {
+            try {
+                const parsedDate = new Date(trimmedText);
+                if (!isNaN(parsedDate.getTime())) {
+                    console.log(`[Copyright] Successfully parsed as ISO 8601: ${parsedDate}`);
+                    return parsedDate;
+                }
+            } catch (error) {
+                console.log(`[Copyright] ISO 8601 parsing failed: ${error.message}`);
+            }
+        }
+
+        // Fallback to custom parsing for various formats
+        const formats = [
+            // ISO 8601 with T separator and seconds: YYYY-MM-DDTHH:mm:ss
+            /^(\d{4}-\d{2}-\d{2})T(\d{1,2}:\d{2}:\d{2})$/,
+            // ISO 8601 with T separator (no seconds): YYYY-MM-DDTHH:mm
+            /^(\d{4}-\d{2}-\d{2})T(\d{1,2}:\d{2})$/,
+            // Space separator with seconds: YYYY-MM-DD HH:mm:ss
+            /^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}:\d{2}:\d{2})$/,
+            // Space separator (no seconds): YYYY-MM-DD HH:mm
+            /^(\d{4}-\d{2}-\d{2})\s+(\d{1,2}:\d{2})$/,
+            // Date only: YYYY-MM-DD
+            /^(\d{4}-\d{2}-\d{2})$/
+        ];
+
+        for (const format of formats) {
+            const match = trimmedText.match(format);
+            if (match) {
+                try {
+                    const dateStr = match[1];
+                    const timeStr = match[2];
+
+                    // Parse date components to avoid timezone issues
+                    const [year, month, day] = dateStr.split('-').map(Number);
+                    const timestampDate = new Date(year, month - 1, day); // month is 0-based
+
+                    if (timeStr) {
+                        // Parse time components
+                        const timeParts = timeStr.split(':').map(Number);
+                        const hours = timeParts[0] || 0;
+                        const minutes = timeParts[1] || 0;
+                        const seconds = timeParts[2] || 0;
+
+                        timestampDate.setHours(hours, minutes, seconds, 0);
+                    } else {
+                        // Date only - set to start of day
+                        timestampDate.setHours(0, 0, 0, 0);
+                    }
+
+                    console.log(`[Copyright] Successfully parsed timestamp using format: ${format}`);
+                    console.log(`[Copyright] Parsed date: ${timestampDate}`);
+                    return timestampDate;
+                } catch (error) {
+                    console.log(`[Copyright] Error parsing with format ${format}: ${error.message}`);
+                    continue;
+                }
+            }
+        }
+
+        console.log(`[Copyright] No supported timestamp format found`);
+        return null;
+    }
+
+    /**
      * Check if timestamp is outdated
      * @param {string} timestampText - Timestamp string
      * @returns {boolean} True if outdated
      */
     isTimestampOutdated(timestampText) {
         console.log(`[Copyright] Checking if timestamp outdated: "${timestampText}"`);
-        try {
-            // Parse the full timestamp (YYYY-MM-DD HH:mm)
-            const fullTimestampMatch = timestampText.match(/(\d{4}-\d{2}-\d{2})\s+(\d{1,2}:\d{2})/);
 
-            if (!fullTimestampMatch) {
-                // Fallback to date-only matching
-                const dateMatch = timestampText.match(/(\d{4}-\d{2}-\d{2})/);
-                if (!dateMatch) {
-                    console.log(`[Copyright] No timestamp pattern found - considering outdated`);
-                    return true;
-                }
-                // If only date is found, update it (old format)
-                console.log(`[Copyright] Found date-only format - needs update to include time`);
-                return true;
-            }
-
-            const [, dateStr, timeStr] = fullTimestampMatch;
-            const [hours, minutes] = timeStr.split(':').map(Number);
-
-            const timestampDate = new Date(dateStr);
-            timestampDate.setHours(hours, minutes, 0, 0);
-
-            const now = new Date();
-
-            console.log(`[Copyright] Parsed timestamp: ${timestampDate}`);
-            console.log(`[Copyright] Current time: ${now}`);
-
-            // Update if timestamp is older than 2 minutes OR from a different day
-            const diffMs = now - timestampDate;
-            const diffMinutes = diffMs / (1000 * 60);
-            const isDifferentDay = timestampDate.toDateString() !== now.toDateString();
-
-            const needsUpdate = diffMinutes > 2 || isDifferentDay;
-            console.log(`[Copyright] Time difference: ${diffHours.toFixed(2)} hours`);
-            console.log(`[Copyright] Different day: ${isDifferentDay}`);
-            console.log(`[Copyright] Needs update: ${needsUpdate}`);
-
-            return needsUpdate;
-        } catch (error) {
-            console.log(`[Copyright] Error parsing timestamp: ${error.message}`);
-            // If we can't parse the timestamp, consider it outdated
+        const timestampDate = this.parseTimestamp(timestampText);
+        if (!timestampDate) {
+            console.log(`[Copyright] Could not parse timestamp - considering outdated`);
             return true;
         }
+
+        const now = new Date();
+        console.log(`[Copyright] Current time: ${now}`);
+
+        // Update if timestamp is older than 2 minutes OR from a different day
+        const diffMs = now - timestampDate;
+        const diffMinutes = diffMs / (1000 * 60);
+        const isDifferentDay = timestampDate.toDateString() !== now.toDateString();
+
+        const needsUpdate = diffMinutes > 2 || isDifferentDay;
+        console.log(`[Copyright] Time difference: ${(diffMs / (1000 * 60 * 60)).toFixed(2)} hours`);
+        console.log(`[Copyright] Different day: ${isDifferentDay}`);
+        console.log(`[Copyright] Needs update: ${needsUpdate}`);
+
+        return needsUpdate;
     }
 
     /**
