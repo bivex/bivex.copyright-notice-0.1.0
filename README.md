@@ -106,7 +106,7 @@ The extension automatically excludes these common folders and files by default:
 
 ### Timestamp Configuration
 - `copyright-notice.includeTimestamp`: Whether to include timestamp when the copyright notice was added (default: false).
-- `copyright-notice.timestampFormat`: Format for the timestamp (default: "YYYY-MM-DDTHH:mm:ssZ"). ISO 8601-2:2019 compliant UTC format.
+- `copyright-notice.timestampFormat`: Format for the timestamp (default: "YYYY-MM-DDTHH:mm:ss"). ISO 8601-2:2019 compliant.
 - `copyright-notice.includeUpdateTime`: Whether to include and update the "last updated" timestamp (default: false).
 - `copyright-notice.updateTimeFormat`: Format for the update timestamp (default: "YYYY-MM-DDTHH:mm:ss"). ISO 8601-2:2019 compliant.
 

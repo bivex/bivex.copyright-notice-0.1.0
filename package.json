@@ -99,8 +99,8 @@
 				},
 				"copyright-notice.timestampFormat": {
 					"type": "string",
-					"default": "YYYY-MM-DDTHH:mm:ssZ",
-					"description": "Format of the timestamp (when includeTimestamp is enabled). Use YYYY (year), MM (month), DD (day), HH (hour), mm (minute), ss (second), Z (UTC timezone). ISO 8601-2:2019 compliant."
+					"default": "YYYY-MM-DDTHH:mm:ss",
+					"description": "Format of the timestamp (when includeTimestamp is enabled). Use YYYY (year), MM (month), DD (day), HH (hour), mm (minute), ss (second). ISO 8601-2:2019 compliant."
 				},
 				"copyright-notice.includeUpdateTime": {
 					"type": "boolean",
@@ -109,8 +109,8 @@
 				},
 				"copyright-notice.updateTimeFormat": {
 					"type": "string",
-					"default": "YYYY-MM-DDTHH:mm:ssZ",
-					"description": "Format of the update timestamp (when includeUpdateTime is enabled). Use YYYY (year), MM (month), DD (day), HH (hour), mm (minute), ss (second), Z (UTC timezone). ISO 8601-2:2019 compliant."
+					"default": "YYYY-MM-DDTHH:mm:ss",
+					"description": "Format of the update timestamp (when includeUpdateTime is enabled). Use YYYY (year), MM (month), DD (day), HH (hour), mm (minute), ss (second). ISO 8601-2:2019 compliant."
 				},
 				"copyright-notice.autoRemoveEmojis": {
 					"type": "boolean",
