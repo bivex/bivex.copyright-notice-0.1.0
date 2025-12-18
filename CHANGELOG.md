@@ -1,6 +1,13 @@
 # Change Log
 All notable changes to the "copyright-notice" extension will be documented in this file.
 
+## [1.1.8] - 2025-12-18
+### Added
+- Go language support with proper comment formatting
+- ISO 8601-2:2019 compliant timestamp formatting (changed default from "YYYY-MM-DD HH:mm:ss" to "YYYY-MM-DDTHH:mm:ss")
+### Changed
+- Updated default timestamp format to use ISO 8601-2:2019 standard with 'T' separator between date and time
+
 ## [1.1.1] - 2025-12-17
 ### Added
 - Silent background mode for unobtrusive copyright management

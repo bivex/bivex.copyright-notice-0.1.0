@@ -1,10 +1,15 @@
 # Copyright Notice Generator
 
-[![Version](https://img.shields.io/badge/version-1.1.1-blue.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
+[![Version](https://img.shields.io/badge/version-1.1.8-blue.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 [![Installs](https://img.shields.io/badge/installs-new-brightgreen.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 [![Rating](https://img.shields.io/badge/rating-5%20stars-yellow.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 
 Automatically add customizable copyright notices to your code files across multiple programming languages. Perfect for ensuring proper intellectual property protection in your projects.
+
+## ✨ What's New in v1.1.8
+
+- 🏗️ **Go Language Support**: Full support for Go files with proper comment formatting using `/** */` style comments.
+- 📅 **ISO 8601-2:2019 Timestamp Format**: Updated default timestamp format to comply with ISO 8601-2:2019 standard (YYYY-MM-DDTHH:mm:ss).
 
 ## ✨ What's New in v1.1.6
 
@@ -55,11 +60,11 @@ Uses advanced pattern recognition to detect existing copyright notices, avoiding
 ### Automatic Comment Style Conversion
 The extension automatically adapts your copyright template to match the appropriate comment style for each programming language:
 
-- **JavaScript/TypeScript/C/C++**: Uses `/** */` multiline comments
+- **JavaScript/TypeScript/C/C++/Go**: Uses `/** */` multiline comments
 - **Python/Shell Scripts**: Automatically converts `/** */` templates to `#` comments
 - **Custom Templates**: Works with any template format - the extension detects the language and converts accordingly
 
-This means you can use the same JavaScript-style template across all your projects, and the extension will automatically format it correctly for Python files, shell scripts, and other languages!
+This means you can use the same JavaScript-style template across all your projects, and the extension will automatically format it correctly for Python files, shell scripts, Go files, and other languages!
 
 ### Multiple Trigger Points
 - **File Opening**: Automatically processes files when first opened
@@ -101,9 +106,9 @@ The extension automatically excludes these common folders and files by default:
 
 ### Timestamp Configuration
 - `copyright-notice.includeTimestamp`: Whether to include timestamp when the copyright notice was added (default: false).
-- `copyright-notice.timestampFormat`: Format for the timestamp (default: "YYYY-MM-DD HH:mm:ss").
+- `copyright-notice.timestampFormat`: Format for the timestamp (default: "YYYY-MM-DDTHH:mm:ssZ"). ISO 8601-2:2019 compliant UTC format.
 - `copyright-notice.includeUpdateTime`: Whether to include and update the "last updated" timestamp (default: false).
-- `copyright-notice.updateTimeFormat`: Format for the update timestamp (default: "YYYY-MM-DD HH:mm:ss").
+- `copyright-notice.updateTimeFormat`: Format for the update timestamp (default: "YYYY-MM-DDTHH:mm:ss"). ISO 8601-2:2019 compliant.
 
 ### Background Operation
 - `copyright-notice.silentMode`: Whether to apply copyright changes silently in the background without showing notifications (default: true).
@@ -244,6 +249,20 @@ The extension automatically excludes these common folders and files by default:
 ```
 
 **Note**: The extension now works with `.ahk2` files even if VS Code doesn't recognize the language ID. Simply add the file extension to the `fileExtensions` array.
+
+### Go Development
+
+```json
+{
+  "copyright-notice.languages": [
+    "go"
+  ],
+  "copyright-notice.fileExtensions": [
+    ".go"
+  ],
+  "copyright-notice.template": "/**\n * Copyright (c) {year} Your Company Name\n * All rights reserved.\n */\n\n"
+}
+```
 
 ### Silent Background Mode
 

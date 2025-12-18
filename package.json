@@ -2,7 +2,7 @@
 	"name": "copyright-notice",
 	"displayName": "⚖️ Copyright Header Generator Pro",
 	"description": "Auto-insert customizable copyright headers in any file format. Smart templating with dynamic year, timestamps, and multi-language support.",
-	"version": "1.1.7",
+	"version": "1.1.8",
 	"publisher": "bivex",
 	"license": "MIT",
 	"homepage": "https://github.com/bivex/bivex.copyright-notice-0.1.0",
@@ -99,8 +99,8 @@
 				},
 				"copyright-notice.timestampFormat": {
 					"type": "string",
-					"default": "YYYY-MM-DD HH:mm:ss",
-					"description": "Format of the timestamp (when includeTimestamp is enabled). Use YYYY (year), MM (month), DD (day), HH (hour), mm (minute), ss (second)."
+					"default": "YYYY-MM-DDTHH:mm:ssZ",
+					"description": "Format of the timestamp (when includeTimestamp is enabled). Use YYYY (year), MM (month), DD (day), HH (hour), mm (minute), ss (second), Z (UTC timezone). ISO 8601-2:2019 compliant."
 				},
 				"copyright-notice.includeUpdateTime": {
 					"type": "boolean",
@@ -109,8 +109,8 @@
 				},
 				"copyright-notice.updateTimeFormat": {
 					"type": "string",
-					"default": "YYYY-MM-DD HH:mm:ss",
-					"description": "Format of the update timestamp (when includeUpdateTime is enabled). Use YYYY (year), MM (month), DD (day), HH (hour), mm (minute), ss (second)."
+					"default": "YYYY-MM-DDTHH:mm:ssZ",
+					"description": "Format of the update timestamp (when includeUpdateTime is enabled). Use YYYY (year), MM (month), DD (day), HH (hour), mm (minute), ss (second), Z (UTC timezone). ISO 8601-2:2019 compliant."
 				},
 				"copyright-notice.autoRemoveEmojis": {
 					"type": "boolean",

@@ -1,20 +1,22 @@
-/**
- * Copyright (c) 2025 Bivex
+/*
+ * Copyright (c) 2024 Bivex
  *
  * Author: Bivex
  * Available for contact via email: support@b-b.top
  * For up-to-date contact information:
  * https://github.com/bivex
  *
- * Created: 2025-12-18 11:28
- * Last Updated: 2025-12-18 11:29
+ * Created: 2024-12-18T10:30:00
+ * Last Updated: 2024-12-18T10:30:00
  *
  * Licensed under the MIT License.
  * Commercial licensing available upon request.
  */
 
-"use strict";
-function greet(user) {
-    return `Hello, ${user.name}!`;
+package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Hello, World!")
 }
-//# sourceMappingURL=basic.js.map
