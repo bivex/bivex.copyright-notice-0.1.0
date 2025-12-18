@@ -1,0 +1,46 @@
+{
+  "timestamp": "2025-12-18T11:46:14.331Z",
+  "tests": [
+    {
+      "name": "File Check: debug_test.js",
+      "status": "FAIL",
+      "result": "File not found"
+    },
+    {
+      "name": "File Check: mutation_tests.js",
+      "status": "FAIL",
+      "result": "File not found"
+    },
+    {
+      "name": "File Check: advanced_mutation_tests.js",
+      "status": "FAIL",
+      "result": "File not found"
+    },
+    {
+      "name": "File Check: integration_mutation_tests.js",
+      "status": "FAIL",
+      "result": "File not found"
+    },
+    {
+      "name": "Node.js Check",
+      "status": "PASS",
+      "result": "Version: v22.21.1"
+    },
+    {
+      "name": "Copyright Detection Test",
+      "status": "PASS",
+      "result": "Copyright not found in test content"
+    },
+    {
+      "name": "Copyright Insertion Test",
+      "status": "PASS",
+      "result": "Copyright inserted correctly"
+    }
+  ],
+  "summary": {
+    "totalTests": 7,
+    "passedTests": 3,
+    "failedTests": 4,
+    "successRate": "42.86"
+  }
+}

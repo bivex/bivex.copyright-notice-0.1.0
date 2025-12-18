@@ -149,9 +149,9 @@
 				},
 				"copyright-notice.smartDebounceMultiplier": {
 					"type": "number",
-					"default": 2.0,
-					"minimum": 1.0,
-					"maximum": 5.0,
+					"default": 2,
+					"minimum": 1,
+					"maximum": 5,
 					"description": "Multiplier for debounce delay when file hasn't been modified for a while (1.0 = no increase, 5.0 = 5x increase)."
 				},
 				"copyright-notice.smartDebounceThreshold": {
@@ -166,8 +166,9 @@
 	},
 	"scripts": {
 		"watch": "tsc -watch -p ./",
+		"compile": "tsc -p ./",
 		"postinstall": "",
-		"test": "npm run compile && node ./node_modules/vscode/bin/test",
+		"test": "vscode-test",
 		"package": "vsce package",
 		"package:win": "scripts\\pack.bat",
 		"package:unix": "bash scripts/pack.sh"
@@ -178,6 +179,8 @@
 		"@types/vscode": "^1.105.0",
 		"@typescript-eslint/eslint-plugin": "^8.50.0",
 		"@typescript-eslint/parser": "^8.50.0",
+		"@vscode/test-cli": "^0.0.12",
+		"@vscode/test-electron": "^2.5.2",
 		"@vscode/vsce": "^3.0.0",
 		"complexity-report": "^2.0.0-alpha",
 		"eslint": "^9.39.2",

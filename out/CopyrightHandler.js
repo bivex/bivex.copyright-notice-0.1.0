@@ -224,14 +224,14 @@ class CopyrightHandler {
             return false;
         }
 
-        const document = editor.document;
+        const currentDocument = editor.document;
 
         // Check if document is eligible for copyright notices
-        if (!this.isEnabled(document)) {
+        if (!this.isEnabled(currentDocument)) {
             return false;
         }
 
-        const text = document.getText();
+        const text = currentDocument.getText();
 
         // Skip if no copyright exists
         if (!this.hasCopyrightNotice(text)) {
@@ -240,8 +240,8 @@ class CopyrightHandler {
 
         // Find the copyright block at the beginning of the file
         // Handle both JavaScript-style (/** */) and Python-style (#) comments
-        const document = editor.document;
-        const languageId = document.languageId;
+        currentDocument = editor.document;
+        const languageId = currentDocument.languageId;
 
         let copyrightBlock = '';
         let blockStartIndex = -1;
@@ -331,15 +331,15 @@ class CopyrightHandler {
         const startIndex = blockStartIndex + lineMatch.index;
         const oldLineLength = lineMatch[0].length;
 
-        const startPosition = document.positionAt(startIndex);
-        const endPosition = document.positionAt(startIndex + oldLineLength);
+        const startPosition = currentDocument.positionAt(startIndex);
+        const endPosition = currentDocument.positionAt(startIndex + oldLineLength);
 
         const newLine = `${prefix}${newContent}${suffix}`;
 
         const edit = new vscode.WorkspaceEdit();
         const range = new vscode.Range(startPosition, endPosition);
 
-        edit.replace(document.uri, range, newLine);
+        edit.replace(currentDocument.uri, range, newLine);
 
         try {
             const success = await vscode.workspace.applyEdit(edit);
@@ -427,10 +427,10 @@ class CopyrightHandler {
     async fixMalformedCopyright(editor) {
         console.log(`[Copyright] fixMalformedCopyright called for ${editor.document.fileName}`);
         const config = this.getConfig();
-        const document = editor.document;
-        const formattedTemplate = this.formatCopyrightTemplate(config, document.languageId);
+        const currentDocument = editor.document;
+        const formattedTemplate = this.formatCopyrightTemplate(config, currentDocument.languageId);
         console.log(`[Copyright] Formatted template: "${formattedTemplate}"`);
-        const text = document.getText();
+        const text = currentDocument.getText();
         console.log(`[Copyright] Original text length: ${text.length}`);
             const lines = text.split('\n');
             let endMalformedIndex = -1;
@@ -482,9 +482,9 @@ class CopyrightHandler {
         console.log(`[Copyright] New content length: ${newContent.length}`);
 
                 const edit = new vscode.WorkspaceEdit();
-                edit.replace(document.uri, new vscode.Range(
-                    document.positionAt(0),
-                    document.positionAt(text.length)
+                edit.replace(currentDocument.uri, new vscode.Range(
+                    currentDocument.positionAt(0),
+                    currentDocument.positionAt(text.length)
                 ), newContent);
 
                 try {
@@ -493,7 +493,7 @@ class CopyrightHandler {
             console.log(`[Copyright] Edit applied: ${success}`);
                     if (success) {
                 console.log(`[Copyright] Saving document...`);
-                        await document.save();
+                        await currentDocument.save();
                 console.log(`[Copyright] Document saved successfully`);
                         return true;
             } else {
@@ -515,10 +515,10 @@ class CopyrightHandler {
     async insertNewCopyright(editor) {
         console.log(`[Copyright] insertNewCopyright called for ${editor.document.fileName}`);
         const config = this.getConfig();
-        const document = editor.document;
-        const formattedTemplate = this.formatCopyrightTemplate(config, document.languageId);
+        const currentDocument = editor.document;
+        const formattedTemplate = this.formatCopyrightTemplate(config, currentDocument.languageId);
         console.log(`[Copyright] Using formatted template: "${formattedTemplate}"`);
-        const text = document.getText();
+        const text = currentDocument.getText();
         console.log(`[Copyright] Original document text length: ${text.length}`);
             const edit = new vscode.WorkspaceEdit();
 
@@ -547,9 +547,9 @@ class CopyrightHandler {
                     contentToInsert = '\n' + contentToInsert;
                 }
                 console.log(`[Copyright] Final content to insert after shebang: "${contentToInsert}"`);
-                edit.replace(document.uri, new vscode.Range(
-                    document.positionAt(insertInfo.shebangEndPosition),
-                    document.positionAt(insertInfo.insertPosition)
+                edit.replace(currentDocument.uri, new vscode.Range(
+                    currentDocument.positionAt(insertInfo.shebangEndPosition),
+                    currentDocument.positionAt(insertInfo.insertPosition)
                 ), contentToInsert);
             } else if (insertInfo.leadingEmptyLines > 0 || insertInfo.insertPosition === 0) {
                 console.log(`[Copyright] Handling leading empty lines or insert at beginning`);
@@ -564,9 +564,9 @@ class CopyrightHandler {
 
                 const endPosition = remainingIsOnlyWhitespace ? text.length : insertInfo.insertPosition;
                 console.log(`[Copyright] Replacing range from 0 to ${endPosition}`);
-                edit.replace(document.uri, new vscode.Range(
-                    document.positionAt(0),
-                    document.positionAt(endPosition)
+                edit.replace(currentDocument.uri, new vscode.Range(
+                    currentDocument.positionAt(0),
+                    currentDocument.positionAt(endPosition)
                 ), contentToInsert);
             } else {
                 console.log(`[Copyright] Normal insertion at position ${insertInfo.insertPosition}`);
@@ -576,7 +576,7 @@ class CopyrightHandler {
                     contentToInsert += '\n';
                 }
                 console.log(`[Copyright] Final content for normal insertion: "${contentToInsert}"`);
-                edit.insert(document.uri, document.positionAt(insertInfo.insertPosition), contentToInsert);
+                edit.insert(currentDocument.uri, currentDocument.positionAt(insertInfo.insertPosition), contentToInsert);
             }
         }
 
@@ -586,7 +586,7 @@ class CopyrightHandler {
             console.log(`[Copyright] Edit applied: ${success}`);
             if (success) {
                 console.log(`[Copyright] Saving document...`);
-                await document.save();
+                await currentDocument.save();
                 console.log(`[Copyright] Document saved successfully`);
                 return true;
             } else {
@@ -753,11 +753,11 @@ class CopyrightHandler {
      * @returns {Object} Analysis results with file state and recommendations
      */
     analyzeDocumentState(editor) {
-        const document = editor.document;
+        const currentDocument = editor.document;
         const config = this.getConfig();
 
-        console.log(`[Copyright] Analyzing document: ${document.fileName}`);
-        console.log(`[Copyright] Document language: ${document.languageId}`);
+        console.log(`[Copyright] Analyzing document: ${currentDocument.fileName}`);
+        console.log(`[Copyright] Document language: ${currentDocument.languageId}`);
         console.log(`[Copyright] Config: silentMode=${config.silentMode}, backgroundUpdateDelay=${config.backgroundUpdateDelay}`);
 
         // Quick eligibility check
@@ -773,7 +773,7 @@ class CopyrightHandler {
 
         // Try to use cached state for background processing optimization
         // But don't skip processing for files that need copyright insertion
-        const cachedState = this.getCachedFileState(document);
+        const cachedState = this.getCachedFileState(currentDocument);
         if (cachedState && config.silentMode) {
             // In silent mode, we can trust recent cache (less than 30 seconds old)
             // But only for files that already have copyright or don't need action
@@ -787,7 +787,7 @@ class CopyrightHandler {
             }
         }
 
-        const text = document.getText();
+        const text = currentDocument.getText();
 
         // Empty file check
         if (!text || text.trim().length === 0) {
@@ -814,7 +814,7 @@ class CopyrightHandler {
             state: Object.assign({}, copyrightAnalysis, timestampAnalysis, {
                 fileSize: text.length,
                 lineCount: text.split('\n').length,
-                lastModified: document.isDirty ? 'unsaved' : 'saved'
+                lastModified: currentDocument.isDirty ? 'unsaved' : 'saved'
             })
         };
     }
@@ -954,6 +954,7 @@ class CopyrightHandler {
      * @returns {Promise<Object>} Action execution result
      */
     async executeAction(editor, action, analysis) {
+        const currentDocument = editor.document;
         console.log(`[Copyright] Executing action:`, action);
         try {
             switch (action.type) {
@@ -964,7 +965,7 @@ class CopyrightHandler {
                         details: updated ? 'timestamp_updated' : 'timestamp_update_failed'
                     };
                     if (result.success) {
-                        this.setCachedFileState(editor.document, Object.assign({}, analysis.state, {
+                        this.setCachedFileState(currentDocument, Object.assign({}, analysis.state, {
                             lastAction: action.type,
                             lastActionTime: Date.now()
                         }));
@@ -979,7 +980,7 @@ class CopyrightHandler {
                         details: fixed ? 'malformed_copyright_fixed' : 'malformed_copyright_fix_failed'
                     };
                     if (result.success) {
-                        this.setCachedFileState(editor.document, Object.assign({}, analysis.state, {
+                        this.setCachedFileState(currentDocument, Object.assign({}, analysis.state, {
                             lastAction: action.type,
                             lastActionTime: Date.now()
                         }));
@@ -994,7 +995,7 @@ class CopyrightHandler {
                         details: inserted ? 'copyright_inserted' : 'copyright_insertion_failed'
                     };
                     if (result.success) {
-                        this.setCachedFileState(editor.document, Object.assign({}, analysis.state, {
+                        this.setCachedFileState(currentDocument, Object.assign({}, analysis.state, {
                             lastAction: action.type,
                             lastActionTime: Date.now()
                         }));
@@ -1415,8 +1416,8 @@ class CopyrightHandler {
             return false;
         }
 
-        const document = editor.document;
-        const text = document.getText();
+        const currentDocument = editor.document;
+        const text = currentDocument.getText();
 
         // Regular expression to match various emoji ranges in Unicode
         // This covers most emojis including skin tone modifiers, flags, etc.
@@ -1431,17 +1432,17 @@ class CopyrightHandler {
 
         // Replace the entire document content
         const fullRange = new vscode.Range(
-            document.positionAt(0),
-            document.positionAt(text.length)
+            currentDocument.positionAt(0),
+            currentDocument.positionAt(text.length)
         );
 
         const edit = new vscode.WorkspaceEdit();
-        edit.replace(document.uri, fullRange, cleanedText);
+        edit.replace(currentDocument.uri, fullRange, cleanedText);
 
         try {
             const success = await vscode.workspace.applyEdit(edit);
             if (success) {
-                await document.save();
+                await currentDocument.save();
                 return true;
             }
         } catch (error) {
