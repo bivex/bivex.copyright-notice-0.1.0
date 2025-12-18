@@ -8,20 +8,21 @@ const results = {
     tests: []
 };
 
-// Test 1: Check if files exist
+// Test 1: Check if test files exist in tests directory
 console.log('📁 Checking test files...');
 const testFiles = [
-    'debug_test.js',
-    'mutation_tests.js',
-    'advanced_mutation_tests.js',
-    'integration_mutation_tests.js'
+    'tests/debug_test.js',
+    'tests/mutation_tests.js',
+    'tests/advanced_mutation_tests.js',
+    'tests/integration_mutation_tests.js'
 ];
 
-testFiles.forEach(file => {
-    const exists = fs.existsSync(file);
-    console.log(`${exists ? '✅' : '❌'} ${file}: ${exists ? 'Found' : 'Missing'}`);
+testFiles.forEach(filePath => {
+    const exists = fs.existsSync(filePath);
+    const fileName = filePath.split('/').pop();
+    console.log(`${exists ? '✅' : '❌'} ${fileName}: ${exists ? 'Found' : 'Missing'}`);
     results.tests.push({
-        name: `File Check: ${file}`,
+        name: `File Check: ${fileName}`,
         status: exists ? 'PASS' : 'FAIL',
         result: exists ? 'File exists' : 'File not found'
     });

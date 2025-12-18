@@ -1,204 +1,173 @@
-# 🧬 Mutation Testing Suite for Copyright Insertion Algorithm
+# Copyright Notice Extension - Test Suite
 
-This directory contains comprehensive mutation tests designed to validate the robustness and correctness of the copyright insertion algorithm used in the VS Code extension.
+This directory contains comprehensive tests for the Copyright Notice VS Code extension.
 
-## 📋 Test Suites Overview
+## Test Categories
 
-### 1. **Basic Mutation Tests** (`mutation_tests.js`)
-- Tests fundamental algorithm behavior with various input mutations
-- Covers empty files, existing copyrights, malformed copyrights, and edge cases
-- Includes stress tests and boundary condition validation
+### 1. VS Code Extension Tests (`npm test` or `npm run test:unit`)
+- **extension.test.js**: Unit tests using VS Code test framework and Mocha
+- **integration.test.js**: Integration tests with real VS Code APIs
 
-### 2. **Advanced Mutation Tests** (`advanced_mutation_tests.js`)
-- Deep-dive testing of specific algorithm components
-- Tests copyright detection accuracy with false positives/negatives
-- Validates insertion point calculation logic
-- Tests malformed copyright repair functionality
-- Includes concurrency and template variation tests
+### 2. Standalone Algorithm Tests
+- **test_copyright_algorithm.js**: Core algorithm functionality tests
+- **comprehensive_copyright_tests.js**: Comprehensive algorithm validation
+- **quick_test.js**: Fast algorithm verification
 
-### 3. **Integration Tests** (`integration_mutation_tests.js`)
-- Tests algorithm against real files from `../test_files/` directory
-- Validates behavior with actual file formats (.cpp, .js, .ahk, etc.)
-- Ensures algorithm works correctly in real-world scenarios
+### 3. Mutation Tests
+- **mutation_tests.js**: Basic algorithm robustness testing
+- **advanced_mutation_tests.js**: Advanced mutation scenarios
+- **integration_mutation_tests.js**: Integration mutation testing
+- **run_all_mutation_tests.js**: Complete mutation test suite runner
 
-### 4. **Master Test Runner** (`run_all_mutation_tests.js`)
-- Orchestrates execution of all test suites
-- Generates comprehensive reports in JSON and HTML formats
-- Provides executive summary and detailed analysis
+### 4. Background Processing Tests
+- **background_mode_test.js**: Background processing functionality tests
 
-## 🚀 Running the Tests
+### 5. Utility Tests
+- **simple_execution_test.js**: Basic file existence and algorithm checks
+- **run_all_tests.js**: Complete test suite runner with HTML reporting
 
-### Run All Tests (Recommended)
+## Running Tests
+
+### Run All Tests
 ```bash
-cd tests
-node run_all_mutation_tests.js
+npm run test:all
 ```
+This runs all test suites and generates comprehensive reports.
 
-This will:
-- Execute all test suites in sequence
-- Generate detailed console output
-- Create JSON report: `mutation_test_master_report.json`
-- Create HTML report: `mutation_test_report.html`
+### Run VS Code Extension Tests Only
+```bash
+npm test
+# or
+npm run test:unit
+```
+Runs the VS Code extension tests using the VS Code test framework.
 
 ### Run Individual Test Suites
 
-#### Basic Tests
 ```bash
-node mutation_tests.js
-```
-Creates: `mutation_test_results.json`
+# Integration tests
+npm run test:integration
 
-#### Advanced Tests
+# Mutation tests
+npm run test:mutation
+
+# Simple execution tests
+npm run test:simple
+
+# Background mode tests
+npm run test:background
+
+# Algorithm tests
+npm run test:algorithm
+```
+
+### Run Tests Manually
+
 ```bash
-node advanced_mutation_tests.js
-```
-Creates: `advanced_mutation_results.json`
+# Run individual test files
+node tests/simple_execution_test.js
+node tests/test_copyright_algorithm.js
+node tests/background_mode_test.js
+node tests/mutation_tests.js
+node tests/advanced_mutation_tests.js
+node tests/integration_mutation_tests.js
 
-#### Integration Tests
+# Run complete test suite
+node tests/run_all_tests.js
+```
+
+## Test Reports
+
+Tests generate several types of reports:
+
+- **JSON Reports**: `test_execution_results.json`, `simple_test_execution_results.json`
+- **HTML Reports**: `test_results_report.html`, `mutation_test_report.html`
+- **Master Reports**: `mutation_test_master_report.json`
+
+## Test Coverage
+
+The test suite covers:
+
+### ✅ Core Functionality
+- Copyright detection algorithms
+- Template formatting and placeholder replacement
+- File type recognition and filtering
+- Timestamp formatting and updating
+
+### ✅ VS Code Integration
+- Document analysis and state management
+- Editor event handling
+- Workspace edit operations
+- Configuration management
+
+### ✅ Edge Cases & Error Handling
+- Empty files, malformed content, encoding issues
+- File exclusions and folder restrictions
+- Background processing and debouncing
+- Cache management and performance optimization
+
+### ✅ Algorithm Robustness
+- Mutation testing with various input scenarios
+- Boundary condition testing
+- Performance validation
+- Integration testing across file types
+
+## Adding New Tests
+
+### For VS Code Extension Tests
+Add tests to `extension.test.js` or `integration.test.js` using Mocha syntax:
+
+```javascript
+test('test description', () => {
+    // Test code using assert
+    assert.equal(actual, expected);
+});
+```
+
+### For Standalone Tests
+Create new test files following the existing patterns, using Node.js and standard assertions.
+
+### For Mutation Tests
+Add new test cases to the mutation test files, focusing on edge cases and error conditions.
+
+## Continuous Integration
+
+The test suite is designed to run in CI/CD environments:
+
+- All tests can run without VS Code GUI (headless mode)
+- Comprehensive reporting for build systems
+- Exit codes indicate test success/failure
+- Parallel test execution support
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Tests failing due to missing files**: Ensure all test files exist in the `tests/` directory
+2. **VS Code tests not running**: Make sure VS Code and test dependencies are installed
+3. **Timeout errors**: Increase timeout values in test configurations
+4. **Path issues**: Tests expect to run from project root directory
+
+### Debug Mode
+
+Run tests with debug output:
 ```bash
-node integration_mutation_tests.js
-```
-Creates: `integration_test_results.json`
-
-## 📊 Understanding Test Results
-
-### Test Categories
-
-- **✅ PASS**: Test passed - algorithm behaved correctly
-- **❌ FAIL**: Test failed - algorithm has a bug or unexpected behavior
-- **⚠️ WARNING**: Test passed but with minor issues
-- **💥 ERROR**: Test suite crashed or threw exception
-
-### Common Test Scenarios
-
-#### Copyright Detection Tests
-- **False Positives**: Should NOT detect copyright in regular text
-- **True Positives**: Should correctly identify actual copyright headers
-- **Edge Cases**: License comments, variable names, string literals
-
-#### Insertion Point Tests
-- **Empty Files**: Insert at beginning
-- **Code Files**: Insert before first code line
-- **Shebang Files**: Insert after `#!/usr/bin/env` but before code
-- **Comment Files**: Skip license comments, insert before actual code
-
-#### Malformed Copyright Repair
-- **Missing `*/`**: Should fix incomplete multi-line comments
-- **Incomplete Copyright**: Should replace with proper format
-- **Mixed Formats**: Should standardize to consistent format
-
-## 🎯 Test Coverage
-
-The mutation testing suite covers:
-
-### ✅ **Algorithm Components**
-- Copyright detection logic
-- Insertion point calculation
-- Malformed copyright repair
-- Template application
-- File structure preservation
-
-### ✅ **Input Mutations**
-- Empty files, large files, Unicode content
-- Various comment styles (//, /* */, /** */)
-- Different file extensions and formats
-- Shebang lines, license headers
-- Malformed and edge-case inputs
-
-### ✅ **Edge Cases**
-- Files with only whitespace
-- Mixed line endings (CRLF, LF)
-- Nested comments
-- Very long lines or deep nesting
-- Concurrent file modifications
-
-### ✅ **Integration Scenarios**
-- Real file formats (.cpp, .js, .ahk, .css, .h)
-- Existing copyright headers
-- Files requiring copyright insertion
-- Malformed copyright repair
-
-## 📈 Interpreting Results
-
-### Success Criteria
-- **100% pass rate**: Algorithm is production-ready
-- **95-99% pass rate**: Algorithm is stable with minor issues
-- **90-95% pass rate**: Algorithm needs improvements
-- **<90% pass rate**: Algorithm requires major rework
-
-### Common Issues and Fixes
-
-#### High False Positive Rate in Detection
-- **Cause**: Overly broad copyright detection regex
-- **Fix**: Refine regex patterns to be more specific
-
-#### Incorrect Insertion Points
-- **Cause**: Logic doesn't properly skip comments/shebangs
-- **Fix**: Improve insertion point calculation algorithm
-
-#### Malformed Copyright Not Repaired
-- **Cause**: Repair logic doesn't handle specific malformation patterns
-- **Fix**: Extend repair logic to cover more edge cases
-
-## 🛠️ Maintenance
-
-### Adding New Tests
-1. Identify the test category (basic/advanced/integration)
-2. Add test case to appropriate file
-3. Update expected results
-4. Run full test suite to validate
-
-### Updating Test Expectations
-When algorithm behavior changes intentionally:
-1. Update expected results in test files
-2. Document the change in test comments
-3. Re-run tests to ensure all pass
-
-### Debugging Failed Tests
-1. Check test output for specific failure details
-2. Examine the algorithm logic that failed
-3. Use individual test files for isolated debugging
-4. Update algorithm or test expectations as needed
-
-## 📋 File Structure
-
-```
-tests/
-├── README.md                          # This documentation
-├── run_all_mutation_tests.js          # Master test runner
-├── mutation_tests.js                  # Basic mutation tests
-├── advanced_mutation_tests.js         # Advanced edge case tests
-├── integration_mutation_tests.js      # Real file integration tests
-├── mutation_test_results.json         # Basic test results
-├── advanced_mutation_results.json     # Advanced test results
-├── integration_test_results.json      # Integration test results
-├── mutation_test_master_report.json   # Combined results
-└── mutation_test_report.html          # HTML report
+DEBUG=vscode-test:* npm test
 ```
 
-## 🔍 Troubleshooting
+### Test Development
 
-### Tests Not Running
-- Ensure Node.js is installed (`node --version`)
-- Check file permissions
-- Verify all dependencies are installed
+To develop tests:
+1. Make changes to test files
+2. Run specific tests: `node tests/your_test.js`
+3. Check console output and generated reports
+4. Update test expectations as needed
 
-### Inconsistent Results
-- Clear any cached results
-- Run tests in clean environment
-- Check for race conditions in parallel execution
+## Contributing
 
-### HTML Report Not Generated
-- Ensure test suite completed successfully
-- Check for file write permissions
-- Verify JSON results are valid
-
-## 🎯 Quality Assurance
-
-This mutation testing suite ensures the copyright insertion algorithm is:
-- **Reliable**: Works consistently across different inputs
-- **Robust**: Handles edge cases and malformed inputs gracefully
-- **Maintainable**: Easy to extend and modify for future changes
-- **Well-tested**: Comprehensive coverage of all code paths
-
-Regular execution of these tests helps maintain code quality and catch regressions early in the development process.
+When adding new functionality:
+1. Add corresponding unit tests to `extension.test.js`
+2. Add integration tests to `integration.test.js` if needed
+3. Update algorithm tests for core logic changes
+4. Add mutation tests for edge cases
+5. Update this README with new test categories or commands

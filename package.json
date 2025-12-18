@@ -169,6 +169,13 @@
 		"compile": "tsc -p ./",
 		"postinstall": "",
 		"test": "vscode-test",
+		"test:all": "node tests/run_all_tests.js",
+		"test:unit": "vscode-test",
+		"test:integration": "node tests/integration.test.js",
+		"test:mutation": "node tests/run_all_mutation_tests.js",
+		"test:simple": "node tests/simple_execution_test.js",
+		"test:background": "node tests/background_mode_test.js",
+		"test:algorithm": "node tests/test_copyright_algorithm.js",
 		"package": "vsce package",
 		"package:win": "scripts\\pack.bat",
 		"package:unix": "bash scripts/pack.sh"

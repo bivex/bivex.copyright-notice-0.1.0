@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-12-04T10:37:48.053Z",
+  "timestamp": "2025-12-18T12:05:41.912Z",
   "summary": {
     "totalFiles": 17,
     "passed": 17,
@@ -7,20 +7,21 @@
   },
   "actions": {
     "inserted": 9,
-    "fixed": 6,
-    "skipped": 2
+    "fixed": 5,
+    "skipped": 3
   },
   "reasons": {
     "at_beginning": 9,
-    "malformed_copyright": 6,
-    "valid_copyright_exists": 2
+    "malformed_copyright": 5,
+    "valid_copyright_exists": 2,
+    "could_not_fix": 1
   },
   "issues": {},
   "detailedResults": [
     {
       "file": "basic.ahk",
-      "originalLength": 90,
-      "resultLength": 126,
+      "originalLength": 83,
+      "resultLength": 119,
       "action": "inserted",
       "reason": "at_beginning",
       "valid": true,
@@ -28,8 +29,8 @@
     },
     {
       "file": "basic.ahk2",
-      "originalLength": 91,
-      "resultLength": 127,
+      "originalLength": 84,
+      "resultLength": 120,
       "action": "inserted",
       "reason": "at_beginning",
       "valid": true,
@@ -37,8 +38,8 @@
     },
     {
       "file": "basic.cpp",
-      "originalLength": 103,
-      "resultLength": 139,
+      "originalLength": 97,
+      "resultLength": 133,
       "action": "inserted",
       "reason": "at_beginning",
       "valid": true,
@@ -46,8 +47,8 @@
     },
     {
       "file": "basic.css",
-      "originalLength": 113,
-      "resultLength": 149,
+      "originalLength": 104,
+      "resultLength": 140,
       "action": "inserted",
       "reason": "at_beginning",
       "valid": true,
@@ -55,8 +56,8 @@
     },
     {
       "file": "basic.h",
-      "originalLength": 93,
-      "resultLength": 129,
+      "originalLength": 84,
+      "resultLength": 120,
       "action": "inserted",
       "reason": "at_beginning",
       "valid": true,
@@ -64,8 +65,8 @@
     },
     {
       "file": "basic.js",
-      "originalLength": 58,
-      "resultLength": 94,
+      "originalLength": 55,
+      "resultLength": 91,
       "action": "inserted",
       "reason": "at_beginning",
       "valid": true,
@@ -73,8 +74,8 @@
     },
     {
       "file": "basic.py",
-      "originalLength": 85,
-      "resultLength": 121,
+      "originalLength": 80,
+      "resultLength": 116,
       "action": "inserted",
       "reason": "at_beginning",
       "valid": true,
@@ -82,8 +83,8 @@
     },
     {
       "file": "malformed_copyright.cpp",
-      "originalLength": 132,
-      "resultLength": 139,
+      "originalLength": 125,
+      "resultLength": 133,
       "action": "fixed",
       "reason": "malformed_copyright",
       "valid": true,
@@ -91,8 +92,8 @@
     },
     {
       "file": "malformed_copyright_2.cpp",
-      "originalLength": 107,
-      "resultLength": 143,
+      "originalLength": 100,
+      "resultLength": 136,
       "action": "inserted",
       "reason": "at_beginning",
       "valid": true,
@@ -100,8 +101,8 @@
     },
     {
       "file": "malformed_copyright_3.js",
-      "originalLength": 107,
-      "resultLength": 120,
+      "originalLength": 101,
+      "resultLength": 115,
       "action": "fixed",
       "reason": "malformed_copyright",
       "valid": true,
@@ -109,8 +110,8 @@
     },
     {
       "file": "malformed_copyright_4.py",
-      "originalLength": 93,
-      "resultLength": 101,
+      "originalLength": 89,
+      "resultLength": 98,
       "action": "fixed",
       "reason": "malformed_copyright",
       "valid": true,
@@ -118,8 +119,8 @@
     },
     {
       "file": "malformed_copyright_5.cpp",
-      "originalLength": 134,
-      "resultLength": 134,
+      "originalLength": 127,
+      "resultLength": 127,
       "action": "skipped",
       "reason": "valid_copyright_exists",
       "valid": true,
@@ -127,17 +128,17 @@
     },
     {
       "file": "malformed_copyright_6.js",
-      "originalLength": 85,
-      "resultLength": 97,
-      "action": "fixed",
-      "reason": "malformed_copyright",
+      "originalLength": 81,
+      "resultLength": 81,
+      "action": "skipped",
+      "reason": "could_not_fix",
       "valid": true,
       "issues": []
     },
     {
       "file": "malformed_copyright_7.cpp",
-      "originalLength": 161,
-      "resultLength": 161,
+      "originalLength": 151,
+      "resultLength": 151,
       "action": "skipped",
       "reason": "valid_copyright_exists",
       "valid": true,
@@ -145,8 +146,8 @@
     },
     {
       "file": "malformed_copyright_8.h",
-      "originalLength": 114,
-      "resultLength": 121,
+      "originalLength": 105,
+      "resultLength": 113,
       "action": "fixed",
       "reason": "malformed_copyright",
       "valid": true,
@@ -154,8 +155,8 @@
     },
     {
       "file": "malformed_copyright_9.ahk",
-      "originalLength": 109,
-      "resultLength": 116,
+      "originalLength": 101,
+      "resultLength": 109,
       "action": "fixed",
       "reason": "malformed_copyright",
       "valid": true,
@@ -163,8 +164,8 @@
     },
     {
       "file": "test_multiline_comment.cpp",
-      "originalLength": 192,
-      "resultLength": 228,
+      "originalLength": 182,
+      "resultLength": 218,
       "action": "inserted",
       "reason": "at_beginning",
       "valid": true,

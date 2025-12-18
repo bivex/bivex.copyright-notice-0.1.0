@@ -1,0 +1,33 @@
+{
+  "timestamp": "2025-12-18T12:05:41.887Z",
+  "detection": {
+    "detectionPassed": 7,
+    "detectionFailed": 1
+  },
+  "insertion": {
+    "insertionPassed": 3,
+    "insertionFailed": 4
+  },
+  "repair": {
+    "repairPassed": 10,
+    "repairFailed": 0
+  },
+  "concurrency": {
+    "concurrencyPassed": 0,
+    "concurrencyFailed": 1
+  },
+  "templates": {
+    "templatePassed": 2,
+    "templateFailed": 2
+  },
+  "basic": {
+    "passed": 16,
+    "failed": 1,
+    "total": 17
+  },
+  "total": {
+    "passed": 38,
+    "failed": 9,
+    "total": 47
+  }
+}

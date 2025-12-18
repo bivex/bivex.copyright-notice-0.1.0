@@ -115,24 +115,39 @@ class CopyrightHandler {
      * @returns {boolean} True if the filename matches the pattern
      */
     matchesPattern(fileName, pattern) {
-        // Simple glob pattern matching
-        const regexPattern = pattern
-            .replace(/\./g, '\\.')  // Escape dots
-            .replace(/\*/g, '.*')   // Convert * to .*
-            .replace(/\?/g, '.')    // Convert ? to .
-            .replace(/\[/g, '\\[')  // Escape [
-            .replace(/\]/g, '\\]')  // Escape ]
-            .replace(/\(/g, '\\(')  // Escape (
-            .replace(/\)/g, '\\)')  // Escape )
-            .replace(/\|/g, '\\|')  // Escape |
-            .replace(/\+/g, '\\+')  // Escape +
-            .replace(/\^/g, '\\^')  // Escape ^
-            .replace(/\$/g, '\\$')  // Escape $
-            .replace(/\{/g, '\\{')  // Escape {
-            .replace(/\}/g, '\\}')  // Escape }
-            .replace(/\\/g, '\\\\'); // Escape backslashes
+        // Simple glob pattern matching - build regex more carefully
+        let regexStr = '^';
 
-        const regex = new RegExp(`^${regexPattern}$`, 'i');
+        for (let i = 0; i < pattern.length; i++) {
+            const char = pattern[i];
+            switch (char) {
+                case '*':
+                    regexStr += '.*';
+                    break;
+                case '?':
+                    regexStr += '.';
+                    break;
+                case '.':
+                case '[':
+                case ']':
+                case '(':
+                case ')':
+                case '{':
+                case '}':
+                case '^':
+                case '$':
+                case '+':
+                case '|':
+                case '\\':
+                    regexStr += '\\' + char;
+                    break;
+                default:
+                    regexStr += char;
+            }
+        }
+
+        regexStr += '$';
+        const regex = new RegExp(regexStr, 'i');
         return regex.test(fileName);
     }
 
@@ -240,7 +255,6 @@ class CopyrightHandler {
 
         // Find the copyright block at the beginning of the file
         // Handle both JavaScript-style (/** */) and Python-style (#) comments
-        currentDocument = editor.document;
         const languageId = currentDocument.languageId;
 
         let copyrightBlock = '';
