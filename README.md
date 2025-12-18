@@ -6,6 +6,10 @@
 
 Automatically add customizable copyright notices to your code files across multiple programming languages. Perfect for ensuring proper intellectual property protection in your projects.
 
+## ✨ What's New in v1.1.6
+
+- 🐍 **Enhanced Python Support**: Copyright notices are now always inserted at the very beginning of Python files, even before docstrings and shebangs, ensuring proper module structure.
+
 ## ✨ What's New in v1.1.5
 
 - 🔇 **Silent Background Operation**: Works invisibly without interrupting your workflow
