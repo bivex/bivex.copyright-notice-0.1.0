@@ -1,10 +1,14 @@
 # Copyright Notice Generator
 
-[![Version](https://img.shields.io/badge/version-1.1.9-blue.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
+[![Version](https://img.shields.io/badge/version-1.1.10-blue.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 [![Installs](https://img.shields.io/badge/installs-new-brightgreen.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 [![Rating](https://img.shields.io/badge/rating-5%20stars-yellow.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 
 Automatically add customizable copyright notices to your code files across multiple programming languages. Perfect for ensuring proper intellectual property protection in your projects.
+
+## ✨ What's New in v1.1.10
+
+- 🐍 **Fixed Python Timestamp Updates**: "Last Updated" timestamps now properly update in Python files using `#` style comments.
 
 ## ✨ What's New in v1.1.9
 

@@ -239,17 +239,71 @@ class CopyrightHandler {
         }
 
         // Find the copyright block at the beginning of the file
-        const copyrightBlockRegex = /\/\*[\s\S]*?\*\//;
-        const blockMatch = text.match(copyrightBlockRegex);
+        // Handle both JavaScript-style (/** */) and Python-style (#) comments
+        const document = editor.document;
+        const languageId = document.languageId;
 
-        if (!blockMatch) {
+        let copyrightBlock = '';
+        let blockStartIndex = -1;
+        let blockEndIndex = -1;
+
+        if (languageId === 'python' || languageId === 'shellscript') {
+            // For Python/shell scripts, find the # style copyright block
+            const lines = text.split('\n');
+            let inCopyrightBlock = false;
+            let blockLines = [];
+            let startLineIndex = -1;
+
+            for (let i = 0; i < lines.length && i < 20; i++) { // Check first 20 lines
+                const line = lines[i];
+                const trimmed = line.trim();
+
+                if (!inCopyrightBlock && trimmed.startsWith('#') && trimmed.toLowerCase().includes('copyright')) {
+                    inCopyrightBlock = true;
+                    startLineIndex = i;
+                    blockLines.push(line);
+                } else if (inCopyrightBlock) {
+                    if (trimmed.startsWith('#') || trimmed === '') {
+                        blockLines.push(line);
+                    } else {
+                        // End of copyright block
+                        break;
+                    }
+                }
+            }
+
+            if (blockLines.length > 0) {
+                copyrightBlock = blockLines.join('\n');
+                blockStartIndex = lines.slice(0, startLineIndex).join('\n').length + (startLineIndex > 0 ? startLineIndex : 0);
+                blockEndIndex = blockStartIndex + copyrightBlock.length;
+            }
+        } else {
+            // For other languages (JavaScript, C++, etc.), use /** */ style
+            const copyrightBlockRegex = /\/\*[\s\S]*?\*\//;
+            const blockMatch = text.match(copyrightBlockRegex);
+
+            if (!blockMatch) {
+                return false;
+            }
+
+            copyrightBlock = blockMatch[0];
+            blockStartIndex = blockMatch.index;
+            blockEndIndex = blockStartIndex + copyrightBlock.length;
+        }
+
+        if (!copyrightBlock) {
             return false;
         }
 
-        const copyrightBlock = blockMatch[0];
-
         // Find the "Last Updated" line within the copyright block
-        const updateLineRegex = /(.*Last\s+Updated:)([^]*?)(\n\s*\*|$)/i;
+        // Handle both " * Last Updated:" (JS style) and "# Last Updated:" (Python style)
+        let updateLineRegex;
+        if (languageId === 'python' || languageId === 'shellscript') {
+            updateLineRegex = /(.*Last\s+Updated:)([^]*?)(\n\s*#|$)/i;
+        } else {
+            updateLineRegex = /(.*Last\s+Updated:)([^]*?)(\n\s*\*|$)/i;
+        }
+
         const lineMatch = copyrightBlock.match(updateLineRegex);
 
         if (!lineMatch) {
@@ -257,7 +311,7 @@ class CopyrightHandler {
         }
 
         // Get the prefix and the content after the timestamp
-        const prefix = lineMatch[1]; // "* Last Updated:"
+        const prefix = lineMatch[1]; // "* Last Updated:" or "# Last Updated:"
         const oldContent = lineMatch[2]; // Timestamp and anything after it
         const suffix = lineMatch[3];  // Line ending and next line start
 
@@ -266,10 +320,15 @@ class CopyrightHandler {
         const newTimestamp = this.formatTimestamp(now, config.updateTimeFormat, config.useUtc);
 
         // Create new "Last Updated" line with proper spacing preserved
-        const newContent = ` ${newTimestamp}`;
+        let newContent;
+        if (languageId === 'python' || languageId === 'shellscript') {
+            newContent = ` ${newTimestamp}`; // Same spacing for Python
+        } else {
+            newContent = ` ${newTimestamp}`; // Same spacing for JS/C++
+        }
 
         // Replace entire "Last Updated" line to ensure proper formatting
-        const startIndex = blockMatch.index + lineMatch.index;
+        const startIndex = blockStartIndex + lineMatch.index;
         const oldLineLength = lineMatch[0].length;
 
         const startPosition = document.positionAt(startIndex);

@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to the "copyright-notice" extension will be documented in this file.
 
+## [1.1.10] - 2025-12-18
+### Fixed
+- "Last Updated" timestamps now properly update in Python files with `#` style comments
+- Enhanced timestamp update logic to handle both JavaScript (`/** */`) and Python (`#`) comment styles
+
 ## [1.1.9] - 2025-12-18
 ### Added
 - UTC timezone support with `copyright-notice.useUtc` configuration option
