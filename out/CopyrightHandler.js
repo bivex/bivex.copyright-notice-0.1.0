@@ -1471,6 +1471,170 @@ class CopyrightHandler {
     }
 
     /**
+     * Apply copyright notice to all eligible files in the workspace
+     * @returns {Promise<Object>} Result with processed files count and errors
+     */
+    async applyToAllFiles() {
+        const config = this.getConfig();
+
+        // Get all files in workspace
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        if (!workspaceFolder) {
+            throw new Error('No workspace folder found');
+        }
+
+        // Create glob patterns for file search
+        const includePatterns = [];
+        const { fileExtensions, languages } = config;
+
+        // Build include patterns based on configuration
+        if (fileExtensions.includes('*') || languages.includes('*')) {
+            // Include all files, exclusions will be handled later
+            includePatterns.push('**/*');
+        } else {
+            // Include specific extensions
+            for (const ext of fileExtensions) {
+                if (ext.startsWith('.')) {
+                    includePatterns.push(`**/*${ext}`);
+                } else {
+                    includePatterns.push(`**/*.${ext}`);
+                }
+            }
+        }
+
+        // Create exclude patterns for findFiles
+        const excludePatterns = config.excludedFiles || [];
+        const excludeGlob = excludePatterns.length > 0 ?
+            `{${excludePatterns.join(',')}}` : null;
+
+        // Find all files
+        const allFiles = [];
+        for (const pattern of includePatterns) {
+            try {
+                const files = await vscode.workspace.findFiles(pattern, excludeGlob, 10000);
+                allFiles.push(...files);
+            } catch (error) {
+                console.warn(`Error finding files with pattern ${pattern}:`, error);
+            }
+        }
+
+        // Remove duplicates
+        let uniqueFiles = Array.from(new Set(allFiles.map(uri => uri.toString())))
+            .map(uriStr => vscode.Uri.parse(uriStr));
+
+        // Filter by allowed folders if specified
+        const { allowedFolders } = config;
+        if (allowedFolders && allowedFolders.length > 0) {
+            uniqueFiles = uniqueFiles.filter(fileUri => {
+                const filePath = fileUri.fsPath;
+                return allowedFolders.some(folderPath => {
+                    // Normalize folder path - make it relative to workspace if not absolute
+                    let normalizedFolderPath = folderPath.trim();
+
+                    // If folder path doesn't start with '/', consider it relative to workspace
+                    if (!normalizedFolderPath.startsWith('/')) {
+                        normalizedFolderPath = vscode.Uri.joinPath(workspaceFolder.uri, normalizedFolderPath).fsPath;
+                    }
+
+                    // Check if file path starts with allowed folder path
+                    return filePath.startsWith(normalizedFolderPath);
+                });
+            });
+        }
+
+        console.log(`[Copyright] Found ${uniqueFiles.length} files to process`);
+
+        // Create progress bar
+        const progressOptions = {
+            location: vscode.ProgressLocation.Notification,
+            title: 'Applying Copyright Notice',
+            cancellable: true
+        };
+
+        let processedCount = 0;
+        let skippedCount = 0;
+        let errorCount = 0;
+        const errors = [];
+
+        await vscode.window.withProgress(progressOptions, async (progress, token) => {
+            const totalFiles = uniqueFiles.length;
+
+            for (let i = 0; i < uniqueFiles.length; i++) {
+                if (token.isCancellationRequested) {
+                    break;
+                }
+
+                const fileUri = uniqueFiles[i];
+                const fileName = vscode.workspace.asRelativePath(fileUri);
+
+                progress.report({
+                    increment: (1 / totalFiles) * 100,
+                    message: `Processing ${fileName} (${i + 1}/${totalFiles})`
+                });
+
+                try {
+                    // Open document
+                    const document = await vscode.workspace.openTextDocument(fileUri);
+
+                    // Check if file is eligible
+                    if (!this.isEnabled(document)) {
+                        console.log(`[Copyright] Skipping ${fileName} - not eligible`);
+                        skippedCount++;
+                        continue;
+                    }
+
+                    // Create mock editor for compatibility with existing methods
+                    const mockEditor = {
+                        document: document,
+                        edit: (callback) => {
+                            const edit = new vscode.WorkspaceEdit();
+                            callback(edit);
+                            return vscode.workspace.applyEdit(edit);
+                        }
+                    };
+
+                    // Analyze document state
+                    const analysis = this.analyzeDocumentState(mockEditor);
+
+                    if (!analysis.shouldProcess) {
+                        console.log(`[Copyright] Skipping ${fileName} - ${analysis.skipReason}`);
+                        skippedCount++;
+                        continue;
+                    }
+
+                    // Determine optimal action
+                    const action = this.determineOptimalAction(analysis);
+
+                    // Execute action using existing method
+                    const result = await this.executeAction(mockEditor, action, analysis);
+
+                    if (result.success) {
+                        processedCount++;
+                        console.log(`[Copyright] Processed ${fileName} - ${action.type}`);
+                    } else {
+                        errorCount++;
+                        errors.push({ file: fileName, error: result.details });
+                        console.error(`[Copyright] Failed to process ${fileName}: ${result.details}`);
+                    }
+
+                } catch (error) {
+                    errorCount++;
+                    errors.push({ file: fileName, error: error.message });
+                    console.error(`[Copyright] Error processing ${fileName}:`, error);
+                }
+            }
+        });
+
+        return {
+            processed: processedCount,
+            skipped: skippedCount,
+            errors: errorCount,
+            errorDetails: errors
+        };
+    }
+
+
+    /**
      * Start listening to VS Code events
      * @returns {vscode.Disposable[]} Array of event subscriptions
      */

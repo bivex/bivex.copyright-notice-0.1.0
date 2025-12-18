@@ -47,6 +47,10 @@
 			{
 				"command": "copyright-notice.remove-emojis",
 				"title": "Remove All Emojis from File"
+			},
+			{
+				"command": "copyright-notice.apply-to-all",
+				"title": "Apply Copyright Notice to All Files in Project"
 			}
 		],
 		"configuration": {

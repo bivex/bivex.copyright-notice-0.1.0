@@ -65,11 +65,41 @@ function activate(context) {
             }
         }
     );
-    
+
+    // Register apply to all files command
+    const applyToAllCommandDisposable = vscode.commands.registerCommand(
+        'copyright-notice.apply-to-all',
+        async () => {
+            try {
+                vscode.window.showInformationMessage('Starting to apply copyright notice to all files in the project. This may take a while...');
+
+                const result = await copyrightHandler.applyToAllFiles();
+
+                // Show results
+                const message = `Copyright notice processing completed!\n` +
+                    `✅ Processed: ${result.processed} files\n` +
+                    `⏭️ Skipped: ${result.skipped} files\n` +
+                    `❌ Errors: ${result.errors} files`;
+
+                if (result.errors > 0) {
+                    vscode.window.showWarningMessage(message);
+                    console.log('Errors:', result.errorDetails);
+                } else {
+                    vscode.window.showInformationMessage(message);
+                }
+
+            } catch (error) {
+                vscode.window.showErrorMessage(`Error applying copyright to all files: ${error.message}`);
+                console.error('Error in copyright-notice.apply-to-all command:', error);
+            }
+        }
+    );
+
     // Register all disposables
     context.subscriptions.push(
         commandDisposable,
         removeEmojisCommandDisposable,
+        applyToAllCommandDisposable,
         ...handlerDisposables
     );
     

@@ -3,7 +3,8 @@ import { defineConfig } from '@vscode/test-cli';
 export default defineConfig({
     files: [
         'tests/extension.test.js',
-        'tests/integration.test.js'
+        'tests/integration.test.js',
+        'tests/apply_to_all_test.js'
     ],
     mocha: {
         timeout: 10000,
