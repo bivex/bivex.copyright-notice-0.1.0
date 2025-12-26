@@ -2,7 +2,7 @@
 	"name": "copyright-notice",
 	"displayName": "⚖️ Copyright Header Generator Pro",
 	"description": "Auto-insert customizable copyright headers in any file format. Smart templating with dynamic year, timestamps, and multi-language support.",
-	"version": "1.1.11",
+	"version": "1.1.13",
 	"publisher": "bivex",
 	"license": "MIT",
 	"homepage": "https://github.com/bivex/bivex.copyright-notice-0.1.0",
@@ -51,6 +51,10 @@
 			{
 				"command": "copyright-notice.apply-to-all",
 				"title": "Apply Copyright Notice to All Files in Project"
+			},
+			{
+				"command": "copyright-notice.select-profile",
+				"title": "Select Copyright Profile"
 			}
 		],
 		"configuration": {
@@ -164,6 +168,120 @@
 					"minimum": 60000,
 					"maximum": 1800000,
 					"description": "Time in milliseconds after which smart debouncing activates (default: 5 minutes)."
+				},
+				"copyright-notice.profiles": {
+					"type": "array",
+					"default": [
+						{
+							"name": "Open Source MIT",
+							"description": "MIT License template for open source projects",
+							"template": "/**\n * Copyright (c) {year} [Author Name]\n *\n * Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in all\n * copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n * SOFTWARE.\n *\n * @author [Author Name]\n * @license MIT\n * @version 1.0.0\n */\n\n",
+							"includeTimestamp": true,
+							"includeUpdateTime": true
+						},
+						{
+							"name": "Apache 2.0",
+							"description": "Apache License 2.0 template for open source projects",
+							"template": "/**\n * Copyright (c) {year} [Author Name]\n *\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *     http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n *\n * @author [Author Name]\n * @license Apache-2.0\n */\n\n",
+							"includeTimestamp": true,
+							"includeUpdateTime": true
+						},
+						{
+							"name": "GPL v3",
+							"description": "GNU General Public License v3 template",
+							"template": "/**\n * Copyright (c) {year} [Author Name]\n *\n * This program is free software: you can redistribute it and/or modify\n * it under the terms of the GNU General Public License as published by\n * the Free Software Foundation, either version 3 of the License, or\n * (at your option) any later version.\n *\n * This program is distributed in the hope that it will be useful,\n * but WITHOUT ANY WARRANTY; without even the implied warranty of\n * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n * GNU General Public License for more details.\n *\n * You should have received a copy of the GNU General Public License\n * along with this program. If not, see <https://www.gnu.org/licenses/>.\n *\n * @author [Author Name]\n * @license GPL-3.0-or-later\n */\n\n",
+							"includeTimestamp": true,
+							"includeUpdateTime": true
+						},
+						{
+							"name": "BSD 3-Clause",
+							"description": "BSD 3-Clause License template",
+							"template": "/**\n * Copyright (c) {year}, [Author Name]\n * All rights reserved.\n *\n * Redistribution and use in source and binary forms, with or without\n * modification, are permitted provided that the following conditions are met:\n *\n * 1. Redistributions of source code must retain the above copyright notice,\n *    this list of conditions and the following disclaimer.\n *\n * 2. Redistributions in binary form must reproduce the above copyright notice,\n *    this list of conditions and the following disclaimer in the documentation\n *    and/or other materials provided with the distribution.\n *\n * 3. Neither the name of the copyright holder nor the names of its\n *    contributors may be used to endorse or promote products derived from\n *    this software without specific prior written permission.\n *\n * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"\n * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE\n * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE\n * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE\n * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL\n * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR\n * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER\n * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,\n * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\n * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n *\n * @author [Author Name]\n * @license BSD-3-Clause\n */\n\n",
+							"includeTimestamp": true,
+							"includeUpdateTime": true
+						},
+						{
+							"name": "Commercial",
+							"description": "Commercial license template for proprietary software",
+							"template": "/**\n * Copyright (c) {year} [Company Name]\n *\n * This software and related documentation are proprietary to [Company Name].\n * All rights reserved. Unauthorized copying, modification, distribution,\n * or use is strictly prohibited.\n *\n * For licensing inquiries, please contact:\n * [Company Name]\n * [Contact Email]\n * [Contact Website]\n *\n * Created: {timestamp}\n * Last Updated: {updatetime}\n *\n * Confidential and Proprietary Information\n */\n\n",
+							"includeTimestamp": true,
+							"includeUpdateTime": true
+						},
+						{
+							"name": "Internal Development",
+							"description": "Template for internal company development",
+							"template": "/**\n * Copyright (c) {year} [Company Name] - Internal Use Only\n *\n * This software is the confidential and proprietary information of [Company Name].\n * You shall not disclose such Confidential Information and shall use it only\n * in accordance with the terms of the license agreement you entered into with [Company Name].\n *\n * INTERNAL DEVELOPMENT VERSION\n * Not for distribution or external use.\n *\n * Created: {timestamp}\n * Last Updated: {updatetime}\n *\n * @internal\n * @company [Company Name]\n * @department [Department]\n */\n\n",
+							"includeTimestamp": true,
+							"includeUpdateTime": true
+						},
+						{
+							"name": "Academic Research",
+							"description": "Template for academic and research projects",
+							"template": "/**\n * Copyright (c) {year} [University/Institution Name]\n *\n * This software is part of research conducted at [University/Institution Name].\n * For academic and research purposes only.\n *\n * Contact: [Researcher Name] <[email]>\n * Institution: [University/Institution Name]\n * Department: [Department Name]\n *\n * Created: {timestamp}\n * Last Updated: {updatetime}\n *\n * @research\n * @institution [University/Institution Name]\n */\n\n",
+							"includeTimestamp": true,
+							"includeUpdateTime": true
+						},
+						{
+							"name": "Government/Public",
+							"description": "Template for government and public sector projects",
+							"template": "/**\n * Copyright (c) {year} [Government Agency/Organization]\n *\n * This software is developed for public use by [Government Agency/Organization].\n * It is provided as-is without warranty of any kind.\n *\n * For official use only. Not for commercial distribution.\n *\n * Created: {timestamp}\n * Last Updated: {updatetime}\n *\n * @government\n * @agency [Government Agency/Organization]\n * @public-domain\n */\n\n",
+							"includeTimestamp": true,
+							"includeUpdateTime": true
+						},
+						{
+							"name": "Startup/Prototype",
+							"description": "Template for startup prototypes and MVPs",
+							"template": "/**\n * Copyright (c) {year} [Startup Name]\n *\n * PROTOTYPE VERSION - NOT FOR PRODUCTION USE\n *\n * This is a prototype/minimum viable product (MVP) developed by [Startup Name].\n * All rights reserved. This software is confidential and proprietary.\n *\n * For partnership inquiries: [Contact Email]\n * Website: [Startup Website]\n *\n * Created: {timestamp}\n * Last Updated: {updatetime}\n *\n * @prototype\n * @startup [Startup Name]\n * @confidential\n */\n\n",
+							"includeTimestamp": true,
+							"includeUpdateTime": true
+						},
+						{
+							"name": "Educational",
+							"description": "Template for educational and learning projects",
+							"template": "/**\n * Copyright (c) {year} [Author/Instructor Name]\n *\n * Educational Project - Learning Purpose Only\n *\n * This software is created for educational and learning purposes.\n * It demonstrates programming concepts and best practices.\n *\n * Instructor: [Instructor Name]\n * Course: [Course Name]\n * Institution: [Institution Name]\n *\n * Created: {timestamp}\n * Last Updated: {updatetime}\n *\n * @educational\n * @course [Course Name]\n * @learning-project\n */\n\n",
+							"includeTimestamp": true,
+							"includeUpdateTime": true
+						}
+					],
+					"description": "Array of copyright profiles with different templates and settings",
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"type": "string",
+								"description": "Profile name displayed in the selection menu"
+							},
+							"description": {
+								"type": "string",
+								"description": "Description of the profile"
+							},
+							"template": {
+								"type": "string",
+								"description": "Copyright notice template for this profile"
+							},
+							"includeTimestamp": {
+								"type": "boolean",
+								"description": "Whether to include creation timestamp",
+								"default": false
+							},
+							"includeUpdateTime": {
+								"type": "boolean",
+								"description": "Whether to include and update last modified timestamp",
+								"default": false
+							},
+							"useUtc": {
+								"type": "boolean",
+								"description": "Whether to use UTC timezone for timestamps",
+								"default": false
+							}
+						},
+						"required": ["name", "description", "template"]
+					}
+				},
+				"copyright-notice.activeProfile": {
+					"type": "string",
+					"default": "Open Source",
+					"description": "Name of the currently active copyright profile"
 				}
 			}
 		}

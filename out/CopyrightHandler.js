@@ -29,25 +29,74 @@ class CopyrightHandler {
      * Get extension configuration
      * @returns {Object} The configuration object with all settings
      */
+    /**
+     * Get profiles configuration
+     * @returns {Array} Array of available profiles
+     */
+    getProfiles() {
+        const config = vscode.workspace.getConfiguration(this.CONFIG_SECTION);
+        return config.get('profiles', []);
+    }
+
+    /**
+     * Get active profile name
+     * @returns {string} Active profile name
+     */
+    getActiveProfileName() {
+        const config = vscode.workspace.getConfiguration(this.CONFIG_SECTION);
+        return config.get('activeProfile', 'Open Source');
+    }
+
+    /**
+     * Set active profile
+     * @param {string} profileName - Name of the profile to activate
+     * @returns {Promise<void>}
+     */
+    async setActiveProfile(profileName) {
+        const config = vscode.workspace.getConfiguration(this.CONFIG_SECTION);
+        await config.update('activeProfile', profileName, vscode.ConfigurationTarget.Workspace);
+    }
+
     getConfig() {
         const config = vscode.workspace.getConfiguration(this.CONFIG_SECTION);
+        const activeProfileName = config.get('activeProfile', 'Open Source');
+        const profiles = config.get('profiles', []);
+
+        // Find the active profile
+        const activeProfile = profiles.find(profile => profile.name === activeProfileName) || profiles[0];
+
+        // If no profile found, use default settings
+        const profileSettings = activeProfile ? {
+            template: activeProfile.template || this.DEFAULT_TEMPLATE,
+            includeTimestamp: activeProfile.includeTimestamp !== undefined ? activeProfile.includeTimestamp : false,
+            includeUpdateTime: activeProfile.includeUpdateTime !== undefined ? activeProfile.includeUpdateTime : false,
+            useUtc: activeProfile.useUtc !== undefined ? activeProfile.useUtc : false
+        } : {
+            template: config.get('template', this.DEFAULT_TEMPLATE),
+            includeTimestamp: config.get('includeTimestamp', false),
+            includeUpdateTime: config.get('includeUpdateTime', false),
+            useUtc: config.get('useUtc', false)
+        };
+
         return {
             languages: config.get('languages', this.DEFAULT_WILDCARD),
             fileExtensions: config.get('fileExtensions', this.DEFAULT_WILDCARD),
             excludedFiles: config.get('excludedFiles', []),
             allowedFolders: config.get('allowedFolders', []),
-            template: config.get('template', this.DEFAULT_TEMPLATE),
-            includeTimestamp: config.get('includeTimestamp', false),
+            template: profileSettings.template,
+            includeTimestamp: profileSettings.includeTimestamp,
             timestampFormat: config.get('timestampFormat', this.DEFAULT_TIMESTAMP_FORMAT),
-            includeUpdateTime: config.get('includeUpdateTime', false),
+            includeUpdateTime: profileSettings.includeUpdateTime,
             updateTimeFormat: config.get('updateTimeFormat', this.DEFAULT_TIMESTAMP_FORMAT),
-            useUtc: config.get('useUtc', false),
+            useUtc: profileSettings.useUtc,
             autoRemoveEmojis: config.get('autoRemoveEmojis', false),
             silentMode: config.get('silentMode', true),
             backgroundUpdateDelay: config.get('backgroundUpdateDelay', 1500),
             smartDebouncing: config.get('smartDebouncing', true),
             smartDebounceMultiplier: config.get('smartDebounceMultiplier', 2.0),
-            smartDebounceThreshold: config.get('smartDebounceThreshold', 300000)
+            smartDebounceThreshold: config.get('smartDebounceThreshold', 300000),
+            profiles: profiles,
+            activeProfile: activeProfileName
         };
     }
 

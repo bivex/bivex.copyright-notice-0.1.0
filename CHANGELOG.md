@@ -1,6 +1,20 @@
 # Change Log
 All notable changes to the "copyright-notice" extension will be documented in this file.
 
+## [1.1.13] - 2025-12-26
+### Added
+- Expanded copyright profiles from 3 to 10 comprehensive templates
+- New profiles: Apache 2.0, GPL v3, BSD 3-Clause, Government/Public, Startup/Prototype, Educational
+- Enhanced profile selection with detailed descriptions and use case guidance
+- Updated template-examples.json with complete profile configurations
+
+## [1.1.12] - 2025-12-26
+### Added
+- Copyright Profiles system for switching between different copyright templates
+- "Select Copyright Profile" command for easy profile switching
+- Pre-configured profiles for Open Source, Commercial, and Internal Development
+- Profile-based configuration with individual timestamp and update settings
+
 ## [1.1.11] - 2025-12-18
 ### Added
 - New "Apply Copyright Notice to All Files in Project" command for bulk processing

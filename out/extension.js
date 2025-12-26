@@ -95,11 +95,57 @@ function activate(context) {
         }
     );
 
+    // Register select profile command
+    const selectProfileCommandDisposable = vscode.commands.registerCommand(
+        'copyright-notice.select-profile',
+        async () => {
+            try {
+                const config = vscode.workspace.getConfiguration('copyright-notice');
+                const profiles = config.get('profiles', []);
+                const activeProfile = config.get('activeProfile', 'Open Source');
+
+                if (profiles.length === 0) {
+                    vscode.window.showWarningMessage('No copyright profiles configured. Please add profiles in your settings.');
+                    return;
+                }
+
+                // Create quick pick items
+                const profileItems = profiles.map(profile => ({
+                    label: profile.name,
+                    description: profile.description,
+                    detail: activeProfile === profile.name ? '✓ Currently active' : '',
+                    picked: activeProfile === profile.name
+                }));
+
+                // Show quick pick menu
+                const selectedItem = await vscode.window.showQuickPick(profileItems, {
+                    placeHolder: 'Select a copyright profile',
+                    matchOnDescription: true,
+                    matchOnDetail: false
+                });
+
+                if (selectedItem) {
+                    // Update active profile
+                    await config.update('activeProfile', selectedItem.label, vscode.ConfigurationTarget.Workspace);
+
+                    const message = `Copyright profile changed to: ${selectedItem.label}`;
+                    vscode.window.showInformationMessage(message);
+                    console.log(`[Copyright] Active profile changed to: ${selectedItem.label}`);
+                }
+
+            } catch (error) {
+                vscode.window.showErrorMessage(`Error selecting copyright profile: ${error.message}`);
+                console.error('Error in copyright-notice.select-profile command:', error);
+            }
+        }
+    );
+
     // Register all disposables
     context.subscriptions.push(
         commandDisposable,
         removeEmojisCommandDisposable,
         applyToAllCommandDisposable,
+        selectProfileCommandDisposable,
         ...handlerDisposables
     );
     

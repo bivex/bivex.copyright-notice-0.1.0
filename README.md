@@ -1,10 +1,14 @@
 # Copyright Notice Generator
 
-[![Version](https://img.shields.io/badge/version-1.1.10-blue.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
+[![Version](https://img.shields.io/badge/version-1.1.13-blue.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 [![Installs](https://img.shields.io/badge/installs-new-brightgreen.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 [![Rating](https://img.shields.io/badge/rating-5%20stars-yellow.svg)](https://marketplace.visualstudio.com/items?itemName=bivex.copyright-notice)
 
 Automatically add customizable copyright notices to your code files across multiple programming languages. Perfect for ensuring proper intellectual property protection in your projects.
+
+## ✨ What's New in v1.1.12
+
+- 🎭 **Copyright Profiles**: New profiles system allowing different copyright templates for open source, commercial, and internal development projects
 
 ## ✨ What's New in v1.1.11
 
@@ -48,6 +52,7 @@ Automatically add customizable copyright notices to your code files across multi
 - ✨ **Automatic Background Insertion**: Silently adds copyright notices to new files in the background
 - 🔄 **Manual Command**: Apply notice on demand with the Command Palette
 - 📁 **Apply to All Files**: Process all eligible files in your project at once with background progress reporting
+- 🎭 **Copyright Profiles**: Switch between different copyright templates (open source, commercial, internal development)
 - 😀 **Emoji Removal**: Remove all emojis from files with a single command
 - 🌐 **Multi-language Support**: Works with all programming languages
 - 🔄 **Automatic Comment Conversion**: Templates automatically adapt to language-specific comment styles
@@ -79,6 +84,13 @@ The extension automatically adapts your copyright template to match the appropri
 - **Custom Templates**: Works with any template format - the extension detects the language and converts accordingly
 
 This means you can use the same JavaScript-style template across all your projects, and the extension will automatically format it correctly for Python files, shell scripts, Go files, and other languages!
+
+### Copyright Profiles
+Use the "Select Copyright Profile" command to switch between different copyright templates. Each profile can have its own template, timestamp settings, and description. Perfect for managing different types of projects:
+
+- **Open Source**: MIT license templates for public projects
+- **Commercial**: Proprietary license templates for commercial software
+- **Internal Development**: Templates for company-internal development
 
 ### Multiple Trigger Points
 - **File Opening**: Automatically processes files when first opened
@@ -155,6 +167,10 @@ The extension automatically excludes these common folders and files by default:
 
 ### Additional Features
 - `copyright-notice.autoRemoveEmojis`: Whether to automatically remove all emojis from files when they are saved (default: false).
+
+### Profile Configuration
+- `copyright-notice.profiles`: Array of copyright profiles with different templates and settings
+- `copyright-notice.activeProfile`: Name of the currently active copyright profile (default: "Open Source")
 
 ## Example Settings
 
@@ -382,6 +398,59 @@ This configuration enables smart debouncing with 3x delay increase for files ina
 
 This configuration adds custom exclusions (temp, cache, temporary files) in addition to the default exclusions.
 
+### Available Copyright Profiles
+
+The extension comes with 10 pre-configured profiles covering various use cases:
+
+1. **Open Source MIT** - Standard MIT license for open source projects
+2. **Apache 2.0** - Apache License 2.0 for permissive open source
+3. **GPL v3** - GNU General Public License v3 for copyleft projects
+4. **BSD 3-Clause** - BSD 3-Clause License for academic and research
+5. **Commercial** - Proprietary license for commercial software
+6. **Internal Development** - Template for company internal development
+7. **Academic Research** - Template for universities and research institutions
+8. **Government/Public** - Template for government and public sector projects
+9. **Startup/Prototype** - Template for startup MVPs and prototypes
+10. **Educational** - Template for learning and educational projects
+
+### Custom Copyright Profiles
+
+```json
+{
+  "copyright-notice.profiles": [
+    {
+      "name": "MIT Open Source",
+      "description": "Standard MIT license template for open source projects",
+      "template": "/**\n * Copyright (c) {year} [Your Name]\n *\n * Permission is hereby granted, free of charge, to any person obtaining a copy\n * of this software and associated documentation files (the \"Software\"), to deal\n * in the Software without restriction, including without limitation the rights\n * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell\n * copies of the Software, and to permit persons to whom the Software is\n * furnished to do so, subject to the following conditions:\n *\n * The above copyright notice and this permission notice shall be included in all\n * copies or substantial portions of the Software.\n *\n * THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\n * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\n * SOFTWARE.\n *\n * @author [Your Name]\n * @license MIT\n */\n\n",
+      "includeTimestamp": true,
+      "includeUpdateTime": true
+    },
+    {
+      "name": "Commercial License",
+      "description": "Proprietary license for commercial software",
+      "template": "/**\n * Copyright (c) {year} [Company Name]\n *\n * This software and related documentation are proprietary to [Company Name].\n * All rights reserved. Unauthorized copying, modification, distribution,\n * or use is strictly prohibited.\n *\n * For licensing inquiries, please contact:\n * [Company Name]\n * [Contact Email]\n * [Contact Website]\n *\n * Created: {timestamp}\n * Last Updated: {updatetime}\n *\n * Confidential and Proprietary Information\n */\n\n",
+      "includeTimestamp": true,
+      "includeUpdateTime": true
+    },
+    {
+      "name": "Internal Development",
+      "description": "Template for internal company development",
+      "template": "/**\n * Copyright (c) {year} [Company Name] - Internal Use Only\n *\n * This software is the confidential and proprietary information of [Company Name].\n * You shall not disclose such Confidential Information and shall use it only\n * in accordance with the terms of the license agreement you entered into with [Company Name].\n *\n * INTERNAL DEVELOPMENT VERSION\n * Not for distribution or external use.\n *\n * Created: {timestamp}\n * Last Updated: {updatetime}\n *\n * @internal\n * @company [Company Name]\n */\n\n",
+      "includeTimestamp": true,
+      "includeUpdateTime": true
+    }
+  ],
+  "copyright-notice.activeProfile": "MIT Open Source"
+}
+```
+
+### Profile Switching
+To switch between copyright profiles:
+1. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
+2. Type "Select Copyright Profile"
+3. Choose your desired profile from the list
+4. The extension will immediately start using the selected profile's template
+
 ### Individual Entrepreneur / Sole Proprietor
 
 ```json
@@ -394,12 +463,18 @@ This configuration adds custom exclusions (temp, cache, temporary files) in addi
 
 ## Additional Template Examples
 
-The extension comes with a variety of pre-configured templates for different scenarios, including:
+The extension comes with 10 pre-configured copyright profiles and a variety of additional templates:
 
+### Built-in Profiles (10 total):
+- **Open Source**: MIT, Apache 2.0, GPL v3, BSD 3-Clause
+- **Commercial**: Commercial license, Internal Development
+- **Specialized**: Academic Research, Government/Public, Startup/Prototype, Educational
+
+### Additional Templates:
 - Corporate templates (standard and detailed)
 - Individual templates (sole proprietor, freelancer)
-- Open source license templates (MIT, GPL)
 - Language-specific templates (Python, HTML, Shell)
+- Creative Commons and Mozilla Public License examples
 
 See the [template-examples.json](https://github.com/bivex/bivex.copyright-notice-0.1.0/blob/main/template-examples.json) file for a complete list of examples that you can copy into your configuration.
 
