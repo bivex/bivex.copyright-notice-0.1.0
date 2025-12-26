@@ -413,6 +413,41 @@ The extension comes with 10 pre-configured profiles covering various use cases:
 9. **Startup/Prototype** - Template for startup MVPs and prototypes
 10. **Educational** - Template for learning and educational projects
 
+## 📋 Supported License Templates
+
+### Open Source Licenses
+
+| License | SPDX ID | Description | When to Use |
+|---------|---------|-------------|-------------|
+| **MIT** | `MIT` | Permissive license allowing commercial use, modification, and distribution with minimal restrictions | Most popular for open source libraries and tools |
+| **Apache 2.0** | `Apache-2.0` | Permissive license with patent protection clauses and contributor agreement requirements | Enterprise-friendly, good for commercial adoption |
+| **GPL v3** | `GPL-3.0-or-later` | Copyleft license requiring derivative works to also be GPL-licensed | Strong copyleft, ensures free software remains free |
+| **BSD 3-Clause** | `BSD-3-Clause` | Permissive license with attribution requirements and no endorsement clause | Academic and research software, permissive licensing |
+
+### Proprietary Licenses
+
+| License Type | Description | When to Use |
+|--------------|-------------|-------------|
+| **Commercial** | Standard proprietary license with all rights reserved | Commercial software products and services |
+| **Internal Development** | Company-internal use with restricted distribution | Enterprise internal tools and applications |
+| **Government/Public** | Public domain or government-specific licensing | Government agencies and public sector projects |
+| **Startup/Prototype** | Early-stage prototype with confidentiality clauses | MVPs, beta versions, and startup projects |
+| **Educational** | Academic and learning materials licensing | Course materials, tutorials, and educational software |
+
+### License Compatibility Matrix
+
+| License | Can be used in proprietary software | Requires source code disclosure | Patent protection |
+|---------|-----------------------------------|-------------------------------|------------------|
+| MIT | ✅ Yes | ❌ No | ❌ No |
+| Apache 2.0 | ✅ Yes | ❌ No | ✅ Yes |
+| GPL v3 | ❌ No (creates copyleft) | ✅ Yes | ❌ No |
+| BSD 3-Clause | ✅ Yes | ❌ No | ❌ No |
+| Commercial | ❌ No | ❌ No | ✅ Yes |
+
+### SPDX License Identifiers
+
+All open source license templates include proper SPDX license identifiers for compliance with modern package management systems and legal requirements.
+
 ### Custom Copyright Profiles
 
 ```json
