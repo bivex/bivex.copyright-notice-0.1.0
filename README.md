@@ -52,6 +52,7 @@ Automatically add customizable copyright notices to your code files across multi
 - ✨ **Automatic Background Insertion**: Silently adds copyright notices to new files in the background
 - 🔄 **Manual Command**: Apply notice on demand with the Command Palette
 - 📁 **Apply to All Files**: Process all eligible files in your project at once with background progress reporting
+- 🔧 **Profile Diagnostics**: Built-in diagnostic tools for troubleshooting profile selection issues
 - 🎭 **Copyright Profiles**: Switch between different copyright templates (open source, commercial, internal development)
 - 😀 **Emoji Removal**: Remove all emojis from files with a single command
 - 🌐 **Multi-language Support**: Works with all programming languages
@@ -170,7 +171,8 @@ The extension automatically excludes these common folders and files by default:
 
 ### Profile Configuration
 - `copyright-notice.profiles`: Array of copyright profiles with different templates and settings
-- `copyright-notice.activeProfile`: Name of the currently active copyright profile (default: "Open Source")
+- `copyright-notice.activeProfile`: Name of the currently active copyright profile (default: "Open Source MIT")
+- `copyright-notice.profileAuthors`: Object storing custom author names for each profile (key: profile name, value: author name)
 
 ## Example Settings
 
@@ -479,12 +481,29 @@ All open source license templates include proper SPDX license identifiers for co
 }
 ```
 
-### Profile Switching
-To switch between copyright profiles:
+### Profile Switching with Author Customization
+To switch between copyright profiles and customize the author name:
 1. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
 2. Type "Select Copyright Profile"
 3. Choose your desired profile from the list
-4. The extension will immediately start using the selected profile's template
+4. Enter your name or company name when prompted
+5. The extension will save your author name and immediately start using the selected profile's template
+
+**Author names are saved per profile**, so you can have different authors for different types of projects (personal, company, open source, etc.).
+
+**Quick Profile Switching**: Use the "⚡ Quick Switch (keep current author)" option to change profiles without modifying the author name.
+
+### Profile Diagnostics
+If you encounter issues with profile selection:
+1. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
+2. Type "Diagnose Copyright Profiles"
+3. Check the Developer Console (Help → Toggle Developer Tools) for detailed diagnostic information
+
+The diagnostic command will show:
+- Number of available profiles
+- Currently active profile
+- Author names for each profile
+- Troubleshooting suggestions
 
 ### Individual Entrepreneur / Sole Proprietor
 

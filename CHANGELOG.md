@@ -1,12 +1,25 @@
 # Change Log
 All notable changes to the "copyright-notice" extension will be documented in this file.
 
-## [1.1.13] - 2025-12-26
+## [1.1.14] - 2025-12-27
+### Fixed
+- Enhanced profile selection with better error handling and diagnostics
+- Added "Diagnose Copyright Profiles" command for troubleshooting profile issues
+- Added Quick Switch option for profile changes without author modification
+- Improved fallback logic for loading profiles when user settings are empty
+- Enhanced logging for profile selection debugging
+
+### Added
+- Diagnostic command to help users troubleshoot profile selection issues
+- Quick profile switching without author name changes
 ### Added
 - Expanded copyright profiles from 3 to 10 comprehensive templates
 - New profiles: Apache 2.0, GPL v3, BSD 3-Clause, Government/Public, Startup/Prototype, Educational
 - Enhanced profile selection with detailed descriptions and use case guidance
 - Updated template-examples.json with complete profile configurations
+- **Author customization**: Profile selection now allows entering custom author/company names
+- **Per-profile author storage**: Author names are saved separately for each profile
+- **Dynamic placeholder replacement**: Templates automatically replace [Author Name] and [Company Name] with custom values
 
 ## [1.1.12] - 2025-12-26
 ### Added

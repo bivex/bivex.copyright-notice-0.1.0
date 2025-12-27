@@ -135,3 +135,4 @@ suite('Apply to All Files Integration Tests', () => {
         console.log('Empty directory test passed');
     });
 });
+

@@ -57,6 +57,30 @@ class CopyrightHandler {
         await config.update('activeProfile', profileName, vscode.ConfigurationTarget.Workspace);
     }
 
+    /**
+     * Get author name for a specific profile
+     * @param {string} profileName - Name of the profile
+     * @returns {string|null} Author name or null if not set
+     */
+    getProfileAuthor(profileName) {
+        const config = vscode.workspace.getConfiguration(this.CONFIG_SECTION);
+        const profileAuthors = config.get('profileAuthors', {});
+        return profileAuthors[profileName] || null;
+    }
+
+    /**
+     * Set author name for a specific profile
+     * @param {string} profileName - Name of the profile
+     * @param {string} authorName - Author name to set
+     * @returns {Promise<void>}
+     */
+    async setProfileAuthor(profileName, authorName) {
+        const config = vscode.workspace.getConfiguration(this.CONFIG_SECTION);
+        const profileAuthors = config.get('profileAuthors', {});
+        profileAuthors[profileName] = authorName;
+        await config.update('profileAuthors', profileAuthors, vscode.ConfigurationTarget.Workspace);
+    }
+
     getConfig() {
         const config = vscode.workspace.getConfiguration(this.CONFIG_SECTION);
         const activeProfileName = config.get('activeProfile', 'Open Source');
@@ -434,6 +458,14 @@ class CopyrightHandler {
             if (config.includeUpdateTime) {
                 const updateTime = this.formatTimestamp(now, config.updateTimeFormat, config.useUtc);
                 formattedTemplate = formattedTemplate.replace(/{updatetime}/g, updateTime);
+            }
+
+            // Replace author placeholders with custom names if available
+            const activeProfileName = config.activeProfile;
+            const authorName = this.getProfileAuthor(activeProfileName);
+            if (authorName) {
+                formattedTemplate = formattedTemplate.replace(/\[Your Name\]|\[Author Name\]|\[Company Name\]/g, authorName);
+                console.log(`[Copyright] Replaced author placeholder with: "${authorName}"`);
             }
 
             // Convert JavaScript-style comments to appropriate format for the language

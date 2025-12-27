@@ -2,7 +2,7 @@
 	"name": "copyright-notice",
 	"displayName": "⚖️ Copyright Header Generator Pro",
 	"description": "Auto-insert customizable copyright headers in any file format. Smart templating with dynamic year, timestamps, and multi-language support.",
-	"version": "1.1.13",
+	"version": "1.1.14",
 	"publisher": "bivex",
 	"license": "MIT",
 	"homepage": "https://github.com/bivex/bivex.copyright-notice-0.1.0",
@@ -55,6 +55,10 @@
 			{
 				"command": "copyright-notice.select-profile",
 				"title": "Select Copyright Profile"
+			},
+			{
+				"command": "copyright-notice.diagnose-profiles",
+				"title": "Diagnose Copyright Profiles"
 			}
 		],
 		"configuration": {
@@ -280,8 +284,19 @@
 				},
 				"copyright-notice.activeProfile": {
 					"type": "string",
-					"default": "Open Source",
+					"default": "Open Source MIT",
 					"description": "Name of the currently active copyright profile"
+				},
+				"copyright-notice.profileAuthors": {
+					"type": "object",
+					"default": {},
+					"description": "Custom author names for each profile (key: profile name, value: author name)",
+					"patternProperties": {
+						".*": {
+							"type": "string",
+							"description": "Author name for this profile"
+						}
+					}
 				}
 			}
 		}

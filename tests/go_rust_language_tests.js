@@ -459,3 +459,4 @@ console.log('📄 Results saved to go_rust_test_results.json');
 
 // Return success status
 process.exit(failed === 0 ? 0 : 1);
+
